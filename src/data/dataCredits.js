@@ -266,6 +266,14 @@ export const DATA_CREDITS = [
       '<a href="https://eismoinfo.lt/" target="_blank" rel="noopener">Via Lietuva / Eismoinfo</a>; periodically updated images',
   },
   {
+    key: 'taiwan-cctv',
+    html:
+      'Freeway camera stills (Taiwan): ' +
+      '<a href="https://www.freeway.gov.tw/" target="_blank" rel="noopener">Freeway Bureau, MOTC</a>, ' +
+      'CCTV static data (MOTC 2.0), released under the ' +
+      '<a href="https://data.gov.tw/license" target="_blank" rel="noopener">Open Government Data License, Taiwan (Version 1.0)</a>',
+  },
+  {
     key: 'calgary-cctv',
     html:
       'Traffic cameras (Calgary): contains information licensed under the ' +
@@ -295,6 +303,13 @@ export const DATA_CREDITS = [
       'per the ' +
       '<a href="https://kingcounty.gov/en/dept/kcit/data-information-services/gis-center/about/terms-conditions-copyrights" target="_blank" rel="noopener">KCGIS Center terms</a>. ' +
       'Partner-city cameras hosted on the county image handler (e.g. Newcastle) name their owner in the CCTV panel.',
+  },
+  {
+    key: 'hk-cctv',
+    html:
+      'Traffic snapshot cameras (Hong Kong): ' +
+      '<a href="https://data.gov.hk/en-data/dataset/hk-td-tis_2-traffic-snapshot-images" target="_blank" rel="noopener">Transport Department / DATA.GOV.HK</a> ' +
+      '(<a href="https://data.gov.hk/en/terms-and-conditions" target="_blank" rel="noopener">Terms of Use</a> — attribution required)',
   },
   {
     key: 'vegvesen-cctv',
