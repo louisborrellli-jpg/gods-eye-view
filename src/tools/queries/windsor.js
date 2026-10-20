@@ -333,14 +333,81 @@ export const getRoadEvents = defineTool({
   },
 });
 
+/** Windsor–Detroit crossing points, matching server/providers/borders.js. */
+const CROSSING_POINTS = [
+  {
+    id: 'ambassador-bridge',
+    name: 'Ambassador Bridge',
+    lat: 42.3118,
+    lon: -83.074,
+  },
+  {
+    id: 'windsor-detroit-tunnel',
+    name: 'Detroit–Windsor Tunnel',
+    lat: 42.3213,
+    lon: -83.0405,
+  },
+  {
+    id: 'gordie-howe-bridge',
+    name: 'Gordie Howe International Bridge',
+    lat: 42.2893,
+    lon: -83.0985,
+  },
+];
+const CROSSING_MATCH_KM = 0.8;
+const ROUTE_CAMERA_KM = 1;
+const ROUTE_CAMERA_LIMIT = 8;
+const MAX_PATH_POINTS = 400;
+
+/** Keep at most `max` points, always including both ends. */
+function thinPath(points, max) {
+  if (points.length <= max) return points;
+  const step = (points.length - 1) / (max - 1);
+  return Array.from({ length: max }, (_, i) => points[Math.round(i * step)]);
+}
+
+/** Distance from p to a polyline, and how far along it (0–1) the nearest point is. */
+export function nearestOnPath(p, path) {
+  let best = { km: Infinity, at: 0 };
+  for (let i = 0; i < path.length - 1; i++) {
+    const km = distanceToSegmentKm(p, path[i], path[i + 1]);
+    if (km < best.km) best = { km, at: i / Math.max(1, path.length - 1) };
+  }
+  if (path.length === 1) best = { km: distanceKm(p, path[0]), at: 0 };
+  return best;
+}
+
+/** The crossing a driving route passes over, if any. */
+export function crossingOnPath(path) {
+  let best = null;
+  for (const c of CROSSING_POINTS) {
+    const { km } = nearestOnPath(c, path);
+    if (km <= CROSSING_MATCH_KM && (!best || km < best.km)) best = { ...c, km };
+  }
+  return best;
+}
+
+function pathBox(path) {
+  const lats = path.map((p) => p.lat);
+  const lons = path.map((p) => p.lon);
+  return [
+    Math.min(...lons) - 0.01,
+    Math.min(...lats) - 0.01,
+    Math.max(...lons) + 0.01,
+    Math.max(...lats) + 0.01,
+  ];
+}
+
 export const windsorCommuteBrief = defineTool({
   name: 'windsor_commute_brief',
   title: 'Commute brief (Windsor–Detroit)',
   description:
     'One answer for "is my drive backed up?" between two points in the ' +
-    'Windsor–Detroit area: live traffic flow along the corridor, incidents, ' +
+    'Windsor–Detroit area, along the actual driving route: distance and ' +
+    'drive time without traffic, which border crossing the route uses versus ' +
+    'the fastest one right now, live traffic flow along the corridor, incidents, ' +
     'closures and construction on highways near the route (Ontario 511), weather at ' +
-    'the destination, the public traffic cameras nearest the route (use ' +
+    'the destination, the public traffic cameras along the route in driving order (use ' +
     'get_cctv_snapshot to see one), and border waits when the trip crosses ' +
     'the river. Sections that are unavailable are marked as such.',
   inputSchema: {
@@ -365,8 +432,31 @@ export const windsorCommuteBrief = defineTool({
     const to = args.to
       ? await resolvePoint(args.to, { services, signal })
       : { label: 'downtown Windsor', ...WINDSOR_CENTER };
-    const bbox = corridorBox(from, to);
-    const crossing = crossesBorder(from, to);
+    // The real driving route when the router answers; otherwise a straight
+    // line, flagged, so the brief still answers.
+    let route = null;
+    let routeNote = null;
+    if (services.routing) {
+      try {
+        const r = await services.routing.route([from, to], 'car', { signal });
+        if (r?.ok && Array.isArray(r.geometry) && r.geometry.length > 1)
+          route = r;
+        else routeNote = r?.error || 'no route found';
+      } catch (error) {
+        if (signal?.aborted) throw error;
+        routeNote =
+          error instanceof ToolError ? error.message : 'routing unavailable';
+      }
+    } else routeNote = 'routing not configured';
+    const path = route
+      ? thinPath(
+          route.geometry.map(([lon, lat]) => ({ lat, lon })),
+          MAX_PATH_POINTS,
+        )
+      : [from, to];
+    const bbox = route ? pathBox(path) : corridorBox(from, to);
+    const usedCrossing = route ? crossingOnPath(path) : null;
+    const crossing = Boolean(usedCrossing) || crossesBorder(from, to);
 
     const jobs = {
       traffic: tools.has('get_traffic_flow')
@@ -376,7 +466,7 @@ export const windsorCommuteBrief = defineTool({
         ? tools.call('get_weather', { location: { lat: to.lat, lon: to.lon } })
         : null,
       cameras: tools.has('find_cctv_cameras')
-        ? tools.call('find_cctv_cameras', { area: { bbox }, limit: 50 })
+        ? tools.call('find_cctv_cameras', { area: { bbox }, limit: 200 })
         : null,
       borders: readBorders(services, signal),
       events: services.roadEvents
@@ -411,6 +501,30 @@ export const windsorCommuteBrief = defineTool({
     const lines = [];
     const sections = {};
 
+    if (route) {
+      const km = route.distanceM / 1000;
+      const min = Math.round(route.durationS / 60);
+      sections.route = {
+        source: 'driving_route',
+        distance_km: Number(km.toFixed(1)),
+        duration_min_no_traffic: min,
+        crossing_used: usedCrossing ? usedCrossing.id : null,
+        path_lon_lat: thinPath(path, 100).map((p) => [
+          Number(p.lon.toFixed(5)),
+          Number(p.lat.toFixed(5)),
+        ]),
+      };
+      lines.push(
+        `Driving ${km.toFixed(1)} km${usedCrossing ? ` via the ${usedCrossing.name}` : ''}, ` +
+          `about ${min} min without traffic${crossing ? ' or border wait' : ''}.`,
+      );
+    } else {
+      sections.route = { source: 'straight_line', reason: routeNote };
+      lines.push(
+        `(No driving route: ${routeNote}; matching cameras and incidents to a straight line.)`,
+      );
+    }
+
     if (got.traffic?.ok) {
       lines.push(got.traffic.value.summary);
       sections.traffic = {
@@ -440,20 +554,31 @@ export const windsorCommuteBrief = defineTool({
 
     if (got.cameras?.ok) {
       const all = got.cameras.value.data?.rows ?? [];
-      const along = all
-        .map((c) => ({
+      const scored = all.map((c) => {
+        const near = nearestOnPath(c, path);
+        return {
           ...c,
-          off_route_km: Number(distanceToSegmentKm(c, from, to).toFixed(2)),
-        }))
-        .sort((a, b) => a.off_route_km - b.off_route_km)
-        .slice(0, CAMERA_LIMIT);
-      sections.cameras = { cameras: along };
+          off_route_km: Number(near.km.toFixed(2)),
+          along_route: Number(near.at.toFixed(3)),
+        };
+      });
+      // Along a real route: cameras within reach, in the order you pass them.
+      // On a straight line: just the nearest few.
+      const along = route
+        ? scored
+            .filter((c) => c.off_route_km <= ROUTE_CAMERA_KM)
+            .sort((a, b) => a.along_route - b.along_route)
+            .slice(0, ROUTE_CAMERA_LIMIT)
+        : scored
+            .sort((a, b) => a.off_route_km - b.off_route_km)
+            .slice(0, CAMERA_LIMIT);
+      sections.cameras = { cameras: along, in_driving_order: Boolean(route) };
       lines.push(
         along.length
-          ? `${along.length} public cameras near the route; closest: ${along
-              .slice(0, 3)
+          ? `${countNoun(along.length, 'public camera')} ${route ? 'along the route, in order' : 'near the route'}: ${along
+              .slice(0, 4)
               .map((c) => c.name)
-              .join('; ')}.`
+              .join('; ')}${along.length > 4 ? '; …' : ''}.`
           : 'No public cameras in the catalog along this route.',
       );
     } else {
@@ -467,9 +592,9 @@ export const windsorCommuteBrief = defineTool({
       const onRoute = got.events.value.events
         .map((e) => ({
           ...eventRow(e),
-          off_route_km: Number(distanceToSegmentKm(e, from, to).toFixed(2)),
+          off_route_km: Number(nearestOnPath(e, path).km.toFixed(2)),
         }))
-        .filter((r) => r.off_route_km <= ROUTE_EVENT_KM)
+        .filter((r) => r.off_route_km <= (route ? 0.5 : ROUTE_EVENT_KM))
         .sort(
           (a, b) =>
             eventRank(a) - eventRank(b) || a.off_route_km - b.off_route_km,
@@ -518,13 +643,37 @@ export const windsorCommuteBrief = defineTool({
               `${c.name} ${fmt((intoUs ? c.toUS : c.toCanada)?.travellers)}`,
           )
           .join(', ');
-        lines.push(
-          `Trip crosses into ${intoUs ? 'the US' : 'Canada'}. ` +
-            (best
-              ? `Fastest: ${best.name} (${best.minutes === 0 ? 'no delay' : `${best.minutes} min`})` +
-                (others ? `; ${others}.` : '.')
-              : 'No current wait times for this direction.'),
-        );
+        const wait = (m) => (m === 0 ? 'no delay' : `${m} min`);
+        const usedRow = usedCrossing
+          ? snap.crossings.find((c) => c.id === usedCrossing.id)
+          : null;
+        const usedWait = usedRow
+          ? (intoUs ? usedRow.toUS : usedRow.toCanada)?.travellers?.minutes
+          : null;
+        sections.borders.crossing_used = usedCrossing?.id ?? null;
+        let line = `Trip crosses into ${intoUs ? 'the US' : 'Canada'}. `;
+        if (usedCrossing && Number.isInteger(usedWait)) {
+          line += `Your route's ${usedCrossing.name}: ${wait(usedWait)}.`;
+          if (
+            best &&
+            best.id !== usedCrossing.id &&
+            usedWait - best.minutes >= 10
+          )
+            line += ` ${best.name} is ${usedWait - best.minutes} min faster right now (${wait(best.minutes)}); worth rerouting.`;
+          else if (
+            best &&
+            best.id !== usedCrossing.id &&
+            usedWait > best.minutes
+          )
+            line += ` ${best.name} is ${usedWait - best.minutes} min faster (${wait(best.minutes)}), probably not worth the detour.`;
+          else if (best && best.id !== usedCrossing.id)
+            line += ` Others: ${others}.`;
+        } else if (best) {
+          line +=
+            `Fastest: ${best.name} (${wait(best.minutes)})` +
+            (others ? `; ${others}.` : '.');
+        } else line += 'No current wait times for this direction.';
+        lines.push(line);
       }
     } else {
       sections.borders = { unavailable: true, reason: got.borders?.reason };

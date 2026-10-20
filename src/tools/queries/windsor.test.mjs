@@ -286,3 +286,54 @@ test('the commute brief keeps only road events near the route', async () => {
     /1 road event on highways near the route: Construction on HWY 401 Westbound \(1 Left Lane\(s\)\)\./,
   );
 });
+
+test('the commute brief follows the driving route and names the crossing it uses', async () => {
+  // Windsor → Detroit over the Ambassador Bridge span (42.3118, -83.074).
+  const geometry = [
+    [-83.0364, 42.3149],
+    [-83.055, 42.305],
+    [-83.074, 42.3118],
+    [-83.08, 42.322],
+    [-83.0458, 42.3314],
+  ];
+  const catalog = composeCatalog({
+    tools: coreTools,
+    services: {
+      borders,
+      routing: {
+        route: async (points, profile) => {
+          assert.equal(profile, 'car');
+          return { ok: true, geometry, distanceM: 9800, durationS: 840 };
+        },
+      },
+    },
+  });
+  const r = await catalog.call('windsor_commute_brief', {
+    from: { lat: 42.3149, lon: -83.0364 },
+    to: { lat: 42.3314, lon: -83.0458 },
+  });
+  assert.equal(r.data.sections.route.source, 'driving_route');
+  assert.equal(r.data.sections.route.crossing_used, 'ambassador-bridge');
+  assert.match(
+    r.summary,
+    /Driving 9\.8 km via the Ambassador Bridge, about 14 min without traffic or border wait\./,
+  );
+  assert.match(r.summary, /Your route's Ambassador Bridge: 25 min\./);
+  assert.doesNotMatch(r.summary, /worth rerouting/);
+});
+
+test('a failed route falls back to a straight line and says so', async () => {
+  const catalog = composeCatalog({
+    tools: coreTools,
+    services: {
+      borders,
+      routing: { route: async () => ({ ok: false, error: 'no route found' }) },
+    },
+  });
+  const r = await catalog.call('windsor_commute_brief', {
+    from: { lat: 42.3149, lon: -83.0364 },
+    to: { lat: 42.3314, lon: -83.0458 },
+  });
+  assert.equal(r.data.sections.route.source, 'straight_line');
+  assert.match(r.summary, /No driving route: no route found/);
+});
