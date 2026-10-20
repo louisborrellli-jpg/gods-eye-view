@@ -111,6 +111,8 @@
   "server/providers/cctv/groundHeights.js",
   "server/providers/cctv/catalog.js",
   "server/providers/cctv/lithuania.js",
+  "server/providers/cctv/mdot.js",
+  "server/providers/cctv/mdot.test.mjs",
   "src/data/cctvLithuania.test.mjs",
   "server/providers/cctv/constants.js",
   "server/providers/cctv/media.js",
@@ -849,6 +851,8 @@
   "src/layers/weather/imageryOrder.js",
   "src/layers/weather/imageryOrder.test.mjs",
   "server/providers/cyclones.js",
+  "server/providers/borders.js",
+  "server/providers/borders.test.mjs",
   "server/providers/firePerimeters.js",
   "src/data/cyclonesProxy.test.mjs",
   "src/data/firePerimetersProxy.test.mjs",
@@ -1061,5 +1065,8 @@
   "src/tooling/changelogFragments.test.mjs",
   "src/data/gbfsProxyRateLimit.test.mjs",
   "src/data/routeSegment.test.mjs",
-  "src/terrainHeightsBounds.test.mjs"
+  "src/terrainHeightsBounds.test.mjs",
+  "src/tools/queries/windsor.js",
+  "src/tools/queries/windsor.test.mjs",
+  "src/sources/borderWaits.js"
 ]

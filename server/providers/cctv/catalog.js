@@ -5,6 +5,7 @@ import { allocateSourceCap, resolveCatalogCap } from './cap.js';
 import { loadGroundHeights, joinGroundHeights } from './groundHeights.js';
 import { cameraRegion, normalizeSourceItem } from './normalize.js';
 import { loadLithuaniaSources } from './lithuania.js';
+import { loadMdotSources } from './mdot.js';
 import {
   loadAustinSourcesFromOpenData,
   loadCaltransSourcesFromOpenData,
@@ -152,6 +153,14 @@ const LIVE_PACKS = [
     name: 'florida',
     enabled: () => envOptIn('CCTV_FLORIDA_ENABLED'),
     load: loadFloridaSourcesFromOpenData,
+  },
+  {
+    // Michigan DOT Mi Drive: the Detroit side of Windsor–Detroit. Opt-in
+    // because MDOT's disclaimer doesn't state reuse terms for camera images
+    // (see DATA_SOURCES.md).
+    name: 'mdot',
+    enabled: () => envOptIn('CCTV_MDOT_ENABLED'),
+    load: loadMdotSources,
   },
 ];
 /**
