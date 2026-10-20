@@ -151,6 +151,13 @@ export const DATA_CREDITS = [
     html: 'Earthquakes: Data courtesy of the U.S. Geological Survey',
   },
   {
+    key: 'noaa-swpc-ovation',
+    html:
+      'Aurora nowcast: ' +
+      '<a href="https://www.swpc.noaa.gov/products/aurora-30-minute-forecast" target="_blank" rel="noopener">' +
+      'NOAA Space Weather Prediction Center (OVATION)</a>',
+  },
+  {
     key: 'nasa-gibs',
     html:
       'Recent imagery: We acknowledge the use of imagery provided by services from ' +

@@ -46,6 +46,7 @@ Two notes on the ones with conditions:
 Do not go looking for keys for these — they are live on first boot:
 
 - **Aircraft** — OpenSky anonymous access, plus adsb.lol.
+- **Aurora** — NOAA SWPC OVATION nowcast, refreshed about every five minutes.
 - **Earthquakes** — USGS, M2.5+ over the last 24 h.
 - **Satellites** — CelesTrak TLEs.
 - **Weather** — NOAA and ECMWF: wind, rain radar, satellite cloud, lightning

@@ -396,6 +396,7 @@
   "UNAVAILABLE": "NO DISPONIBLE",
   "Live Flights": "Vuelos en vivo",
   "Earthquakes (24h)": "Terremotos (24 h)",
+  "Aurora (nowcast)": "Auroras (pronóstico)",
   "No selected data layers": "No hay capas de datos seleccionadas",
   "Cleared {count} data layers": {
     "one": "Se limpió {count} capa de datos",
@@ -2648,6 +2649,7 @@
   "Perimeter source unavailable": "Fuente de perímetros no disponible",
   "Imagery catalog unavailable": "Catálogo de imágenes no disponible",
   "Earthquake source unavailable": "Fuente de terremotos no disponible",
+  "Aurora source unavailable": "Fuente de auroras no disponible",
   "TeleGeography load failed": "Falló la carga de TeleGeography",
   "Wind request timed out": "La petición del viento agotó el tiempo de espera",
   "Malformed wind manifest": "Manifiesto del viento mal formado",

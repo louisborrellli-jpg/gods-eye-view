@@ -59,6 +59,33 @@ provider registration rejects compositions that cannot fit rather than truncatin
 identities. A malformed or duplicate entry invalidates the complete custom-switch
 field. Existing whole-link size limits still apply.
 
+## Aurora nowcast layer
+
+`aurora` draws NOAA SWPC's OVATION Prime nowcast, keyless, from
+`services.swpc.noaa.gov`. The feed is a 360x181 whole-degree probability grid
+republished about every five minutes, which is the layer's `updateInterval`.
+
+It renders as a single `SingleTileImageryProvider` spanning
+`Rectangle.MAX_VALUE` rather than as entities: 65,160 cells would otherwise
+become 65,160 entities for a field that is smooth and global. The raster is
+north-up with the prime meridian in the middle, so the source's 0-359 eastward
+longitude maps to column `(lon + 180) % 360` and latitude to row `90 - lat`.
+
+Cells below 2% probability are fully transparent, and alpha ramps from zero at
+that threshold, so the oval's edge fades rather than ending on a line. Colour
+runs green to yellow to red and reaches full strength at 50%, which is where
+OVATION tops out outside a storm; above that the ramp holds rather than
+brightening further.
+
+A refresh adds the replacement imagery before removing the previous layer, so
+the oval never blinks off the globe, and the replaced layer is removed with
+`destroy: true` so its full-globe texture is not leaked once per refresh. A
+snapshot that is not a complete, in-range, duplicate-free grid is refused by
+`normalizeAuroraSnapshot` and the previous overlay stays up; the failure
+surfaces through `getStats().error`. `getStats()` also reports the drawn cell
+count, the peak probability, and both the observation and forecast times,
+because this is a short-horizon forecast and not an observation.
+
 ## Intel HUD readouts
 
 Every Intel HUD slot resolves from something the application can observe; none

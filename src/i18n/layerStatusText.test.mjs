@@ -24,6 +24,7 @@ const SITES = [
   ['../layers/recentImagery/index.js', 'Imagery catalog unavailable'],
   ['../layers/installations/ingestion.js', 'Installation context unavailable'],
   ['../layers/earthquakes/index.js', 'Earthquake source unavailable'],
+  ['../layers/aurora/index.js', 'Aurora source unavailable'],
   ['../layers/submarineCables/ingestion.js', 'TeleGeography load failed'],
   ['../layers/vessels/ingestion.js', 'AIS live load failed'],
   ['../layers/vessels/lifecycle.js', 'AIS live load failed'],

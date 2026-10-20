@@ -39,6 +39,18 @@ export function formatImageryLabel(stack) {
 }
 
 /**
+ * The provider alone, for the edge strip. That strip is rotated 90 degrees and
+ * laid out on one nowrap line, so its width runs down the side of the screen:
+ * a full product name there reads worse than the vendor it names. The first
+ * word is the vendor ("Esri Satellite" -> ESRI, "Google 3D" -> GOOGLE), and
+ * the full label still appears in the top bar where it is horizontal.
+ */
+export function shortImageryLabel(stack) {
+  const label = formatImageryLabel(stack);
+  return label.split(/\s+/)[0] || UNKNOWN_IMAGERY;
+}
+
+/**
  * The right-edge strip: what is actually being drawn and in which frame.
  * @param {{label?: string, id?: string}|null} stack Active map stack.
  * @param {{terrain?: boolean}} [options] Whether terrain relief is applied.
@@ -46,7 +58,7 @@ export function formatImageryLabel(stack) {
  */
 export function imageryStripLines(stack, { terrain = false } = {}) {
   return [
-    `SRC: ${formatImageryLabel(stack)}`,
+    `SRC: ${shortImageryLabel(stack)}`,
     'PROJ: WGS84',
     `TERR: ${terrain ? 'ON' : 'OFF'}`,
   ];

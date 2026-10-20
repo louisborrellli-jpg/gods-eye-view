@@ -10,6 +10,7 @@ import {
   formatImageryLabel,
   formatNiirs,
   imageryStripLines,
+  shortImageryLabel,
 } from './hudTelemetrySlots.js';
 
 const NOW = 1_700_000_000_000;
@@ -27,8 +28,14 @@ test('imagery readouts name the active stack and never invent one', () => {
   assert.equal(formatImageryLabel({ label: '   ' }), 'UNKNOWN');
   assert.equal(formatImageryLabel(null), 'UNKNOWN');
 
+  // The strip is rotated down the screen edge, so it carries the vendor only.
+  assert.equal(shortImageryLabel({ label: 'Esri Satellite' }), 'ESRI');
+  assert.equal(shortImageryLabel({ label: 'Bing Aerial' }), 'BING');
+  assert.equal(shortImageryLabel({ id: 'osm' }), 'OSM');
+  assert.equal(shortImageryLabel(null), 'UNKNOWN');
+
   assert.deepEqual(imageryStripLines({ label: 'Google 3D' }, { terrain: true }), [
-    'SRC: GOOGLE 3D',
+    'SRC: GOOGLE',
     'PROJ: WGS84',
     'TERR: ON',
   ]);
