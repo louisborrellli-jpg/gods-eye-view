@@ -101,7 +101,12 @@ const SCOPE_TERMINUS_SAMPLE_MS = 120;
 let _canvas = null;
 let _container = null;
 let _viewer = null;
-let _enabled = true;
+// OFF on a fresh boot. The circular mask is the app's signature treatment,
+// but it also crops roughly a third of the viewport, and a newcomer reads
+// that as a broken view rather than a scope. #scope-toggle still turns it
+// on, and a share link carrying `scopeEnabled: true` still restores it, so
+// the look is one click away instead of mandatory.
+let _enabled = false;
 let _featherRatio = SCOPE_FEATHER_RATIO_DEFAULT;
 let _resizeObserver = null;
 let _dprQuery = null;
