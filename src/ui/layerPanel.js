@@ -19,6 +19,7 @@ import {
   t,
   translateKnown,
 } from '../i18n/index.js';
+import { QUICK_VIEWS, planQuickView } from './quickViews.js';
 
 // Feed-state values are machine ids (QA hooks, CSS feed-* classes); only the
 // label translates.
@@ -277,6 +278,41 @@ export class LayerPanel {
     this._recentImageryFactory = null;
     this._toggleContainer = null;
   }
+  /**
+   * One row of buttons above the layer list, each a complete "show me X".
+   * The list answers which feeds exist; these answer what to turn on.
+   */
+  _renderQuickViews(layers) {
+    const container = this._toggleContainer;
+    if (!container?.appendChild) return;
+    const heading = document.createElement('h3');
+    heading.className = 'data-layer-group-heading quick-views-heading';
+    heading.textContent = t(msg('Quick views'));
+    container.appendChild(heading);
+
+    const row = document.createElement('div');
+    row.className = 'quick-views-row';
+    for (const view of QUICK_VIEWS) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'quick-view-btn';
+      button.dataset.quickView = view.id;
+      button.textContent = t(view.label);
+      button.addEventListener?.('click', () => {
+        const plan = planQuickView(view.id, this.getAll());
+        if (!plan) return;
+        // `origin: 'user'` because this is a person choosing these layers, so
+        // it persists exactly as clicking each row would.
+        for (const id of plan.disable)
+          void this.setEnabled(id, false, { origin: 'user' });
+        for (const id of plan.enable)
+          void this.setEnabled(id, true, { origin: 'user' });
+      });
+      row.appendChild(button);
+    }
+    container.appendChild(row);
+  }
+
   _renderToggles() {
     if (this._destroyed || !this._toggleContainer) return;
     this._releaseBindings();
@@ -290,17 +326,35 @@ export class LayerPanel {
           (PANEL_POSITIONS.get(a.id) ?? PANEL_ORDER.length) -
           (PANEL_POSITIONS.get(b.id) ?? PANEL_ORDER.length),
       );
+    this._renderQuickViews(layers);
+
     let previousGroup = '';
+    // Rows land inside the current group's container, not the panel root.
+    let groupRows = null;
     for (const layer of layers) {
       if (!layer.showInTogglePanel) continue;
       const group =
         PANEL_ORDER[PANEL_POSITIONS.get(layer.id)]?.label ??
         msg('Other layers');
       if (group && group !== previousGroup) {
-        const heading = document.createElement('h3');
+        // Each group owns its rows so the heading can collapse them. The
+        // heading is a button rather than an h3 because it is now operable;
+        // it keeps the same class so existing styling still applies.
+        const heading = document.createElement('button');
+        heading.type = 'button';
         heading.className = 'data-layer-group-heading';
         heading.textContent = t(group);
+        heading.setAttribute('aria-expanded', 'true');
+        const rows = document.createElement('div');
+        rows.className = 'data-layer-group-rows';
+        heading.addEventListener('click', () => {
+          const open = heading.getAttribute('aria-expanded') !== 'false';
+          heading.setAttribute('aria-expanded', String(!open));
+          rows.hidden = open;
+        });
         this._toggleContainer.appendChild(heading);
+        this._toggleContainer.appendChild(rows);
+        groupRows = rows;
       }
       previousGroup = group;
       const row = document.createElement('div');
@@ -421,7 +475,7 @@ export class LayerPanel {
         }
       }
 
-      this._toggleContainer.appendChild(row);
+      (groupRows ?? this._toggleContainer).appendChild(row);
     }
     this._refreshWeatherPanel();
   }

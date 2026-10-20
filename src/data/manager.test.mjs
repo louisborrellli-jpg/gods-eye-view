@@ -110,7 +110,17 @@ test('renders ordinary layer rows without recreating a panel-hidden coordinator'
       querySelector(selector) {
         if (selector.startsWith('[data-layer-id="')) {
           const id = selector.slice(16, -2);
-          return this.children.find((child) => child.dataset.layerId === id) || null;
+          // Recursive, like a real querySelector: layer rows live inside
+          // their collapsible group container, not directly under the panel.
+          const find = (node) => {
+            for (const child of node.children || []) {
+              if (child.dataset?.layerId === id) return child;
+              const found = find(child);
+              if (found) return found;
+            }
+            return null;
+          };
+          return find(this);
         }
         const className = selector.startsWith('.') ? selector.slice(1) : '';
         const visit = (node) => {
@@ -2779,7 +2789,17 @@ function makeControlElement() {
     querySelector(selector) {
       if (selector.startsWith('[data-layer-id="')) {
         const id = selector.slice(16, -2);
-        return this.children.find((child) => child.dataset.layerId === id) || null;
+        // Recursive, like a real querySelector: layer rows live inside their
+        // collapsible group container, not directly under the panel.
+        const find = (node) => {
+          for (const child of node.children || []) {
+            if (child.dataset?.layerId === id) return child;
+            const found = find(child);
+            if (found) return found;
+          }
+          return null;
+        };
+        return find(this);
       }
       const className = selector.startsWith('.') ? selector.slice(1) : '';
       const visit = (node) => {

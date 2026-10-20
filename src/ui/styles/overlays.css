@@ -401,3 +401,24 @@
 #intel-hud[data-variant='minimal'] .hud-summary-wrap {
   max-width: 280px;
 }
+
+/* The Advanced disclosure in Display. Deliberately quiet: a line of text that
+   reads as a link, not another button competing with the toggles above it. */
+.pp-advanced-summary {
+  cursor: pointer;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.62;
+  padding: 4px 0;
+  list-style: none;
+}
+
+.pp-advanced-summary:hover,
+.pp-advanced-summary:focus-visible {
+  opacity: 0.95;
+}
+
+.pp-advanced[open] > .pp-advanced-summary {
+  opacity: 0.85;
+}
