@@ -155,7 +155,7 @@ export const SHARPEN_SHADER = /* glsl */ `
  */
 export const STYLE_STATUS_LABELS = {
   normal: msg('NORMAL'),
-  retro: msg('CRT'),
+  retro: msg('RETRO'),
   surveillance: msg('NVG'),
   thermal: msg('FLIR'),
   anime: msg('ANIME'),

@@ -1516,7 +1516,7 @@ existing modules.
 ## Web app install icons
 
 `public/manifest.webmanifest` declares the installable app: standalone display,
-`#0a0a0f` background and theme, and 192/512 icons plus a 512 maskable variant.
+`#0b0c10` background and theme, and 192/512 icons plus a 512 maskable variant.
 `index.html` links the manifest, a 180px `apple-touch-icon` and a 32px PNG
 favicon; the existing SVG favicon still serves the browser tab. Safari ignores an
 SVG apple-touch-icon and substitutes a page screenshot, so the raster is what
@@ -1713,7 +1713,7 @@ See [component ownership and adoption](CODE-BOUNDARIES.md).
 Local Places nearby/text search and the CCTV Street View fallback prefer
 `GOOGLE_MAPS_SERVER_API_KEY`, falling back to `GOOGLE_MAPS_API_KEY` when the
 server key is blank or absent. Only the browser key is injected into client
-code. POWER UP presents one Google Maps entry for the browser key. The optional
+code. ADD KEYS presents one Google Maps entry for the browser key. The optional
 server key is configured manually in the same ignored root `.env`, or Pinokio's
 ignored `pinokio/ENVIRONMENT`; it is omitted from Provider Settings and its
 missing-key count. Existing server keys and the single-key fallback remain

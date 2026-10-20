@@ -37,7 +37,7 @@ The `many` form is the `other` text with «de» after the number: «{count} de c
 | SIMULATED                                     | SIMULADO                                                          |
 | stale / degraded / unavailable                | desactualizado / degradado / no disponible                        |
 | retry / retrying                              | reintento / reintentando                                          |
-| key (API key) / POWER UP / POWERED UP         | clave / ENCENDER / ENCENDIDO                                      |
+| key (API key) / ADD KEYS / ALL KEYS IN        | clave / AÑADIR CLAVES / TODAS LAS CLAVES                          |
 | Provider Settings                             | Ajustes de proveedores                                            |
 | ON / OFF (state chips)                        | ACTIVO / INACTIVO (short enough for the layer pill)               |
 | enable / disable                              | activar / desactivar                                              |

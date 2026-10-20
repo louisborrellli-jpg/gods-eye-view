@@ -821,7 +821,7 @@ export class StyleManager extends ShellFacade {
   _applyRuntimeStaticHeaderText() {
     this._setHeaderText(
       document.querySelector('#control-panel .panel-title'),
-      t('VISUAL PRESETS'),
+      t('STYLES'),
     );
     this._setHeaderText(
       document.querySelector('#location-bar .location-toolbar-label'),

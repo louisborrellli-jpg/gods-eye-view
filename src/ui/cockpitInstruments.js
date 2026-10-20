@@ -262,7 +262,7 @@ export function setVisionMode(mode, { revealParameters = false } = {}) {
   this.visionMode = next;
   const labels = {
     optical: t('NORMAL'),
-    crt: t('CRT'),
+    crt: t('RETRO'),
     nvg: t('NVG'),
     thermal: t('FLIR'),
     anime: t('ANIME'),
@@ -271,7 +271,7 @@ export function setVisionMode(mode, { revealParameters = false } = {}) {
   };
   const names = {
     optical: t('Normal'),
-    crt: t('CRT'),
+    crt: t('Retro'),
     nvg: t('Night vision'),
     thermal: t('Thermal'),
     anime: t('Anime'),

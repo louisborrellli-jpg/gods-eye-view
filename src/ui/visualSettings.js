@@ -1665,7 +1665,7 @@ export class VisualSettings {
       btn.querySelector('.pp-label').textContent = t('DENSE');
       btn.classList.add('active', 'panoptic');
     } else {
-      btn.querySelector('.pp-label').textContent = t('DETECT');
+      btn.querySelector('.pp-label').textContent = t('DETECTION');
     }
 
     if (this._detectionSliderRow) {
