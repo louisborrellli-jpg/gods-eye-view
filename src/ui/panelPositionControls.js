@@ -75,6 +75,11 @@ export class PanelPositionControls {
     // first-run mission card for the one first impression there is. A stored
     // choice still wins in both directions, so anyone who opens it keeps it.
     if (panelId === 'pp-toggles' && stored === null) collapsed = true;
+    // DATA LAYERS starts EXPANDED for a first-time visitor, the mirror of the
+    // rule above. It is the menu: the quick views and every feed live in it,
+    // and behind a collapsed "+" a newcomer sees a globe and no way into it.
+    // A stored choice still wins in both directions, so collapsing it sticks.
+    if (panelId === 'data-panel' && stored === null) collapsed = false;
     panelEl.classList.toggle('collapsed', collapsed);
     // Bodies that expand themselves on first appearance must not override a
     // choice the user (or a share link) already made.
