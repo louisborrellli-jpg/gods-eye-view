@@ -1,5 +1,5 @@
 /**
- * Key setup ("POWER UP") — the pure core.
+ * Key setup ("ADD KEYS") — the pure core.
  *
  * One registry and pure functions; it imports only the proxy-header check
  * shared with the other local gates (localRequestGate.mjs) and the msg()
@@ -22,9 +22,11 @@ export const KEY_SETUP_VALUE_LIMIT = 512;
 /** Most env vars accepted in one save. */
 export const KEY_SETUP_UPDATE_LIMIT = 16;
 
-/** Header line written above keys the panel appends to a .env file. */
+/** Header line written above keys the panel appends to a .env file. Named for
+    what it is rather than for the panel, which is matched verbatim in .env
+    files already carrying it and so should not follow a UI rename again. */
 export const KEY_SETUP_APPEND_HEADER =
-  '# Keys added by the in-app POWER UP panel';
+  '# Keys added by the in-app key setup panel';
 
 /**
  * Provider credentials, in display order — most magic per

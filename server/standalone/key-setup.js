@@ -54,7 +54,7 @@ const DEV_FRESH_EXTERNAL_KEYS_AT_BOOT = new Set(
 );
 
 /**
- * In-app key setup ("POWER UP" panel) — dev-server only.
+ * In-app key setup ("ADD KEYS" panel) — dev-server only.
  *
  * GET  /api/setup/status → which keys are configured, as presence plus a
  *   source classification. Never a value or suffix. The panel renders itself entirely from

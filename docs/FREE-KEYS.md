@@ -11,7 +11,7 @@ signup page for each one you don't.
 
 ## The ten-minute pass
 
-Four signups, no card, biggest return first. Paste each into **POWER UP →
+Four signups, no card, biggest return first. Paste each into **ADD KEYS →
 Provider Settings** in the running app — it writes this checkout's `.env` for
 you — or set the variable yourself (see `.env.example`).
 

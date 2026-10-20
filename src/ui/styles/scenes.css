@@ -96,21 +96,21 @@
 #left-panel-stack > [data-panel-id]:not(.collapsed) .panel-divider {
   background: linear-gradient(
     90deg,
-    rgb(0 212 255 / 28%),
-    rgba(0, 212, 255, 0.18) 58%,
+    rgb(var(--accent-rgb) / 28%),
+    rgb(var(--accent-rgb) / 0.18) 58%,
     transparent
   );
-  box-shadow: 0 0 7px rgba(0, 212, 255, 0.22);
+  box-shadow: 0 0 7px rgb(var(--accent-rgb) / 0.22);
 }
 
 #right-context-rail [data-panel-id]:not(.collapsed) .panel-divider {
   background: linear-gradient(
     90deg,
-    rgb(0 212 255 / 28%),
-    rgba(0, 212, 255, 0.18) 58%,
+    rgb(var(--accent-rgb) / 28%),
+    rgb(var(--accent-rgb) / 0.18) 58%,
     transparent
   );
-  box-shadow: 0 0 7px rgba(0, 212, 255, 0.22);
+  box-shadow: 0 0 7px rgb(var(--accent-rgb) / 0.22);
 }
 
 #scene-panel .panel-glow {
@@ -118,7 +118,7 @@
   inset: -18px;
   background: radial-gradient(
     ellipse at center,
-    rgba(0, 212, 255, 0.16) 0%,
+    rgb(var(--accent-rgb) / 0.16) 0%,
     transparent 65%
   );
   filter: blur(16px);
@@ -253,7 +253,7 @@ html:not([lang='en']) #scene-panel .scene-controls .scene-btn {
 
 .scene-shot-row.active {
   border-color: var(--accent);
-  background: rgba(0, 212, 255, 0.08);
+  background: rgb(var(--accent-rgb) / 0.08);
 }
 
 .scene-shot-top {
@@ -279,7 +279,7 @@ html:not([lang='en']) #scene-panel .scene-controls .scene-btn {
   font: inherit;
   color: var(--text-primary);
   background: var(--bg-panel, #101820);
-  border: 1px solid var(--accent, #00d4ff);
+  border: 1px solid var(--accent);
 }
 
 .scene-shot-meta {
@@ -324,7 +324,7 @@ html:not([lang='en']) #scene-panel .scene-controls .scene-btn {
 .scene-btn:hover:not(:disabled) {
   color: var(--accent);
   border-color: var(--accent);
-  background: rgba(0, 212, 255, 0.14);
+  background: rgb(var(--accent-rgb) / 0.14);
 }
 
 .scene-btn:disabled {
@@ -353,8 +353,8 @@ html:not([lang='en']) #scene-panel .scene-controls .scene-btn {
   height: 100%;
   background: linear-gradient(
     90deg,
-    rgba(0, 212, 255, 0.2),
-    rgba(0, 212, 255, 0.75)
+    rgb(var(--accent-rgb) / 0.2),
+    rgb(var(--accent-rgb) / 0.75)
   );
   color: #d5f7ff;
   font-family: var(--font-mono);
@@ -365,7 +365,7 @@ html:not([lang='en']) #scene-panel .scene-controls .scene-btn {
   justify-content: flex-end;
   padding-right: 6px;
   transition: width 100ms linear;
-  text-shadow: 0 0 6px rgba(0, 212, 255, 0.6);
+  text-shadow: 0 0 6px rgb(var(--accent-rgb) / 0.6);
 }
 
 #scene-status {
@@ -392,10 +392,10 @@ html:not([lang='en']) #scene-panel .scene-controls .scene-btn {
   letter-spacing: 2px;
   color: #bff4ff;
   background: rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(0, 212, 255, 0.36);
+  border: 1px solid rgb(var(--accent-rgb) / 0.36);
   border-radius: 999px;
   padding: 6px 14px;
-  text-shadow: 0 0 8px rgba(0, 212, 255, 0.55);
+  text-shadow: 0 0 8px rgb(var(--accent-rgb) / 0.55);
   pointer-events: none;
 }
 

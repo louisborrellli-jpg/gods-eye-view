@@ -6,7 +6,7 @@ import { formatNumber, msg, t } from '../i18n/index.js';
 // import (it pulls in the shaders).
 const STYLE_LABELS = Object.freeze({
   normal: msg('NORMAL'),
-  retro: msg('CRT'),
+  retro: msg('RETRO'),
   surveillance: msg('NVG'),
   thermal: msg('FLIR'),
   anime: msg('ANIME'),

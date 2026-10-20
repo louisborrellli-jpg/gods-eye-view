@@ -5,7 +5,7 @@ import {
 } from './voice/cloudVoiceAuth.js';
 
 /**
- * The POWER UP surface — paste a key, get a power.
+ * The ADD KEYS surface — paste a key, get a power.
  *
  * A small chip sits bottom-right whenever the app is running under the dev
  * server with keys still missing. It opens a dialog rendered ENTIRELY from
@@ -32,10 +32,10 @@ export function keySetupChipLabel(status) {
   return missing > 0
     ? tn(
         missing,
-        'POWER UP · {count} KEY WAITING',
-        'POWER UP · {count} KEYS WAITING',
+        'ADD KEYS · {count} KEY MISSING',
+        'ADD KEYS · {count} KEYS MISSING',
       )
-    : t('POWERED UP');
+    : t('ALL KEYS IN');
 }
 
 /**

@@ -80,7 +80,7 @@ const HUD_COLORS = {
  */
 const MODE_LABELS = Object.freeze({
   normal: msg('NORMAL'),
-  retro: msg('CRT'),
+  retro: msg('RETRO'),
   surveillance: msg('NVG'),
   thermal: msg('FLIR'),
   anime: msg('ANIME'),

@@ -151,7 +151,7 @@ test('Cockpit vision cycle exposes every map preset exactly once', () => {
   );
   assert.match(
     setVisionMode.toString(),
-    /const labels = \{\s*optical: t\('NORMAL'\),\s*crt: t\('CRT'\),\s*nvg: t\('NVG'\),\s*thermal: t\('FLIR'\),\s*anime: t\('ANIME'\),\s*noir: t\('NOIR'\),\s*snow: t\('SNOW'\),?\s*\};/,
+    /const labels = \{\s*optical: t\('NORMAL'\),\s*crt: t\('RETRO'\),\s*nvg: t\('NVG'\),\s*thermal: t\('FLIR'\),\s*anime: t\('ANIME'\),\s*noir: t\('NOIR'\),\s*snow: t\('SNOW'\),?\s*\};/,
   );
   assert.doesNotMatch(setVisionMode.toString(), /none: 'NONE'/);
   assert.doesNotMatch(ui, /getInheritedVisionLabel/);
@@ -473,7 +473,7 @@ test('Cockpit owns a focused shared Display portal and compact Radio controls', 
   );
   assert.match(
     css,
-    /\.cockpit-utility-control\.is-expanded \.cockpit-utility-divider\s*\{[\s\S]*?linear-gradient\(\s*90deg,\s*rgb\(0 212 255 \/ 28%\),\s*rgba\(0, 212, 255, 0\.18\) 58%,\s*transparent\s*\)[\s\S]*?box-shadow:\s*0 0 7px rgba\(0, 212, 255, 0\.22\);/,
+    /\.cockpit-utility-control\.is-expanded \.cockpit-utility-divider\s*\{[\s\S]*?linear-gradient\(\s*90deg,\s*rgb\(var\(--accent-rgb\) \/ 28%\),\s*rgb\(var\(--accent-rgb\) \/ 0\.18\) 58%,\s*transparent\s*\)[\s\S]*?box-shadow:\s*0 0 7px rgb\(var\(--accent-rgb\) \/ 0\.22\);/,
   );
   assert.match(
     radioBindings,

@@ -97,7 +97,7 @@ cameras, radio, and launches are available without keys.
 For photorealistic 3D, add a **Cesium ion token** for eligible personal,
 non-commercial use, or a **Google Maps key** for the direct, metered route and
 Google place search. Provider terms and quotas apply. Add keys through the
-app's **POWER UP** panel; [Keys & Costs](#-api-keys) explains the options.
+app's **ADD KEYS** panel; [Keys & Costs](#-api-keys) explains the options.
 
 > **Already installed?** Update to the latest version. Older versions query
 > public OpenStreetMap Overpass servers, which now refuse them, so Traffic,

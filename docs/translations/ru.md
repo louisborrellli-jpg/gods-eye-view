@@ -34,7 +34,7 @@ When a word next to a number cannot agree in every form, move the number after a
 | SIMULATED                                   | СИМУЛЯЦИЯ                                                          |
 | stale / degraded / unavailable              | устарел / с перебоями / недоступен                                 |
 | retry                                       | повтор                                                             |
-| key (API key) / POWER UP                    | ключ / ЗАПУСК                                                      |
+| key (API key) / ADD KEYS                    | ключ / ДОБАВИТЬ КЛЮЧИ                                              |
 | Provider Settings                           | Настройки провайдеров                                              |
 | globe / map / map source                    | глобус / карта / источник карты                                    |
 | aircraft / flight / military flights        | самолёт (short HUD: борт) / рейс / военные рейсы                   |

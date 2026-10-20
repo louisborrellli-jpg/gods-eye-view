@@ -93,9 +93,9 @@ test('applyDocumentLanguage sets lang and dir', () => {
 });
 
 test('t() returns English text in English and translates in Russian', () => {
-  assert.equal(t('POWERED UP'), 'POWERED UP');
+  assert.equal(t('ALL KEYS IN'), 'ALL KEYS IN');
   setLocale('ru');
-  assert.notEqual(t('POWERED UP'), 'POWERED UP');
+  assert.notEqual(t('ALL KEYS IN'), 'ALL KEYS IN');
 });
 
 test('t() interpolates named values and keeps unknown names literal', () => {
@@ -118,11 +118,11 @@ test('tn() picks English and Russian plural forms', () => {
   const label = (count) =>
     tn(
       count,
-      'POWER UP · {count} KEY WAITING',
-      'POWER UP · {count} KEYS WAITING',
+      'ADD KEYS · {count} KEY MISSING',
+      'ADD KEYS · {count} KEYS MISSING',
     );
-  assert.equal(label(1), 'POWER UP · 1 KEY WAITING');
-  assert.equal(label(3), 'POWER UP · 3 KEYS WAITING');
+  assert.equal(label(1), 'ADD KEYS · 1 KEY MISSING');
+  assert.equal(label(3), 'ADD KEYS · 3 KEYS MISSING');
   setLocale('ru');
   assert.match(label(1), / 1 КЛЮЧ(?![А-ЯЁ])/);
   assert.match(label(3), / 3 КЛЮЧА(?![А-ЯЁ])/);
@@ -166,8 +166,8 @@ function fakeElement({ text = '', attributes = {} } = {}) {
 }
 
 test('applyDocumentTranslations translates opted-in text and attributes in place', () => {
-  const label = fakeElement({ text: '\n  POWERED\n  UP  ' });
-  const pin = fakeElement({ attributes: { title: 'POWERED UP' } });
+  const label = fakeElement({ text: '\n  ALL KEYS\n  IN  ' });
+  const pin = fakeElement({ attributes: { title: 'ALL KEYS IN' } });
   const unknown = fakeElement({ text: 'No such message' });
   const doc = {
     querySelectorAll(selector) {
@@ -183,8 +183,8 @@ test('applyDocumentTranslations translates opted-in text and attributes in place
   );
   setLocale('ru');
   assert.equal(applyDocumentTranslations(doc), 2);
-  assert.equal(label.textContent, t('POWERED UP'));
-  assert.equal(pin.attrs.get('title'), t('POWERED UP'));
+  assert.equal(label.textContent, t('ALL KEYS IN'));
+  assert.equal(pin.attrs.get('title'), t('ALL KEYS IN'));
   assert.equal(unknown.textContent, 'No such message');
 });
 

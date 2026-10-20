@@ -6,19 +6,19 @@
     <div class="panel-inner">
       <button id="control-panel-toggle" class="panel-header dock-tray-toggle" type="button"
         data-dock-toggle-target="control-panel" aria-expanded="false"
-        aria-controls="control-panel-popover" aria-label="Expand Visual Presets" data-i18n-aria-label>
-        <span class="panel-title" data-i18n-runtime><span class="dock-label-icon dock-label-icon-presets" aria-hidden="true"></span>VISUAL PRESETS</span>
+        aria-controls="control-panel-popover" aria-label="Expand Styles" data-i18n-aria-label>
+        <span class="panel-title" data-i18n-runtime><span class="dock-label-icon dock-label-icon-presets" aria-hidden="true"></span>STYLES</span>
         <span class="panel-divider"></span>
       </button>
       <div id="control-panel-popover" class="dock-popover-content">
-      <button class="dock-pin-btn" data-pin-target="control-panel" type="button" aria-label="Pin visual presets" aria-pressed="false" title="Keep visual presets open" data-i18n-aria-label data-i18n-title><img src="/pin.svg" alt="" /></button>
+      <button class="dock-pin-btn" data-pin-target="control-panel" type="button" aria-label="Pin styles" aria-pressed="false" title="Keep styles open" data-i18n-aria-label data-i18n-title><img src="/pin.svg" alt="" /></button>
       <!-- The tray holds two unrelated choices: how the globe is RENDERED
            (these filters) and which imagery it is DRAWN FROM (map source
            below). Only the second had a heading, so the first read as seven
            unlabelled icons and neither group announced what it changed. -->
       <section class="style-section" aria-labelledby="style-section-label">
         <div class="map-source-heading">
-          <span data-i18n id="style-section-label">VISUAL FILTER</span>
+          <span data-i18n id="style-section-label">CAMERA FILTER</span>
         </div>
       <div id="style-buttons" class="button-grid">
         <button class="style-btn active" data-style="normal" title="Show the globe without a visual filter." data-i18n-title>
@@ -28,7 +28,7 @@
         </button>
         <button class="style-btn" data-style="retro" title="Emulate a green phosphor CRT with scanlines and screen curvature." data-i18n-title>
           <span class="btn-icon">▦</span>
-          <span class="btn-label" data-i18n>CRT</span>
+          <span class="btn-label" data-i18n>Retro</span>
           <span class="btn-key">2</span>
         </button>
         <button class="style-btn" data-style="surveillance" title="Simulate night-vision goggles with green intensification and a tube vignette." data-i18n-title>

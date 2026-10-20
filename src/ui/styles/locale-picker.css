@@ -1,5 +1,5 @@
 /* ============================================================
-   Bottom-right corner row: the POWER UP chip (provider-settings.css)
+   Bottom-right corner row: the ADD KEYS chip (provider-settings.css)
    and, in the very corner, the interface language picker
    (src/ui/localePicker.js). Logical properties throughout, so a
    right-to-left page mirrors the row and the list.
@@ -48,7 +48,7 @@
   border-radius: 0.42rem;
   box-shadow:
     0 0.4rem 1.6rem rgba(0, 0, 0, 0.5),
-    0 0 1.2rem rgba(0, 212, 255, 0.07);
+    0 0 1.2rem rgb(var(--accent-rgb) / 0.07);
   backdrop-filter: blur(18px) saturate(1.2);
   -webkit-backdrop-filter: blur(18px) saturate(1.2);
   cursor: pointer;
@@ -117,7 +117,7 @@
   border-radius: 0.55rem;
   box-shadow:
     0 1rem 3rem rgba(0, 0, 0, 0.65),
-    0 0 2rem rgba(0, 212, 255, 0.08),
+    0 0 2rem rgb(var(--accent-rgb) / 0.08),
     inset 0 0 0 1px rgba(255, 255, 255, 0.025);
   backdrop-filter: blur(24px) saturate(1.25);
   -webkit-backdrop-filter: blur(24px) saturate(1.25);
