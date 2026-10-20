@@ -10,6 +10,7 @@ government-published data. No private cameras, no tracking people.
 | **Border waits, both directions** — Ambassador Bridge, Detroit–Windsor Tunnel, Gordie Howe, Blue Water | CBSA (into Canada) + U.S. CBP (into the U.S.): cars, NEXUS, trucks, FAST, lanes open | Refreshed every 3 min | None |
 | **Detroit-side traffic cameras** — ~300 nearest the riverfront (Jefferson, Lodge, I-75, I-94, I-96…) | Michigan DOT Mi Drive | Live stills | None (opt-in flag) |
 | **Windsor/Ontario cameras** — 401, EC Row, Herb Gray Parkway, plus the rest of Ontario (the original project fixed the key requirement the same day) | Ontario 511 | Live stills | Free 511on.ca key |
+| **Coast Guard river cameras** — Detroit River at Windsor, Livingstone Channel, Lake St. Clair, Blue Water Bridge, Sarnia | Canadian Coast Guard | Stills every few min | None (opt-in flag) |
 | **Highway incidents, closures, construction** (401, 3, 77, bridge approaches) | Ontario 511 events | Every 2 min | Same 511 key |
 | **`get_border_waits`** tool for Claude and voice | Above | | |
 | **`windsor_commute_brief`** tool — "is my drive backed up?" | Traffic flow + highway incidents + destination weather + cameras along the route + border waits if you cross | | TomTom for traffic speeds |
@@ -34,9 +35,38 @@ In `.env`, set:
 ```sh
 ONTARIO_511_API_KEY=...    # free: make a 511on.ca account → Developers → request key
 CCTV_MDOT_ENABLED=1        # Detroit cameras
+CCTV_CCG_ENABLED=1         # Coast Guard river cameras
 TOMTOM_API_KEY=...         # free tier at my.tomtom.com — real traffic speeds
 AISSTREAM_API_KEY=...      # optional, free at aisstream.io — ships on the river
 ```
+
+### Windsor focus (recommended)
+
+The camera catalog is capped at 4,000 and split evenly across every enabled
+region, so with the defaults Ontario only gets ~245 of its 925 cameras and
+Detroit ~245 of ~800. Turn off the far-away packs so all the local ones fit:
+
+```sh
+CCTV_MDOT_MAX_SOURCES=800
+CCTV_TFL_ENABLED=0
+CCTV_FINTRAFFIC_ENABLED=0
+CCTV_DRIVEBC_ENABLED=0
+CCTV_TXDOT_ENABLED=0
+CCTV_TALLINN_ENABLED=0
+CCTV_TARKTEE_ENABLED=0
+CCTV_WARENDORF_ENABLED=0
+CCTV_NSW_ENABLED=0
+CCTV_CALGARY_ENABLED=0
+CCTV_CATALONIA_ENABLED=0
+CCTV_DELDOT_ENABLED=0
+CCTV_KINGCOUNTY_ENABLED=0
+CCTV_WSDOT_ENABLED=0
+CCTV_VEGVESEN_ENABLED=0
+```
+
+With that: all 925 Ontario, ~800 Michigan, 6 Coast Guard, plus Toronto,
+Austin and California (the last two can't be switched off) — about 260 live
+cameras in the Windsor–Detroit area alone.
 
 Then `npm run dev` and open http://localhost:4173.
 

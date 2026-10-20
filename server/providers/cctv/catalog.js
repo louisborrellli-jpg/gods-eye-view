@@ -6,6 +6,7 @@ import { loadGroundHeights, joinGroundHeights } from './groundHeights.js';
 import { cameraRegion, normalizeSourceItem } from './normalize.js';
 import { loadLithuaniaSources } from './lithuania.js';
 import { loadMdotSources } from './mdot.js';
+import { loadCcgSources } from './ccg.js';
 import {
   loadAustinSourcesFromOpenData,
   loadCaltransSourcesFromOpenData,
@@ -161,6 +162,14 @@ const LIVE_PACKS = [
     name: 'mdot',
     enabled: () => envOptIn('CCTV_MDOT_ENABLED'),
     load: loadMdotSources,
+  },
+  {
+    // Canadian Coast Guard river cameras (Detroit River, Lake St. Clair,
+    // St. Clair River). Opt-in: CCG offers the images as a courtesy without
+    // stating reuse terms (see DATA_SOURCES.md).
+    name: 'ccg',
+    enabled: () => envOptIn('CCTV_CCG_ENABLED'),
+    load: loadCcgSources,
   },
 ];
 /**

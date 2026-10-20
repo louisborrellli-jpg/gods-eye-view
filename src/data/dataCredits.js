@@ -271,6 +271,10 @@ export const DATA_CREDITS = [
       'See the <a href="https://www.michigan.gov/mdot/about/mi-drive-disclaimer" target="_blank" rel="noopener">Mi Drive disclaimer</a>',
   },
   {
+    key: 'ccg-cctv',
+    html: 'River cameras: <a href="https://e-navigation.canada.ca/topics/cameras/index-en" target="_blank" rel="noopener">Canadian Coast Guard</a>, offered as a public courtesy for information only',
+  },
+  {
     key: 'border-waits',
     html:
       'Border wait times: <a href="https://www.cbsa-asfc.gc.ca/bwt-taf/menu-eng.html" target="_blank" rel="noopener">Canada Border Services Agency</a> (into Canada); ' +

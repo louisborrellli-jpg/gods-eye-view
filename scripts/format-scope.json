@@ -113,6 +113,8 @@
   "server/providers/cctv/lithuania.js",
   "server/providers/cctv/mdot.js",
   "server/providers/cctv/mdot.test.mjs",
+  "server/providers/cctv/ccg.js",
+  "server/providers/cctv/ccg.test.mjs",
   "src/data/cctvLithuania.test.mjs",
   "server/providers/cctv/constants.js",
   "server/providers/cctv/media.js",
