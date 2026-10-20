@@ -14,6 +14,7 @@ import { createBikeshareSource } from '../layers/bikeshare/source.js';
 import { createCctvSource } from '../layers/cctv/source.js';
 import { createCycloneSource } from '../layers/cyclones/source.js';
 import { createBorderWaitSource } from '../sources/borderWaits.js';
+import { createRoadEventsSource } from '../sources/roadEvents.js';
 import { createUsgsEarthquakeSource } from '../layers/earthquakes/source.js';
 import { createFirmsSource } from '../layers/firms/source.js';
 import { createInstallationSource } from '../layers/installations/source.js';
@@ -83,6 +84,7 @@ export function createToolServices({ fetchImpl, appUrl, panelKey }) {
     features: requests.features,
     cyclones: createCycloneSource({ fetchImpl }),
     borders: createBorderWaitSource({ fetchImpl }),
+    roadEvents: createRoadEventsSource({ fetchImpl }),
     perimeters: createWfigsPerimeterSource({ fetchImpl }),
     installations: createInstallationSource({
       fetchImpl,

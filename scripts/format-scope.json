@@ -853,6 +853,8 @@
   "server/providers/cyclones.js",
   "server/providers/borders.js",
   "server/providers/borders.test.mjs",
+  "server/providers/roadEvents.js",
+  "server/providers/roadEvents.test.mjs",
   "server/providers/firePerimeters.js",
   "src/data/cyclonesProxy.test.mjs",
   "src/data/firePerimetersProxy.test.mjs",
@@ -1068,5 +1070,6 @@
   "src/terrainHeightsBounds.test.mjs",
   "src/tools/queries/windsor.js",
   "src/tools/queries/windsor.test.mjs",
-  "src/sources/borderWaits.js"
+  "src/sources/borderWaits.js",
+  "src/sources/roadEvents.js"
 ]

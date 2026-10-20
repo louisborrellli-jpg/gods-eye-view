@@ -28,6 +28,7 @@ import { firePerimetersProxy } from './firePerimeters.js';
 import { gnssIntegrityProxy } from './gnssIntegrity.js';
 import { cycloneProxy } from './cyclones.js';
 import { borderWaitsProxy } from './borders.js';
+import { roadEventsProxy } from './roadEvents.js';
 import { windProxy } from './wind.js';
 
 /**
@@ -63,6 +64,7 @@ function localProviderPlugins({ realtime, gemini } = {}) {
     weatherProxy(),
     cycloneProxy(),
     borderWaitsProxy(),
+    roadEventsProxy(),
     mapillaryProxy(),
     firePerimetersProxy(),
     gnssIntegrityProxy(),

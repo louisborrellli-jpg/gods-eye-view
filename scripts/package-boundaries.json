@@ -3913,7 +3913,8 @@
       "src/layers/alpr/tileRecords.js",
       "src/sources/infrastructureData.js",
       "src/sources/eventPacks.js",
-      "src/sources/borderWaits.js"
+      "src/sources/borderWaits.js",
+      "src/sources/roadEvents.js"
     ],
     "external": ["@mapbox/vector-tile", "pbf"]
   },

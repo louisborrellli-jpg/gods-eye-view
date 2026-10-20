@@ -6,12 +6,21 @@
 
 import { suggestView } from '../views.js';
 import { defineTool, ToolError } from '../catalog.js';
-import { POINT_SCHEMA, resolvePoint, distanceKm } from '../area.js';
+import {
+  AREA_SCHEMA,
+  POINT_SCHEMA,
+  areaCenter,
+  resolveArea,
+  resolvePoint,
+  distanceKm,
+} from '../area.js';
+import { LIMIT_SCHEMA, capRows, countNoun } from '../results.js';
 
 /** Downtown Windsor, used when a commute brief is asked with no endpoints. */
 export const WINDSOR_CENTER = Object.freeze({ lat: 42.3149, lon: -83.0364 });
 const CORRIDOR_PAD_DEG = 0.03; // ~3 km either side of the trip's box
 const CAMERA_LIMIT = 6;
+const ROUTE_EVENT_KM = 1.5; // events farther than this off the route are skipped
 
 const fmt = (lane) => {
   if (!lane) return 'n/a';
@@ -220,12 +229,117 @@ export function crossesBorder(a, b) {
   return near(a) && near(b) && riverSide(a) !== riverSide(b);
 }
 
+const EVENT_LABEL = {
+  accidentsandincidents: 'Incident',
+  roadwork: 'Construction',
+  closures: 'Closure',
+  specialevents: 'Event',
+  generalinfo: 'Info',
+  other: 'Event',
+};
+
+function eventRow(e, center) {
+  return {
+    id: e.id,
+    kind: EVENT_LABEL[e.type] ?? 'Event',
+    road: e.road,
+    direction: e.direction,
+    description: e.description,
+    lanes: e.lanes,
+    full_closure: e.fullClosure,
+    lat: e.lat,
+    lon: e.lon,
+    updated_at: e.updatedAt,
+    planned_end_at: e.plannedEndAt,
+    ...(center
+      ? { distance_km: Number(distanceKm(center, e).toFixed(2)) }
+      : {}),
+  };
+}
+
+/** Incidents and closures first, then construction; nearest first within each. */
+const eventRank = (row) =>
+  row.kind === 'Incident'
+    ? 0
+    : row.full_closure
+      ? 1
+      : row.kind === 'Closure'
+        ? 2
+        : 3;
+
+function eventLine(row) {
+  const where = [row.road, row.direction].filter(Boolean).join(' ');
+  const what = row.full_closure
+    ? 'FULL CLOSURE'
+    : row.lanes || row.kind.toLowerCase();
+  return `${row.kind} on ${where || 'unnamed road'} (${what})`;
+}
+
+export const getRoadEvents = defineTool({
+  name: 'get_road_events',
+  title: 'Road incidents, closures and construction (Ontario)',
+  description:
+    'Live collisions, closures and construction on Ontario provincial ' +
+    'highways (401, 3, 77, bridge approaches…) from Ontario 511, in an area, ' +
+    'incidents and full closures first. Does not cover city streets.',
+  inputSchema: {
+    type: 'object',
+    properties: { area: AREA_SCHEMA, limit: LIMIT_SCHEMA },
+    required: ['area'],
+    additionalProperties: false,
+  },
+  requires: ['roadEvents'],
+  async run(args, { services, signal }) {
+    const area = await resolveArea(args.area, { services, signal });
+    const snapshot = await services.roadEvents.getEvents({
+      box: {
+        west: area.west,
+        south: area.south,
+        east: area.east,
+        north: area.north,
+      },
+      signal,
+    });
+    if (snapshot.unavailable)
+      throw new ToolError(
+        'unavailable',
+        snapshot.reason || 'Road events are unavailable right now',
+      );
+    const center = areaCenter(area);
+    const rows = snapshot.events
+      .map((e) => eventRow(e, center))
+      .sort(
+        (a, b) => eventRank(a) - eventRank(b) || a.distance_km - b.distance_km,
+      );
+    const urgent = rows.filter((r) => eventRank(r) < 3);
+    return {
+      summary:
+        `${countNoun(rows.length, 'road event')} on provincial highways in ${area.label}` +
+        (urgent.length
+          ? `; ${urgent.length} incident/closure: ${urgent.slice(0, 3).map(eventLine).join('; ')}.`
+          : rows.length
+            ? `, all construction: ${rows.slice(0, 3).map(eventLine).join('; ')}.`
+            : '.') +
+        (snapshot.stale ? ' (Cached; upstream unavailable.)' : ''),
+      data: {
+        view: suggestView(services, { area, layers: ['traffic', 'cctv'] }),
+        ...capRows(rows, args.limit),
+        coverage: snapshot.coverage,
+        fetched_at: snapshot.fetchedAt,
+        stale: snapshot.stale,
+        attribution: snapshot.attribution,
+      },
+    };
+  },
+});
+
 export const windsorCommuteBrief = defineTool({
   name: 'windsor_commute_brief',
   title: 'Commute brief (Windsor–Detroit)',
   description:
     'One answer for "is my drive backed up?" between two points in the ' +
-    'Windsor–Detroit area: live traffic flow along the corridor, weather at ' +
+    'Windsor–Detroit area: live traffic flow along the corridor, incidents, ' +
+    'closures and construction on highways near the route (Ontario 511), weather at ' +
     'the destination, the public traffic cameras nearest the route (use ' +
     'get_cctv_snapshot to see one), and border waits when the trip crosses ' +
     'the river. Sections that are unavailable are marked as such.',
@@ -265,6 +379,17 @@ export const windsorCommuteBrief = defineTool({
         ? tools.call('find_cctv_cameras', { area: { bbox }, limit: 50 })
         : null,
       borders: readBorders(services, signal),
+      events: services.roadEvents
+        ? services.roadEvents.getEvents({
+            box: {
+              west: bbox[0],
+              south: bbox[1],
+              east: bbox[2],
+              north: bbox[3],
+            },
+            signal,
+          })
+        : null,
     };
     const keys = Object.keys(jobs).filter((k) => jobs[k]);
     const settled = await Promise.allSettled(keys.map((k) => jobs[k]));
@@ -335,6 +460,38 @@ export const windsorCommuteBrief = defineTool({
       sections.cameras = {
         unavailable: true,
         reason: got.cameras?.reason ?? 'not configured',
+      };
+    }
+
+    if (got.events?.ok && !got.events.value.unavailable) {
+      const onRoute = got.events.value.events
+        .map((e) => ({
+          ...eventRow(e),
+          off_route_km: Number(distanceToSegmentKm(e, from, to).toFixed(2)),
+        }))
+        .filter((r) => r.off_route_km <= ROUTE_EVENT_KM)
+        .sort(
+          (a, b) =>
+            eventRank(a) - eventRank(b) || a.off_route_km - b.off_route_km,
+        );
+      sections.road_events = {
+        events: onRoute,
+        coverage: got.events.value.coverage,
+      };
+      lines.push(
+        onRoute.length
+          ? `${countNoun(onRoute.length, 'road event')} on highways near the route: ${onRoute
+              .slice(0, 3)
+              .map(eventLine)
+              .join('; ')}.`
+          : 'No incidents, closures or construction on provincial highways near the route.',
+      );
+    } else {
+      sections.road_events = {
+        unavailable: true,
+        reason: got.events?.ok
+          ? got.events.value.reason
+          : (got.events?.reason ?? 'not configured'),
       };
     }
 

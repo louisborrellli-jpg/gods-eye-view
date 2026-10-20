@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { composeCatalog, coreTools } from '../index.js';
 import { validateBorderSnapshot } from '../../sources/borderWaits.js';
+import { validateRoadEventsSnapshot } from '../../sources/roadEvents.js';
 import { crossesBorder } from './windsor.js';
 
 const lane = (minutes, status = 'open') => ({ minutes, status });
@@ -198,4 +199,90 @@ test('Blue Water is never named the fastest Windsor crossing', async () => {
   const result = await catalog.call('get_border_waits', {});
   assert.equal(result.data.fastest_to_us.id, 'ambassador-bridge');
   assert.match(result.summary, /Blue Water Bridge: into Canada no delay/);
+});
+
+const roadEvent = (id, lat, lon, extra = {}) => ({
+  id: `on511-${id}`,
+  type: 'roadwork',
+  subtype: null,
+  road: 'HWY 401',
+  direction: 'Westbound',
+  description: 'Daily Construction',
+  lanes: '1 Left Lane(s)',
+  fullClosure: false,
+  severity: 'Unknown',
+  lat,
+  lon,
+  endLat: null,
+  endLon: null,
+  reportedAt: null,
+  updatedAt: '2026-10-20T12:00:00.000Z',
+  plannedEndAt: null,
+  ...extra,
+});
+const roadEvents = (events) => ({
+  getEvents: async () =>
+    validateRoadEventsSnapshot({
+      schemaVersion: 1,
+      source: 'Ontario 511',
+      attribution: 'Ontario 511',
+      coverage: 'Ontario provincial highways; not municipal streets',
+      fetchedAt: '2026-10-20T12:30:00.000Z',
+      stale: false,
+      unavailable: false,
+      reason: null,
+      events,
+    }),
+});
+
+test('get_road_events lists incidents and closures before construction', async () => {
+  const catalog = composeCatalog({
+    tools: coreTools,
+    services: {
+      roadEvents: roadEvents([
+        roadEvent(1, 42.25, -82.95),
+        roadEvent(2, 42.3, -83.0, {
+          type: 'accidentsandincidents',
+          fullClosure: true,
+          direction: 'Eastbound',
+        }),
+      ]),
+    },
+  });
+  const r = await catalog.call('get_road_events', {
+    area: { bbox: [-83.2, 42.1, -82.8, 42.4] },
+  });
+  assert.deepEqual(
+    r.data.rows.map((x) => x.id),
+    ['on511-2', 'on511-1'],
+  );
+  assert.match(
+    r.summary,
+    /^2 road events on provincial highways .*1 incident\/closure: Incident on HWY 401 Eastbound \(FULL CLOSURE\)\.$/,
+  );
+});
+
+test('the commute brief keeps only road events near the route', async () => {
+  const catalog = composeCatalog({
+    tools: coreTools,
+    services: {
+      borders,
+      roadEvents: roadEvents([
+        roadEvent(1, 42.29, -83.01), // on the line between the two points
+        roadEvent(2, 42.29, -83.06), // ~2 km off the line, inside the corridor box
+      ]),
+    },
+  });
+  const r = await catalog.call('windsor_commute_brief', {
+    from: { lat: 42.3149, lon: -83.0364 },
+    to: { lat: 42.27, lon: -82.98 },
+  });
+  assert.deepEqual(
+    r.data.sections.road_events.events.map((e) => e.id),
+    ['on511-1'],
+  );
+  assert.match(
+    r.summary,
+    /1 road event on highways near the route: Construction on HWY 401 Westbound \(1 Left Lane\(s\)\)\./,
+  );
 });

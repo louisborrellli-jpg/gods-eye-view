@@ -10,8 +10,9 @@ government-published data. No private cameras, no tracking people.
 | **Border waits, both directions** — Ambassador Bridge, Detroit–Windsor Tunnel, Gordie Howe, Blue Water | CBSA (into Canada) + U.S. CBP (into the U.S.): cars, NEXUS, trucks, FAST, lanes open | Refreshed every 3 min | None |
 | **Detroit-side traffic cameras** — ~300 nearest the riverfront (Jefferson, Lodge, I-75, I-94, I-96…) | Michigan DOT Mi Drive | Live stills | None (opt-in flag) |
 | **Windsor/Ontario cameras** — 401, EC Row, Herb Gray Parkway, plus the rest of Ontario (the original project fixed the key requirement the same day) | Ontario 511 | Live stills | Free 511on.ca key |
+| **Highway incidents, closures, construction** (401, 3, 77, bridge approaches) | Ontario 511 events | Every 2 min | Same 511 key |
 | **`get_border_waits`** tool for Claude and voice | Above | | |
-| **`windsor_commute_brief`** tool — "is my drive backed up?" | Traffic flow + destination weather + cameras along the route + border waits if you cross | | TomTom for traffic speeds |
+| **`windsor_commute_brief`** tool — "is my drive backed up?" | Traffic flow + highway incidents + destination weather + cameras along the route + border waits if you cross | | TomTom for traffic speeds |
 
 Everything the base app already does still works: live flights over Windsor
 (keyless), ships on the Detroit River (free AISStream key), satellites,
@@ -77,7 +78,7 @@ Quit Claude Desktop fully, reopen, new chat, keep `npm run dev` running. Try:
 ## Roadmap
 
 1. **Border pins on the globe** with a HUD ticker (data's done; this is the Cesium renderer).
-2. **Road closures and incidents** from Ontario 511 events (same key).
+2. **City intersection webcams** via Windy (Ouellette & Tecumseh etc.; free key).
 3. **Environment Canada weather alerts** for Essex County.
 4. **"Jarvis" alerts:** a scheduled check around 4:45 p.m. on weekdays that
    pings you only if your route home or a bridge is backed up.
