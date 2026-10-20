@@ -1,6 +1,16 @@
 import { createStandaloneApplication } from './standalone/application.js';
 import { describeError } from './standalone/errors.js';
 import { t } from './i18n/index.js';
+import {
+  prepareWindsorStart,
+  startWindsorMode,
+  windsorModeEnabled,
+} from './windsor/windsorMode.js';
+
+// Windsor mode (on unless VITE_WINDSOR_MODE=0): open on Windsor with the
+// simple panel. Must run before the app reads the start view.
+const windsorMode = windsorModeEnabled(import.meta.env.VITE_WINDSOR_MODE);
+if (windsorMode) prepareWindsorStart();
 
 const application = createStandaloneApplication({
   googleApiKey: import.meta.env.GOOGLE_MAPS_API_KEY,
@@ -8,13 +18,20 @@ const application = createStandaloneApplication({
   allowQaRegistration: import.meta.env.DEV,
 });
 
-application.start().catch((error) => {
-  console.error("God's Eye View initialization failed:", error);
-  const loaderStatus = document.querySelector('#loading-screen .loader-status');
-  loaderStatus.textContent = t('Error: {message}', {
-    message: describeError(error),
+application
+  .start()
+  .then(() => {
+    if (windsorMode) return startWindsorMode();
+  })
+  .catch((error) => {
+    console.error("God's Eye View initialization failed:", error);
+    const loaderStatus = document.querySelector(
+      '#loading-screen .loader-status',
+    );
+    loaderStatus.textContent = t('Error: {message}', {
+      message: describeError(error),
+    });
+    loaderStatus.style.color = '#ff4444';
   });
-  loaderStatus.style.color = '#ff4444';
-});
 
 export { application };

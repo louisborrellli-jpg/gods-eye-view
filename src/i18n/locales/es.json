@@ -2937,5 +2937,20 @@
   "Gemini access was refused. Check the API key and model access.": "Se denegó el acceso a Gemini. Comprueba la clave de API y el acceso al modelo.",
   "Gemini Live is unavailable for the configured model.": "Gemini Live no está disponible para el modelo configurado.",
   "Token request is too large": "La solicitud de credencial es demasiado grande",
-  "Use an empty JSON token request": "Usa una solicitud de credencial con un objeto JSON vacío"
+  "Use an empty JSON token request": "Usa una solicitud de credencial con un objeto JSON vacío",
+  "Radar": "Radar",
+  "WINDSOR · LIVE": "WINDSOR · EN VIVO",
+  "Fly back over Windsor": "Volver a sobrevolar Windsor",
+  "Windsor": "Windsor",
+  "BORDER WAIT": "ESPERA EN LA FRONTERA",
+  "US": "EE. UU.",
+  "CA": "CAN",
+  "Cars, standard lanes. Click a crossing to fly there.": "Autos, carriles estándar. Haz clic en un cruce para volar allí.",
+  "Show every control": "Mostrar todos los controles",
+  "ADVANCED": "AVANZADO",
+  "Back to the simple Windsor view": "Volver a la vista simple de Windsor",
+  "SIMPLE": "BÁSICO",
+  "Fly to the {crossing}": "Volar a {crossing}",
+  "No data": "Sin datos",
+  "(old)": "(antiguo)"
 }

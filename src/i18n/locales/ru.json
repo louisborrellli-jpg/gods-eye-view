@@ -3004,5 +3004,20 @@
   "Gemini access was refused. Check the API key and model access.": "Доступ к Gemini запрещён. Проверьте ключ API и доступ к модели.",
   "Gemini Live is unavailable for the configured model.": "Gemini Live недоступен для выбранной модели.",
   "Token request is too large": "Запрос токена слишком велик",
-  "Use an empty JSON token request": "Используйте запрос токена с пустым объектом JSON"
+  "Use an empty JSON token request": "Используйте запрос токена с пустым объектом JSON",
+  "Radar": "Радар",
+  "WINDSOR · LIVE": "ВИНДЗОР · В ЭФИРЕ",
+  "Fly back over Windsor": "Вернуться к Виндзору",
+  "Windsor": "Виндзор",
+  "BORDER WAIT": "ОЖИДАНИЕ НА ГРАНИЦЕ",
+  "US": "США",
+  "CA": "КАН",
+  "Cars, standard lanes. Click a crossing to fly there.": "Легковые, обычные полосы. Нажмите на переход, чтобы перелететь туда.",
+  "Show every control": "Показать все элементы управления",
+  "ADVANCED": "РАСШИРЕННЫЙ",
+  "Back to the simple Windsor view": "Назад к простому виду Виндзора",
+  "SIMPLE": "ПРОСТОЙ",
+  "Fly to the {crossing}": "Лететь к: {crossing}",
+  "No data": "Нет данных",
+  "(old)": "(устарело)"
 }

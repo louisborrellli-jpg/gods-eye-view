@@ -3,6 +3,21 @@
 A Windsor–Detroit layer on top of God's Eye View. Everything here is public,
 government-published data. No private cameras, no tracking people.
 
+## Windsor mode (the simple view)
+
+The app opens straight on Windsor with cameras, flights and rain radar on,
+and the busy menus hidden. One panel on the left:
+
+- **⌂ Windsor** flies back over the city; **Cameras / Flights / Radar** toggle
+  those layers.
+- **Border wait**: live car waits at the Ambassador, Tunnel and Gordie Howe,
+  both directions (orange 15+ min, red 30+). Click a crossing to fly there.
+- **Advanced ▸** brings back every control; **◂ Simple** (bottom left) returns.
+  The choice is remembered.
+
+Click any camera marker on the map to see its live image in the viewer on
+the right. Turn Windsor mode off entirely with `VITE_WINDSOR_MODE=0` in `.env`.
+
 ## What this fork adds
 
 | Feature | Data | Live? | Key |
