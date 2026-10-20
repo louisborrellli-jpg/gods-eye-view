@@ -108,6 +108,19 @@
 }
 
 .data-layer-group-heading {
+  /* A <button> since the groups collapse, so the user-agent button skin has to
+     go: left as-is it paints an opaque light box over the panel. Everything
+     below the reset is the heading styling this rule has always carried. */
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: 0;
+  width: calc(100% - 20px);
+  display: block;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+
   margin: 8px 10px 2px;
   padding-top: 12px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -116,6 +129,22 @@
   font-weight: 600;
   letter-spacing: 1.4px;
   text-transform: uppercase;
+}
+
+.data-layer-group-heading:hover,
+.data-layer-group-heading:focus-visible {
+  color: var(--text-primary, #fff);
+}
+
+/* A folded group says so: the marker turns with aria-expanded. */
+.data-layer-group-heading::after {
+  content: '\2013';
+  float: right;
+  opacity: 0.55;
+}
+
+.data-layer-group-heading[aria-expanded='false']::after {
+  content: '+';
 }
 
 .data-layer-group-heading:first-child {
