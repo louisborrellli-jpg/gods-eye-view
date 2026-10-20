@@ -38,7 +38,8 @@ test('the complete Realtime tool payload pins the manifest-generated layer relea
     // requested radius and center authority in descriptions only.
     // Street Level and GNSS extend the manifest; tracked and analyst aircraft describe broadcasts.
     // Air quality (ECCC AQHI) extends the manifest.
-    '775ba323384b4c1b62fb8415bac52aecc3fc668e20bedcfa57e426dcd1da3969',
+    // The aurora nowcast overlay extends the manifest.
+    '39d1ffaad4324a8223c5bdd48e0d48fea79835d0e941cbafd35b80f3ee97fad5',
   );
 });
 

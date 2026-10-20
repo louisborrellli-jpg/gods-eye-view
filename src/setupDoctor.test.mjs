@@ -7,6 +7,7 @@ import {
   buildCapabilitySummary,
   CREDENTIALS,
   classifyNodeVersion,
+  blockingSteps,
   formatSetupReport,
   hasRequiredDependencies,
   isConfiguredValue,
@@ -391,5 +392,78 @@ test('doctor never calls a dependency-missing setup ready', () => {
   });
   assert.match(output, /dependencies missing; run npm install/);
   assert.match(output, /Setup needs attention/);
+  assert.doesNotMatch(output, /Ready\. Run/);
+});
+
+const unconfiguredCredentials = () => Object.fromEntries(
+  CREDENTIALS.map((spec) => [spec.name, { configured: false }]),
+);
+
+test('every provider spec names its cost tier and an issuing page', () => {
+  for (const spec of CREDENTIALS) {
+    assert.ok(
+      spec.tier === 'free' || spec.tier === 'metered',
+      `${spec.name} must declare a free or metered tier`,
+    );
+    assert.match(spec.signup, /^https:\/\//, `${spec.name} needs a signup URL`);
+  }
+});
+
+test('an unconfigured provider names its tier and signup page; a configured one does not', () => {
+  const credentials = unconfiguredCredentials();
+  credentials.AISSTREAM_API_KEY = { configured: true, source: 'environment' };
+  const output = formatSetupReport({
+    ready: true,
+    node: { level: 'ok', version: '24.14.0', summary: 'supported' },
+    npm: { available: true, version: '11.0.0' },
+    dependenciesInstalled: true,
+    capabilities: buildCapabilitySummary(credentials),
+    credentials,
+  });
+  assert.match(output, /\[--\] NASA FIRMS fires — free tier · https:\/\/firms\.modaps\.eosdis\.nasa\.gov/);
+  assert.match(output, /\[--\] OpenAI voice — metered · https:\/\/platform\.openai\.com/);
+  // The row for a key the reader already has stays a single short line.
+  assert.match(output, /\[OK\] AISStream vessels \(environment\)\n/);
+  assert.doesNotMatch(output, /AISStream vessels \(environment\) —/);
+});
+
+test('blocking steps name the real cause and never ask for an optional key', () => {
+  assert.deepEqual(
+    blockingSteps({
+      node: { level: 'error', version: '22.22.0' },
+      npm: { available: true },
+      dependenciesInstalled: false,
+    }),
+    [
+      'Install Node 24.14 or newer, then re-run npm run doctor (found 22.22.0).',
+      'Run npm install.',
+    ],
+  );
+  const steps = blockingSteps({
+    node: { level: 'ok', version: '24.14.0' },
+    npm: { available: true },
+    dependenciesInstalled: true,
+  });
+  assert.deepEqual(steps, [
+    'Re-run npm run doctor and check the flagged lines above.',
+  ]);
+  assert.ok(
+    blockingSteps({ node: { level: 'ok' }, npm: { available: false }, dependenciesInstalled: true })
+      .every((step) => !/key|token/i.test(step)),
+    'no credential may be reported as blocking startup',
+  );
+});
+
+test('a not-ready report prints numbered fixes under the verdict', () => {
+  const credentials = unconfiguredCredentials();
+  const output = formatSetupReport({
+    ready: false,
+    node: { level: 'error', version: '22.22.0', summary: 'too old' },
+    npm: { available: true, version: '10.9.4' },
+    dependenciesInstalled: true,
+    capabilities: buildCapabilitySummary(credentials),
+    credentials,
+  });
+  assert.match(output, /Setup needs attention before the app can start\.\n\nFix first:\n  1\. Install Node 24\.14 or newer/);
   assert.doesNotMatch(output, /Ready\. Run/);
 });

@@ -78,6 +78,7 @@ const PANEL_GROUPS = [
   {
     label: msg('Weather'),
     ids: [
+      'aurora',
       'air-quality',
       'wind',
       'weather-radar',

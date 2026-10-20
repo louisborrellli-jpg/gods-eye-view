@@ -1854,6 +1854,7 @@
       "src/hudLocality.js",
       "src/hudLocalityFormat.js",
       "src/hudSummaryResponse.js",
+      "src/hudTelemetrySlots.js",
       "src/keySetup.js",
       "src/keySetupCore.mjs",
       "src/localRequestGate.mjs",
@@ -2499,7 +2500,12 @@
       "src/voice/providerCapabilities.js",
       "src/voice/geminiSession.js",
       "src/voice/geminiAudio.js",
-      "src/voice/geminiCaptureWorklet.js"
+      "src/voice/geminiCaptureWorklet.js",
+      "src/layers/aurora/index.js",
+      "src/layers/aurora/model.js",
+      "src/layers/aurora/source.js",
+      "src/layers/aurora/records.js",
+      "src/app/layers/aurora.js"
     ],
     "external": [
       "hls.js",
@@ -3066,7 +3072,12 @@
       "src/layers/airQuality/source.js",
       "src/ui/statusText.js",
       "src/ui/layerNames.js",
-      "src/layers/streetLevel/providers/mapillary/policy.js"
+      "src/layers/streetLevel/providers/mapillary/policy.js",
+      "src/layers/aurora/index.js",
+      "src/layers/aurora/model.js",
+      "src/layers/aurora/source.js",
+      "src/layers/aurora/records.js",
+      "src/app/layers/aurora.js"
     ],
     "external": [
       "hls.js",
@@ -3496,7 +3507,9 @@
       "src/layers/submarineCables/bundledSource.js",
       "src/layers/gnss/source.js",
       "src/layers/airQuality/model.js",
-      "src/layers/airQuality/source.js"
+      "src/layers/airQuality/source.js",
+      "src/layers/aurora/source.js",
+      "src/layers/aurora/records.js"
     ],
     "external": []
   },
