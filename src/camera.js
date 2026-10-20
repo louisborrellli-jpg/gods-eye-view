@@ -1,10 +1,35 @@
 import * as Cesium from 'cesium';
 
 /**
+ * Where a fresh session starts, as [longitude, latitude].
+ *
+ * Windsor, Ontario. The startup flight faces roughly north on purpose: from
+ * the Windsor riverfront that looks straight across the Detroit River at the
+ * Detroit skyline, which is a far better first frame than open ground.
+ */
+export const STARTUP_LOCATION = Object.freeze({
+  lon: -83.0364,
+  lat: 42.3149,
+  // i18n-ignore: place name
+  label: 'Windsor, ON',
+});
+
+/**
  * Camera presets for notable locations.
- * Phase 1 default: fly to Austin, TX on load.
  */
 export const CAMERA_PRESETS = {
+  windsor: {
+    destination: Cesium.Cartesian3.fromDegrees(
+      STARTUP_LOCATION.lon,
+      STARTUP_LOCATION.lat,
+      800,
+    ),
+    orientation: {
+      heading: Cesium.Math.toRadians(0),
+      pitch: Cesium.Math.toRadians(-35),
+      roll: 0.0,
+    },
+  },
   austin: {
     destination: Cesium.Cartesian3.fromDegrees(-97.7431, 30.2672, 800),
     orientation: {
@@ -47,13 +72,17 @@ export function flyToPreset(viewer, presetName, duration = 3.0) {
 }
 
 /**
- * Set camera to Austin on load with a cinematic fly-in.
+ * Set the camera to STARTUP_LOCATION on load with a cinematic fly-in.
  * @returns {Function} Cancels the pending or active startup flight.
  */
-export function flyToAustin(viewer) {
+export function flyToStartupLocation(viewer) {
   // Start from a high altitude, then fly down
   viewer.camera.setView({
-    destination: Cesium.Cartesian3.fromDegrees(-97.7431, 30.2672, 25000),
+    destination: Cesium.Cartesian3.fromDegrees(
+      STARTUP_LOCATION.lon,
+      STARTUP_LOCATION.lat,
+      25000,
+    ),
     orientation: {
       heading: Cesium.Math.toRadians(0),
       pitch: Cesium.Math.toRadians(-90),
@@ -65,7 +94,11 @@ export function flyToAustin(viewer) {
   const timer = setTimeout(() => {
     if (viewer.isDestroyed()) return;
     viewer.camera.flyTo({
-      destination: Cesium.Cartesian3.fromDegrees(-97.7431, 30.2672, 600),
+      destination: Cesium.Cartesian3.fromDegrees(
+        STARTUP_LOCATION.lon,
+        STARTUP_LOCATION.lat,
+        600,
+      ),
       orientation: {
         heading: Cesium.Math.toRadians(15),
         pitch: Cesium.Math.toRadians(-30),
