@@ -46,7 +46,11 @@ export const GLOBAL_POST_DEFAULTS = {
   bloom: { enabled: false, intensity: BLOOM_INTENSITY_DEFAULT },
   sharpen: { enabled: true, intensity: 49 },
   hudVariant: 'tactical',
-  hudVisible: true,
+  // OFF at first load: the corner readouts are telemetry for someone who came
+  // for telemetry, and they are the densest thing on a newcomer's screen. The
+  // three military styles below still set `hudVisible: true` themselves, so
+  // choosing one brings the HUD with it, and `H` toggles it at any time.
+  hudVisible: false,
   // Detection is ON for EVERY style on a first run, Normal included (owner
   // directive 2026-08-22: "detect should also be on by default"). It is the
   // same preset object the military styles and Contacts already apply, so there

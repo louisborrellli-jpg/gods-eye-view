@@ -86,6 +86,27 @@ surfaces through `getStats().error`. `getStats()` also reports the drawn cell
 count, the peak probability, and both the observation and forecast times,
 because this is a short-horizon forecast and not an observation.
 
+## First-boot visual defaults
+
+A fresh boot shows the map and the controls, and nothing else.
+
+- **Scope off.** `scopeMask.js` starts disabled. The mask crops the viewport to
+  a circle and masks roughly a third of it, which reads as a broken view rather
+  than as a scope to someone seeing it first. `#scope-toggle` (Display) turns it
+  on, its markup default agrees with the module flag, and a share link carrying
+  `scopeEnabled: true` still restores it.
+- **Intel HUD off.** `GLOBAL_POST_DEFAULTS.hudVisible` is false, so the first
+  load no longer forces the HUD on regardless of style. The `retro`,
+  `surveillance` and `thermal` presets still set `hudVisible: true` themselves,
+  so a military style brings the HUD with it; `H` toggles it at any time, and
+  `setMode('auto')` still follows the style.
+- **HUD text survives daylight.** With the scope off, the corners are no longer
+  darkened for free. `#intel-hud *` carries a tight dark halo beneath its
+  coloured glow, and `.hud-corner::before` paints a soft radial scrim with no
+  edge, border or hit area (`z-index: -1`, `pointer-events: none`). Both are
+  tuned to disappear against dark imagery and only assert themselves over
+  sunlit ground.
+
 ## Intel HUD readouts
 
 Every Intel HUD slot resolves from something the application can observe; none
