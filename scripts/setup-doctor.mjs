@@ -11,17 +11,27 @@ const ROOT = projectRoot(import.meta.url);
 const OPENSKY_AUTH_MODE_DEFAULT = 'oauth';
 const OPENSKY_AUTH_MODES = new Set(['basic', 'oauth', 'auto', 'anon']);
 
+/**
+ * Every provider the doctor can report on. `tier` and `signup` exist so an
+ * unconfigured row can name the cost and the page that issues the credential:
+ * a reader who has just been told a capability is off should not have to go
+ * find the README to turn it on. `free` means a signup with no card; `metered`
+ * means usage is billed (or, for LL2, that the only token is a paid upgrade
+ * and the keyless public tier is the free path).
+ */
 export const CREDENTIALS = Object.freeze([
-  { name: 'GOOGLE_MAPS_API_KEY', label: 'Google Maps', keychain: [['google-maps-api', 'api-key'], ['google-maps-api', 'default'], ['google-maps-api', 'key']] },
-  { name: 'GOOGLE_MAPS_SERVER_API_KEY', label: 'Google Places / Street View server', keychain: [] },
-  { name: 'CESIUM_ION_TOKEN', label: 'Cesium ion', keychain: [['cesium-ion', 'token']] },
-  { name: 'OPENAI_API_KEY', label: 'OpenAI voice', keychain: [['openai-api', 'api-key']] },
-  { name: 'AISSTREAM_API_KEY', label: 'AISStream vessels', keychain: [['aisstream-api', 'api-key']] },
-  { name: 'FIRMS_MAP_KEY', label: 'NASA FIRMS fires', keychain: [['firms-map', 'map-key']] },
-  { name: 'TOMTOM_API_KEY', label: 'TomTom traffic', keychain: [['tomtom-api', 'api-key']] },
+  { name: 'GOOGLE_MAPS_API_KEY', label: 'Google Maps', tier: 'metered', signup: 'https://console.cloud.google.com/', keychain: [['google-maps-api', 'api-key'], ['google-maps-api', 'default'], ['google-maps-api', 'key']] },
+  { name: 'GOOGLE_MAPS_SERVER_API_KEY', label: 'Google Places / Street View server', tier: 'metered', signup: 'https://console.cloud.google.com/', keychain: [] },
+  { name: 'CESIUM_ION_TOKEN', label: 'Cesium ion', tier: 'free', signup: 'https://cesium.com/ion', keychain: [['cesium-ion', 'token']] },
+  { name: 'OPENAI_API_KEY', label: 'OpenAI voice', tier: 'metered', signup: 'https://platform.openai.com', keychain: [['openai-api', 'api-key']] },
+  { name: 'AISSTREAM_API_KEY', label: 'AISStream vessels', tier: 'free', signup: 'https://aisstream.io', keychain: [['aisstream-api', 'api-key']] },
+  { name: 'FIRMS_MAP_KEY', label: 'NASA FIRMS fires', tier: 'free', signup: 'https://firms.modaps.eosdis.nasa.gov/api/map_key/', keychain: [['firms-map', 'map-key']] },
+  { name: 'TOMTOM_API_KEY', label: 'TomTom traffic', tier: 'free', signup: 'https://my.tomtom.com/keys', keychain: [['tomtom-api', 'api-key']] },
   {
     name: 'OPENSKY_CLIENT_ID',
     label: 'OpenSky client ID',
+    tier: 'free',
+    signup: 'https://opensky-network.org',
     keychain: ['opensky-network', 'opensky'].flatMap((service) => (
       ['client_id', 'client-id', 'client', 'api-key'].map((account) => [service, account])
     )),
@@ -29,12 +39,14 @@ export const CREDENTIALS = Object.freeze([
   {
     name: 'OPENSKY_CLIENT_SECRET',
     label: 'OpenSky client secret',
+    tier: 'free',
+    signup: 'https://opensky-network.org',
     keychain: ['opensky-network', 'opensky'].flatMap((service) => (
       ['client_secret', 'client-secret', 'secret'].map((account) => [service, account])
     )),
   },
-  { name: 'LL2_API_TOKEN', label: 'Launch Library 2', keychain: [] },
-  { name: 'MAPILLARY_CLIENT_TOKEN', label: 'Mapillary street level', keychain: [['mapillary', 'client-token'], ['mapillary', 'token']] },
+  { name: 'LL2_API_TOKEN', label: 'Launch Library 2', tier: 'metered', signup: 'https://thespacedevs.com/supportus', keychain: [] },
+  { name: 'MAPILLARY_CLIENT_TOKEN', label: 'Mapillary street level', tier: 'free', signup: 'https://www.mapillary.com/dashboard/developers', keychain: [['mapillary', 'client-token'], ['mapillary', 'token']] },
 ]);
 
 export function isConfiguredValue(value) {
@@ -251,14 +263,46 @@ export function formatSetupReport(report, { readyMessage } = {}) {
       const state = report.credentials[spec.name];
       return state.configured
         ? `  [OK] ${spec.label} (${state.source})`
-        : `  [--] ${spec.label}`;
+        : `  [--] ${spec.label}${describeUnconfigured(spec)}`;
     }),
     '',
-    report.ready
-      ? resolvedReadyMessage
-      : 'Setup needs attention before the app can start.',
+    ...(report.ready ? [resolvedReadyMessage] : [
+      'Setup needs attention before the app can start.',
+      '',
+      'Fix first:',
+      ...blockingSteps(report).map((step, index) => `  ${index + 1}. ${step}`),
+    ]),
   ];
   return lines.join('\n');
+}
+
+/**
+ * Name the cost and the issuing page for a provider that is not configured.
+ * Only unconfigured rows carry it: a reader who already has the credential
+ * does not need the signup link, and the configured row stays one short line.
+ */
+function describeUnconfigured(spec) {
+  if (!spec.signup) return '';
+  const tier = spec.tier === 'free' ? 'free tier' : 'metered';
+  return ` \u2014 ${tier} \u00b7 ${spec.signup}`;
+}
+
+/**
+ * The actions that actually unblock a not-ready checkout, in the order they
+ * must happen. Credentials never appear here: every provider is optional, so
+ * a missing key is never what stops the app from starting.
+ */
+export function blockingSteps(report) {
+  const steps = [];
+  if (report?.node?.level === 'error') {
+    steps.push(`Install Node 24.14 or newer, then re-run npm run doctor (found ${report.node.version}).`);
+  }
+  if (!report?.npm?.available) steps.push('Install npm (it ships with Node).');
+  if (!report?.dependenciesInstalled) steps.push('Run npm install.');
+  // A not-ready report with no recognized cause must still say something
+  // actionable rather than leaving the reader with a bare verdict.
+  if (!steps.length) steps.push('Re-run npm run doctor and check the flagged lines above.');
+  return steps;
 }
 
 const invokedPath = process.argv[1] ? path.resolve(process.argv[1]) : '';

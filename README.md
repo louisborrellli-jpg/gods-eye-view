@@ -501,7 +501,8 @@ See [`docs/CURRENT-STATE.md`](docs/CURRENT-STATE.md) for the authoritative runti
 Use **POWER UP → Provider Settings** to add keys. The tables below explain what
 each provider enables; none is required to start. See the
 [setup instructions](#then-power-it-up--in-the-app-not-in-a-file) for storage
-and configuration details.
+and configuration details. In a hurry: [docs/FREE-KEYS.md](docs/FREE-KEYS.md)
+is the free-tier-only shortlist, ordered by what it puts on screen.
 
 No key needed for Wind, Rain radar, Satellite clouds, Lightning density,
 Cyclone advisories, Mapped ALPR Cameras, Transit, Directions, Delaware live

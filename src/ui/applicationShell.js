@@ -358,6 +358,7 @@ export class StyleManager extends ShellFacade {
     this.hud = new IntelHUD(viewer, {
       placeSearch,
       summaryService: requestServices?.summary,
+      mapStackController,
     });
     this._recording.hud = this.hud;
     this._cockpitCoordinator = new CockpitCoordinator({

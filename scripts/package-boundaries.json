@@ -1854,6 +1854,7 @@
       "src/hudLocality.js",
       "src/hudLocalityFormat.js",
       "src/hudSummaryResponse.js",
+      "src/hudTelemetrySlots.js",
       "src/keySetup.js",
       "src/keySetupCore.mjs",
       "src/localRequestGate.mjs",
