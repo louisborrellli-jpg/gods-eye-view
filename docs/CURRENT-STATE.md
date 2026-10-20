@@ -116,6 +116,28 @@ A fresh boot shows the map and the controls, and nothing else.
   tuned to disappear against dark imagery and only assert themselves over
   sunlit ground.
 
+## Data Layers panel: quick views and collapsible groups
+
+The panel opens with a **Quick views** row — Traffic & cameras, Aircraft,
+Ships, Weather, Earth events — above the layer list. `src/ui/quickViews.js`
+holds the policy; `planQuickView(viewId, layers)` returns the exact
+`{enable, disable}` plan against the live roster.
+
+A view is exact, not additive: it enables its own layers and disables every
+other toggleable layer, so clicking the same view twice cannot mean two
+different things. Layers with `showInTogglePanel === false` (hidden
+coordinators that other layers depend on) are never disabled by a view, and a
+layer a view names but the catalog does not carry is absent from the plan
+rather than enabled blindly. Both enables and disables run with
+`origin: 'user'`, so they persist exactly as clicking each row would.
+
+The six existing groups — Movement, Cameras, Infrastructure, Events, Weather,
+Utilities — now collapse. Each heading is a `<button>` carrying
+`aria-expanded` that owns a `.data-layer-group-rows` container, so layer rows
+are nested rather than siblings of their heading. Anything locating a row by
+`[data-layer-id]` must therefore search descendants, as a real
+`querySelector` does.
+
 ## Intel HUD readouts
 
 Every Intel HUD slot resolves from something the application can observe; none

@@ -1398,3 +1398,31 @@ body.recording-mode #right-context-rail > [data-panel-id] {
     width: 100%;
   }
 }
+
+/* Quick views: a wrapped row of small buttons above the layer list. They are
+   shortcuts, not state, so they stay visually lighter than the layer toggles
+   underneath and carry no on/off styling of their own. */
+.quick-views-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 2px 0 10px;
+}
+
+.quick-view-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  padding: 5px 9px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  color: inherit;
+  cursor: pointer;
+}
+
+.quick-view-btn:hover,
+.quick-view-btn:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.3);
+}

@@ -477,6 +477,7 @@
       "src/ui/layers.js",
       "src/ui/layerPanel.js",
       "src/ui/layerNames.js",
+      "src/ui/quickViews.js",
       "src/ui/weatherPanel.js",
       "src/ui/railCards.js",
       "src/ui/railCardBlocks.js",
@@ -767,6 +768,7 @@
       "src/ui/unitLabels.js",
       "src/ui/keyGuidance.js",
       "src/ui/layerNames.js",
+      "src/ui/quickViews.js",
       "src/ui/statusText.js"
     ],
     "external": ["cesium"]
@@ -2227,6 +2229,7 @@
       "src/agent/worldPacket.js",
       "src/voice/speech.js",
       "src/ui/layerNames.js",
+      "src/ui/quickViews.js",
       "src/voice/earcon.js",
       "src/voice/narration.js",
       "src/voice/turnMetrics.js",
