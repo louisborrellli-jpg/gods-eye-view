@@ -92,6 +92,19 @@ export class DisplayBindings {
       },
     });
 
+    // The Advanced disclosure inside Detect. Local to this panel and with no
+    // stored state, so it uses a plain button rather than the panel-level
+    // collapse machinery, which persists and owns Escape handling.
+    const advancedToggle = document.getElementById('detection-advanced-toggle');
+    const advancedBody = document.getElementById('detection-advanced');
+    if (advancedToggle && advancedBody && !advancedToggle.dataset.bound) {
+      advancedToggle.dataset.bound = 'true';
+      advancedToggle.addEventListener('click', () => {
+        const open = advancedToggle.getAttribute('aria-expanded') === 'true';
+        advancedToggle.setAttribute('aria-expanded', String(!open));
+        advancedBody.hidden = open;
+      });
+    }
     this._displayControls?.destroy();
     this._displayControls = bindDisplayControls({
       elements: {

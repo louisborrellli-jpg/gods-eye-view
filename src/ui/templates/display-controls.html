@@ -61,6 +61,16 @@
         <input type="range" class="pp-slider" id="detection-density-slider" min="0" max="100" step="25" value="50" aria-label="Detection label density" data-i18n-aria-label />
         <span class="pp-slider-value" id="detection-density-value">50%</span>
       </div>
+      <!-- Allocation, fade and outside-opacity tune how detection labels are
+           placed and faded. They are worth having and worth not meeting first:
+           Density above covers the common adjustment. The rows keep their own
+           ids and `.visible` class, which visualSettings still toggles when
+           Detect turns on and off; this disclosure only nests them. -->
+      <!-- A button and a hidden container rather than <details>: this app's
+           stylesheet does not collapse <details>, and the same button/hidden
+           pattern already drives the Data Layers group headings. -->
+      <button type="button" class="pp-advanced-summary" id="detection-advanced-toggle" aria-expanded="false" aria-controls="detection-advanced" data-i18n>Advanced</button>
+      <div class="pp-advanced" id="detection-advanced" hidden>
       <div class="pp-slider-row detection-allocation-row" id="detection-allocation-row">
         <span class="pp-slider-mini-label" data-i18n>Allocation</span>
         <div class="pp-mode-seg detection-allocation-seg" role="radiogroup" aria-label="Detection label allocation" data-i18n-aria-label>
@@ -77,6 +87,7 @@
         <label class="pp-slider-mini-label" for="detection-opacity-slider" data-i18n>Outside</label>
         <input type="range" class="pp-slider" id="detection-opacity-slider" min="0" max="100" step="1" value="1" aria-label="Detection opacity outside the keyhole" title="World-overlay label and card opacity beyond the fade distance" data-i18n-aria-label data-i18n-title />
         <span class="pp-slider-value" id="detection-opacity-value">1%</span>
+      </div>
       </div>
     </div>
     <!-- The one shared preset-parameter surface is inserted here at runtime. -->

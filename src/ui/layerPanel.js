@@ -291,16 +291,32 @@ export class LayerPanel {
           (PANEL_POSITIONS.get(b.id) ?? PANEL_ORDER.length),
       );
     let previousGroup = '';
+    // Rows land inside the current group's container, not the panel root.
+    let groupRows = null;
     for (const layer of layers) {
       if (!layer.showInTogglePanel) continue;
       const group =
         PANEL_ORDER[PANEL_POSITIONS.get(layer.id)]?.label ??
         msg('Other layers');
       if (group && group !== previousGroup) {
-        const heading = document.createElement('h3');
+        // Each group owns its rows so the heading can collapse them. The
+        // heading is a button rather than an h3 because it is now operable;
+        // it keeps the same class so existing styling still applies.
+        const heading = document.createElement('button');
+        heading.type = 'button';
         heading.className = 'data-layer-group-heading';
         heading.textContent = t(group);
+        heading.setAttribute('aria-expanded', 'true');
+        const rows = document.createElement('div');
+        rows.className = 'data-layer-group-rows';
+        heading.addEventListener('click', () => {
+          const open = heading.getAttribute('aria-expanded') !== 'false';
+          heading.setAttribute('aria-expanded', String(!open));
+          rows.hidden = open;
+        });
         this._toggleContainer.appendChild(heading);
+        this._toggleContainer.appendChild(rows);
+        groupRows = rows;
       }
       previousGroup = group;
       const row = document.createElement('div');
@@ -421,7 +437,7 @@ export class LayerPanel {
         }
       }
 
-      this._toggleContainer.appendChild(row);
+      (groupRows ?? this._toggleContainer).appendChild(row);
     }
     this._refreshWeatherPanel();
   }
