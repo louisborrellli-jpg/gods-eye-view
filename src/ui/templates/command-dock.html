@@ -12,6 +12,14 @@
       </button>
       <div id="control-panel-popover" class="dock-popover-content">
       <button class="dock-pin-btn" data-pin-target="control-panel" type="button" aria-label="Pin visual presets" aria-pressed="false" title="Keep visual presets open" data-i18n-aria-label data-i18n-title><img src="/pin.svg" alt="" /></button>
+      <!-- The tray holds two unrelated choices: how the globe is RENDERED
+           (these filters) and which imagery it is DRAWN FROM (map source
+           below). Only the second had a heading, so the first read as seven
+           unlabelled icons and neither group announced what it changed. -->
+      <section class="style-section" aria-labelledby="style-section-label">
+        <div class="map-source-heading">
+          <span data-i18n id="style-section-label">VISUAL FILTER</span>
+        </div>
       <div id="style-buttons" class="button-grid">
         <button class="style-btn active" data-style="normal" title="Show the globe without a visual filter." data-i18n-title>
           <span class="btn-icon">◯</span>
@@ -49,6 +57,7 @@
           <span class="btn-key">7</span>
         </button>
       </div>
+      </section>
       <section class="map-source-section" aria-labelledby="map-source-label">
         <div class="map-source-heading">
           <span data-i18n id="map-source-label">MAP SOURCE</span>

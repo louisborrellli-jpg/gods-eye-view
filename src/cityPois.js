@@ -15,6 +15,56 @@
  *   buildingHeight — estimated height of landmark center above ground (meters)
  */
 export const CITY_POIS = {
+  // First in the list because it is where a fresh session starts
+  // (STARTUP_LOCATION in src/camera.js). Coordinates are good to roughly a
+  // block; nudge them if a framing looks off.
+  windsor: {
+    name: 'Windsor',
+    groundElevation: 175, // meters above WGS84 ellipsoid; the river sits ~174
+    viewBounds: {
+      southwest: { lat: 42.25, lng: -83.15 },
+      northeast: { lat: 42.37, lng: -82.92 },
+    },
+    pois: [
+      {
+        name: 'Detroit Riverfront',
+        lat: 42.3183,
+        lon: -83.0405,
+        alt: 550,
+        // Looking north across the river at the Detroit skyline.
+        pitch: -22,
+        heading: 0,
+        buildingHeight: 10,
+      },
+      {
+        name: 'Ambassador Bridge',
+        lat: 42.312,
+        lon: -83.073,
+        alt: 600,
+        pitch: -25,
+        heading: 320,
+        buildingHeight: 110,
+      },
+      {
+        name: 'Caesars Windsor',
+        lat: 42.3185,
+        lon: -83.0315,
+        alt: 550,
+        pitch: -25,
+        heading: 300,
+        buildingHeight: 70,
+      },
+      {
+        name: 'Windsor City Hall',
+        lat: 42.3157,
+        lon: -83.0371,
+        alt: 500,
+        pitch: -28,
+        heading: 20,
+        buildingHeight: 25,
+      },
+    ],
+  },
   austin: {
     name: 'Austin',
     groundElevation: 150, // meters above WGS84 ellipsoid
