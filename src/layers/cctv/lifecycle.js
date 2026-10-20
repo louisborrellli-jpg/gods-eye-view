@@ -8,6 +8,7 @@ import {
   IDLE_CAMERA_COLOR,
   CALIBRATION_RANGE_FLOOR_M,
 } from './policy.js';
+import { defaultCameraId, viewpointFromCartographic } from './defaultCamera.js';
 
 export function createLifecycle({
   state: layerState,
@@ -210,7 +211,12 @@ export function createLifecycle({
       if (layerState._records.length > 0) {
         // Projection runtime + first frame fetch are deferred to enable() so
         // initializing the catalog stays render-cheap.
-        layerState._activeCameraId = layerState._records[0].camera.id;
+        // Nearest the viewer, not first in the catalog: the catalog is ordered
+        // by source pack, so first means whoever ships the leading pack.
+        layerState._activeCameraId = defaultCameraId(
+          layerState._records,
+          viewpointFromCartographic(viewer?.camera?.positionCartographic),
+        );
       }
 
       // Task 5: if the prior batch lost init's bounded race, apply it post-hoc
@@ -362,7 +368,12 @@ export function createLifecycle({
         return Boolean(coverage && layerState._recordById.has(coverage[1]));
       });
       if (!layerState._activeCameraId && layerState._records.length) {
-        layerState._activeCameraId = layerState._records[0].camera.id;
+        layerState._activeCameraId = defaultCameraId(
+          layerState._records,
+          viewpointFromCartographic(
+            layerState._viewer?.camera?.positionCartographic,
+          ),
+        );
         layerState._autoHopSuspended = false;
       }
       const activeRecord = parts.selection.getActiveRecord();
