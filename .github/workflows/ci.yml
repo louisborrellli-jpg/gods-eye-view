@@ -85,6 +85,10 @@ jobs:
       - name: Build production bundle with a dummy Mapillary token
         env:
           MAPILLARY_CLIENT_TOKEN: 'MLY|0|qa-fixture'
+          # Windsor mode opens on Windsor with cameras, flights and radar on;
+          # this gate parks its own camera over its fixtures and needs the
+          # plain start.
+          VITE_WINDSOR_MODE: '0'
         run: npm run build
 
       - name: Start the preview server
