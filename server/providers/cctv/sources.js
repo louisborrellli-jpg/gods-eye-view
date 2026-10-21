@@ -506,12 +506,15 @@ function normalizeOntarioCctvUrl(value) {
 }
 
 /**
- * Select the best Ontario 511 still view for a camera.
+ * List a camera's enabled Ontario 511 still views, best first: views that
+ * look somewhere come before the straight-down "Looking Down" shot, otherwise
+ * upstream order is kept. Each view is a distinct fixed shot (most cameras
+ * carry one per travel direction plus a down view), so each becomes a source.
  *
  * @param {Array<object>} views
- * @returns {{url:string,description:string}|null}
+ * @returns {Array<{id:string,url:string,description:string}>}
  */
-function pickOntarioCctvView(views) {
+function listOntarioCctvViews(views) {
   const enabled = (Array.isArray(views) ? views : [])
     .filter(
       (view) =>
@@ -520,14 +523,16 @@ function pickOntarioCctvView(views) {
           .toLowerCase() === 'enabled',
     )
     .map((view) => ({
+      id: String(view?.Id ?? view?.id ?? '').trim(),
       url: normalizeOntarioCctvUrl(view?.Url || view?.url),
       description: String(view?.Description || view?.description || '').trim(),
     }))
     .filter((view) => view.url);
-  if (!enabled.length) return null;
-  return (
-    enabled.find((view) => !/\bdown\b/i.test(view.description)) || enabled[0]
-  );
+  const isDown = (view) => /\bdown\b/i.test(view.description);
+  return [
+    ...enabled.filter((view) => !isDown(view)),
+    ...enabled.filter(isDown),
+  ];
 }
 
 let ontarioKeyMissingLogged = false;
@@ -543,8 +548,8 @@ export function _resetOntarioKeyWarningForTest() {
  * developer key"; unkeyed calls answer 400 "Invalid Key"), read from
  * ONTARIO_511_API_KEY. Without one the pack is skipped with a single log line.
  * Frame URLs are stable still-image endpoints under 511on.ca/map/Cctv/. Only
- * rows with finite Ontario coords and at least one enabled official still
- * view are kept.
+ * rows with finite Ontario coords are kept, and each enabled official still
+ * view becomes its own source.
  *
  * @param {object} [_options] The catalog's loader options (unused).
  * @param {object} [env] Environment to read the key and the source cap from.
@@ -593,48 +598,56 @@ export async function loadOntarioSourcesFromOpenData(
       const lon = toFiniteNumber(row?.Longitude ?? row?.longitude);
       if (!isLikelyOntarioCoordinate(lat, lon)) continue;
 
-      const view = pickOntarioCctvView(row?.Views || row?.views);
-      if (!view) continue;
+      const views = listOntarioCctvViews(row?.Views || row?.views);
+      if (!views.length) continue;
 
-      const cameraId = `on-${rawId}`;
       const location = String(row?.Location || row?.location || '').trim();
       const roadway = String(row?.Roadway || row?.roadway || '').trim();
-      const viewLabel =
-        view.description && !/\bdown\b/i.test(view.description)
-          ? view.description
-          : '';
-      const label = [
-        location || roadway || `Ontario 511 Camera ${rawId}`,
-        viewLabel,
-      ]
-        .filter(Boolean)
-        .join(' - ');
-      let heading = directionToHeading(row?.Direction ?? row?.direction, true);
-      if (!Number.isFinite(heading)) {
-        heading = directionToHeading(view.description, true);
-      }
-      const hasHeading = Number.isFinite(heading);
+      const rowHeading = directionToHeading(
+        row?.Direction ?? row?.direction,
+        true,
+      );
+      views.forEach((view, index) => {
+        // The best view keeps the camera's historical id so saved links and
+        // selections still resolve; extra views are keyed by their view id
+        // (or position when upstream omits one).
+        const cameraId =
+          index === 0 ? `on-${rawId}` : `on-${rawId}-${view.id || `v${index}`}`;
+        const label = [
+          location || roadway || `Ontario 511 Camera ${rawId}`,
+          views.length > 1 || !/\bdown\b/i.test(view.description)
+            ? view.description
+            : '',
+        ]
+          .filter(Boolean)
+          .join(' - ');
+        // A view's own "Looking East" beats the row direction, which is
+        // shared by every view and usually "Unknown".
+        let heading = directionToHeading(view.description, true);
+        if (!Number.isFinite(heading)) heading = rowHeading;
+        const hasHeading = Number.isFinite(heading);
 
-      cameras.push({
-        id: cameraId,
-        name: label,
-        city: location || roadway || 'Ontario',
-        cityId: 'ontario',
-        provider: 'Ontario 511',
-        lat,
-        lon,
-        headingDeg: hasHeading ? heading : fallbackHeadingFromId(cameraId),
-        headingConfidence: hasHeading ? 'high' : 'low',
-        pitchDeg: hasHeading ? -24 : -18,
-        fovDeg: hasHeading ? 56 : 44,
-        rangeM: hasHeading ? 210 : 145,
-        mountHeightM: hasHeading ? 10 : 8,
-        groundElevationM: 200,
-        feedType: 'image',
-        url: view.url,
-        snapshotUrl: view.url,
-        sourceKind: 'ontario-511-open-data',
-        license: 'Open Government Licence - Ontario',
+        cameras.push({
+          id: cameraId,
+          name: label,
+          city: location || roadway || 'Ontario',
+          cityId: 'ontario',
+          provider: 'Ontario 511',
+          lat,
+          lon,
+          headingDeg: hasHeading ? heading : fallbackHeadingFromId(cameraId),
+          headingConfidence: hasHeading ? 'high' : 'low',
+          pitchDeg: hasHeading ? -24 : -18,
+          fovDeg: hasHeading ? 56 : 44,
+          rangeM: hasHeading ? 210 : 145,
+          mountHeightM: hasHeading ? 10 : 8,
+          groundElevationM: 200,
+          feedType: 'image',
+          url: view.url,
+          snapshotUrl: view.url,
+          sourceKind: 'ontario-511-open-data',
+          license: 'Open Government Licence - Ontario',
+        });
       });
     }
 
