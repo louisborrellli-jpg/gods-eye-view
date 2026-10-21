@@ -14,7 +14,7 @@ test('every dataset names a known category, geom and colour', () => {
     assert.ok(['point', 'line'].includes(spec.geom), `${id} geom`);
     assert.match(spec.color, /^#[0-9a-f]{6}$/i, `${id} colour`);
   }
-  assert.deepEqual(datasetsInCategory('incidents'), ['crime']);
+  assert.deepEqual(datasetsInCategory('incidents'), ['crime', '311-requests']);
   assert.deepEqual(datasetsInCategory('road'), ['construction']);
 });
 

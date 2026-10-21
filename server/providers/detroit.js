@@ -30,6 +30,15 @@ const ARCGIS = Object.freeze({
     outFields: 'offense_category,offense_description,incident_occurred_at',
     cap: 400,
   },
+  // Improve Detroit (SeeClickFix) 311 requests. These rows carry no ArcGIS
+  // geometry — the point is in longitude/latitude attribute fields — so this
+  // dataset is queried by an attribute bbox and the proxy builds the GeoJSON.
+  '311-requests': {
+    service: 'improve_detroit',
+    outFields: 'request_type,status,address,created_at,longitude,latitude',
+    cap: 1000,
+    attrCoords: { lon: 'longitude', lat: 'latitude' },
+  },
 });
 
 const CACHE_MS = 120_000;
@@ -87,6 +96,49 @@ function arcgisUrl(datasetId, bbox) {
   return `${ARCGIS_BASE}/${cfg.service}/FeatureServer/0/query?${params}`;
 }
 
+/** Attribute-bbox query for a dataset whose points live in lon/lat fields
+ * rather than ArcGIS geometry. bbox values are validated finite numbers
+ * (parseBbox), so interpolating them into the where clause is injection-safe. */
+function arcgisAttrUrl(datasetId, bbox) {
+  const cfg = ARCGIS[datasetId];
+  const { lon, lat } = cfg.attrCoords;
+  const where = [
+    recencyWhere(datasetId),
+    `${lon} >= ${bbox.west}`,
+    `${lon} <= ${bbox.east}`,
+    `${lat} >= ${bbox.south}`,
+    `${lat} <= ${bbox.north}`,
+  ]
+    .filter((clause) => clause && clause !== '1=1')
+    .join(' AND ');
+  const params = new URLSearchParams({
+    where: where || '1=1',
+    outFields: cfg.outFields,
+    returnGeometry: 'false',
+    resultRecordCount: String(cfg.cap),
+    f: 'json',
+  });
+  return `${ARCGIS_BASE}/${cfg.service}/FeatureServer/0/query?${params}`;
+}
+
+/** Build GeoJSON point features from an ArcGIS attribute-coords response. */
+function featuresFromAttrRows(payload, attrCoords) {
+  const { lon, lat } = attrCoords;
+  const features = [];
+  for (const row of Array.isArray(payload?.features) ? payload.features : []) {
+    const props = row?.attributes || {};
+    const x = Number(props[lon]);
+    const y = Number(props[lat]);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+    features.push({
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [x, y] },
+      properties: props,
+    });
+  }
+  return features;
+}
+
 async function fetchJson(fetchImpl, url) {
   const response = await fetchImpl(url, {
     signal: AbortSignal.timeout(TIMEOUT_MS),
@@ -113,6 +165,16 @@ export function detroitProxy({
   const allow = makeRateLimiter({ windowMs: 60_000, max: 60, globalMax: 600 });
 
   async function loadArcgis(datasetId, bbox) {
+    const cfg = ARCGIS[datasetId];
+    if (cfg?.attrCoords) {
+      const payload = await fetchJson(
+        fetchImpl,
+        arcgisAttrUrl(datasetId, bbox),
+      );
+      if (payload?.error)
+        throw new Error(payload.error.message || 'arcgis_error');
+      return { features: featuresFromAttrRows(payload, cfg.attrCoords) };
+    }
     const payload = await fetchJson(fetchImpl, arcgisUrl(datasetId, bbox));
     if (payload?.error)
       throw new Error(payload.error.message || 'arcgis_error');
