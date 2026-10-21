@@ -30,6 +30,7 @@ import { createApplicationFirePerimeters } from './layers/perimeters.js';
 import { createApplicationGnssIntegrity } from './layers/gnss.js';
 import { createApplicationCables } from './layers/submarineCables.js';
 import { createApplicationStreetLevel } from './layers/streetLevel.js';
+import { createApplicationWatchZones } from './layers/watchZones.js';
 import { createInfrastructureLayers } from '../data/infrastructure.js';
 import { localGeoJsonServices } from './localGeojsonServices.js';
 import { createBhoteKoshiEventLayer } from '../data/bhoteKoshiEvent.js';
@@ -41,6 +42,8 @@ import { createBhoteKoshiLocatorLayer } from '../data/bhoteKoshiLocator.js';
  */
 export const LOCAL_ONLY_LAYER_METADATA = Object.freeze([
   Object.freeze({ id: 'local-adsb', disposition: 'local-only' }),
+  // Zones and their alert memory live in this browser's storage only.
+  Object.freeze({ id: 'watch-zones', disposition: 'local-only' }),
 ]);
 
 /** Serialization metadata for every layer the application catalog constructs. */
@@ -119,6 +122,7 @@ export function createApplicationCatalog({
           displayParams: () => flights.getParams(),
           ...(resolveAsset ? { resolveAsset } : {}),
         }),
+        createApplicationWatchZones(),
         createApplicationEarthquakes({ source: sources.earthquakes }),
         createApplicationAurora({ source: sources.aurora }),
         createApplicationAirQuality({ source: sources['air-quality'] }),

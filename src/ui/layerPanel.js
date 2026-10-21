@@ -69,6 +69,7 @@ const PANEL_GROUPS = [
   {
     label: msg('Events'),
     ids: [
+      'watch-zones',
       'rocket-launches',
       'earthquakes',
       'local-firms',

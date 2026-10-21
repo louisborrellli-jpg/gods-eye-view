@@ -110,6 +110,7 @@
     "panel",
     "view band|GLOBAL",
     "voice|ERROR",
+    "{radius} km",
     "{rate} msg/s",
     "{speed} kn",
     "{type}  SPD: {speed}  HDG: {heading}",
