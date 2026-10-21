@@ -118,6 +118,9 @@ export function summarizeResult(result) {
   const pick = (...values) =>
     values.find((v) => typeof v === 'string' && v.trim())?.trim();
   if (!result || typeof result !== 'object') return { ok: true, text: 'Done' };
+  // Overtaken by a newer request (a second tap): not a failure, and the newer
+  // request reports for itself.
+  if (result.cancelled) return { ok: true, quiet: true, text: 'Changed again' };
   const failed = result.ok === false || Boolean(result.error);
   const text =
     pick(
@@ -282,7 +285,9 @@ export async function startPhoneRemote({
   }
 
   function toggleLayer(id) {
-    const on = !dataManager.isEnabled(id);
+    const on = !(
+      dataManager.isEffectivelyEnabled?.(id) ?? dataManager.isEnabled(id)
+    );
     dataManager.setEnabled(id, on, { origin: 'user' });
     return on;
   }
@@ -446,7 +451,11 @@ export async function startPhoneRemote({
     const layers = {};
     for (const id of REPORT_LAYERS) {
       try {
-        layers[id] = Boolean(dataManager.isEnabled(id));
+        // A layer still starting up counts as on (its target), so the phone
+        // button doesn't flip back to off while it loads.
+        layers[id] = Boolean(
+          dataManager.isEffectivelyEnabled?.(id) ?? dataManager.isEnabled(id),
+        );
       } catch {
         layers[id] = false;
       }
