@@ -294,17 +294,16 @@ export function shipmentStage(shipment) {
 }
 
 /**
- * Published free time used when the operator has set nothing, so every last
- * free day is worked out without asking. These are the standard rules for
- * the Montreal → Toronto (CN Brampton) carrier-haulage route, and contracts
- * often differ, so clocks built on them are shown as estimates:
- * - port: MSC Montreal import demurrage, 6 working days after unloading;
- * - ramp: CN intermodal storage, 1 free day after the box reaches the ramp;
+ * Published free time used when the operator has set nothing, so no number
+ * has to be typed. Contracts often differ; numbers on the board win.
+ * - ramp: CN intermodal storage, 1 free day once the box is off the rail;
  * - return: MSC Montreal import detention, 4 working days after pickup;
- * - rail: about 4 days from Montreal to Toronto.
+ * - rail: about 4 days from Montreal to Toronto;
+ * - port: not counted unless set. On carrier haulage the box goes from the
+ *   ship straight onto the train, so port storage is the line's matter.
  */
 export const STANDARD_FREE_TIME = Object.freeze({
-  portFreeDays: 6,
+  portFreeDays: null,
   rampFreeDays: 1,
   returnFreeDays: 4,
   railDays: 4,
@@ -343,7 +342,8 @@ export function freeTimeFor(shipment, defaults, kind) {
   if (own !== null && own !== undefined) return { days: own, standard: false };
   const set = defaults?.[DEFAULT_KEYS[kind]];
   if (set !== null && set !== undefined) return { days: set, standard: false };
-  return { days: STANDARD_FREE_TIME[DEFAULT_KEYS[kind]], standard: true };
+  const standard = STANDARD_FREE_TIME[DEFAULT_KEYS[kind]];
+  return { days: standard ?? null, standard: true };
 }
 
 function isWorkingDay(day) {
@@ -380,12 +380,35 @@ export function rampEtaFor(shipment, defaults = null) {
   if (d.rampArrived) return { day: d.rampArrived, estimated: false };
   if (d.rampEta) return { day: d.rampEta, estimated: false };
   const rail = freeTimeFor(shipment, defaults, 'rail').days;
-  const base = d.railDeparted || d.discharged || d.portEta;
+  const base = d.railDeparted || d.discharged || latestPortEta(shipment);
   const sameplace =
     shipment.port.trim().toLowerCase() === shipment.ramp.trim().toLowerCase();
   if (rail === null || rail === undefined || !base || sameplace)
     return { day: '', estimated: false };
   return { day: addDays(base, rail), estimated: true };
+}
+
+/**
+ * The freshest port ETA: the ship's own AIS ETA when it was heard after the
+ * last tracking answer (ships often update it first), else the tracked or
+ * typed ETA. A typed ETA always wins.
+ */
+export function latestPortEta(shipment) {
+  const d = shipment.dates;
+  if (shipment.manual?.portEta) return shipment.manual.portEta;
+  const seen = shipment.lastSeen;
+  const eta = seen?.eta ? Date.parse(seen.eta) : NaN;
+  if (
+    !d.discharged &&
+    Number.isFinite(eta) &&
+    seen.at > (shipment.auto?.fetchedAt ?? 0)
+  )
+    return localDay(eta);
+  return d.portEta;
+}
+
+function stageOf(dates) {
+  return shipmentStage({ dates });
 }
 
 function clockState(daysLeft) {
@@ -424,13 +447,15 @@ export function shipmentClocks(shipment, today, defaults = null) {
       daysLeft,
       state: closed ? 'closed' : clockState(daysLeft),
       closed,
+      pending: false,
     });
   };
   // Port free time matters only while the box waits at the port.
   let portDay = d.portLfd;
   let portEstimated = false;
-  if (!portDay && d.discharged) {
-    const free = freeTimeFor(shipment, defaults, 'port');
+  const portFree = freeTimeFor(shipment, defaults, 'port');
+  if (!portDay && d.discharged && portFree.days !== null) {
+    const free = portFree;
     portDay = lastFreeDay(d.discharged, free.days, {
       workingDays: WORKING_DAY_CLOCKS.has('port'),
     });
@@ -443,18 +468,29 @@ export function shipmentClocks(shipment, today, defaults = null) {
     Boolean(d.railDeparted || d.pickedUp || d.emptyReturned),
   );
 
-  let rampDay = d.rampLfd;
-  let rampEstimated = false;
-  if (!rampDay) {
-    const free = freeTimeFor(shipment, defaults, 'ramp');
+  // The ramp's last free day is a count of days once the box is off the
+  // rail, not a date anyone publishes. Until it is off the rail the clock is
+  // pending: the rule, plus a projection from the rail ETA for planning.
+  const rampFree = freeTimeFor(shipment, defaults, 'ramp');
+  const rampDone = Boolean(d.pickedUp || d.emptyReturned);
+  if (d.rampLfd) push('ramp', d.rampLfd, false, rampDone);
+  else if (d.rampArrived) {
+    // Free time starts the day after the box comes off the rail.
+    push('ramp', lastFreeDay(d.rampArrived, rampFree.days), false, rampDone);
+  } else if (!rampDone && stageOf(d) !== 'done') {
     const eta = rampEtaFor(shipment, defaults);
-    if (eta.day) {
-      // Free time starts the day after the box reaches the ramp.
-      rampDay = lastFreeDay(eta.day, free.days);
-      rampEstimated = !d.rampArrived || free.standard;
-    }
+    const projected = eta.day ? lastFreeDay(eta.day, rampFree.days) : '';
+    clocks.push({
+      id: 'ramp',
+      day: projected,
+      estimated: true,
+      daysLeft: projected ? daysBetween(today, projected) : null,
+      state: 'pending',
+      closed: false,
+      pending: true,
+      freeDays: rampFree.days,
+    });
   }
-  push('ramp', rampDay, rampEstimated, Boolean(d.pickedUp || d.emptyReturned));
 
   let returnDay = d.emptyReturnBy;
   let returnEstimated = false;
@@ -497,8 +533,9 @@ export function shipmentAlerts(shipment, today, defaults = null) {
   if (stage === 'done') return [];
   const d = shipment.dates;
   const alerts = [];
+  // A pending clock is only a projection; it raises no alert of its own.
   const clocks = shipmentClocks(shipment, today, defaults).filter(
-    (clock) => !clock.closed,
+    (clock) => !clock.closed && !clock.pending,
   );
   for (const clock of clocks) {
     if (clock.state === 'overdue')
@@ -598,7 +635,7 @@ export function shipmentSummary(shipment, today, defaults = null) {
   const stage = shipmentStage(shipment);
   const d = shipment.dates;
   const open = shipmentClocks(shipment, today, defaults).filter(
-    (clock) => !clock.closed,
+    (clock) => !clock.closed && !clock.pending,
   );
   const rampEta = rampEtaFor(shipment, defaults);
   const clock = open.sort((a, b) => a.daysLeft - b.daysLeft)[0];

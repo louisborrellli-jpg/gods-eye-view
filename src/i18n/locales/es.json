@@ -3203,7 +3203,6 @@
   "Tracked: {day}": "Seguido: {day}",
   "Saved only in this browser and never put in share links. To track them, this app’s server sends container numbers to FindTEU and Terminal49 and ship names or numbers to its live ship feed; nothing else leaves. Export to keep a copy.": "Se guarda solo en este navegador y nunca va en los enlaces compartidos. Para seguirlos, el servidor de esta aplicación envía los números de contenedor a FindTEU y Terminal49, y los nombres o números de buque a su fuente de buques en vivo; nada más sale. Exporta para guardar una copia.",
   "Free time rules (automatic)": "Reglas de tiempo libre (automáticas)",
-  "Last free days are worked out automatically from the standard rules: MSC Montreal port 6 working days, CN Toronto ramp 1 day, MSC empty return 4 working days, rail about 4 days. Change a number only if your contract differs; dates from these rules are marked est.": "Los últimos días libres se calculan automáticamente con las reglas estándar: puerto de Montreal (MSC) 6 días hábiles, terminal de Toronto (CN) 1 día, devolución del vacío (MSC) 4 días hábiles, tren unos 4 días. Cambia un número solo si tu contrato es distinto; las fechas basadas en estas reglas se marcan como aprox.",
   "Free time saved": "Tiempo libre guardado",
   "Port free days (working days)": "Días libres en puerto (días hábiles)",
   "Ramp free days": "Días libres en la terminal",
@@ -3220,7 +3219,6 @@
   "Last free day": "Último día libre",
   "Next step": "Siguiente paso",
   "Updated {age}": "Actualizado {age}",
-  "Saved in this browser only. Last free days marked est. use standard MSC and CN rules.": "Guardado solo en este navegador. Los últimos días libres marcados como aprox. usan las reglas estándar de MSC y CN.",
   "Open the map": "Abrir el mapa",
   "Need action": "Requieren acción",
   "Arriving in 7 days": "Llegan en 7 días",
@@ -3255,5 +3253,17 @@
   "{name} (est.)": "{name} (aprox.)",
   "Estimated from its departure and ETA; live position returns near the coast": "Estimado a partir de su salida y ETA; la posición en vivo vuelve cerca de la costa",
   "Shipments page": "Página de envíos",
-  "Every container on one easy-to-read page": "Todos los contenedores en una página fácil de leer"
+  "Every container on one easy-to-read page": "Todos los contenedores en una página fácil de leer",
+  "{count} free days once it is off the rail": {
+    "one": "{count} día libre desde que sale del tren",
+    "many": "{count} días libres desde que sale del tren",
+    "other": "{count} días libres desde que sale del tren"
+  },
+  "Off rail + {count} days": {
+    "one": "Fuera del tren + {count} día",
+    "many": "Fuera del tren + {count} días",
+    "other": "Fuera del tren + {count} días"
+  },
+  "The ramp’s last free day is counted from the day the box comes off the rail (CN: 1 free day). The empty must be back 4 working days after pickup (MSC). Rail takes about 4 days. Port days count only if you set them. Change a number only if your contract differs.": "El último día libre en la terminal se cuenta desde el día en que el contenedor sale del tren (CN: 1 día libre). El vacío debe devolverse 4 días hábiles después del retiro (MSC). El tren tarda unos 4 días. Los días en puerto solo cuentan si los configuras. Cambia un número solo si tu contrato es distinto.",
+  "Saved in this browser only. Before the box is off the rail, its last free day is estimated from the expected rail arrival.": "Guardado solo en este navegador. Antes de que el contenedor salga del tren, su último día libre se estima a partir de la llegada prevista del tren."
 }

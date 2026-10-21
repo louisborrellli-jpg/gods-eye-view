@@ -16,6 +16,8 @@ import {
   STAGE_LABELS,
   daysBetween,
   describeShipmentAlert,
+  describePendingRule,
+  describePendingShort,
   rampEtaFor,
   STANDARD_FREE_TIME,
   displayDay,
@@ -39,7 +41,7 @@ function element(doc, tag, className, text) {
 function urgency(shipment, today) {
   const alerts = shipmentAlerts(shipment, today);
   const clocks = shipmentClocks(shipment, today).filter(
-    (clock) => !clock.closed,
+    (clock) => !clock.closed && !clock.pending,
   );
   return {
     severity: alerts[0]?.severity ?? 0,
@@ -204,7 +206,7 @@ export function createShipmentsBoard({
         'p',
         'shipments-hint',
         t(
-          'Last free days are worked out automatically from the standard rules: MSC Montreal port 6 working days, CN Toronto ramp 1 day, MSC empty return 4 working days, rail about 4 days. Change a number only if your contract differs; dates from these rules are marked est.',
+          'The ramp’s last free day is counted from the day the box comes off the rail (CN: 1 free day). The empty must be back 4 working days after pickup (MSC). Rail takes about 4 days. Port days count only if you set them. Change a number only if your contract differs.',
         ),
       ),
     );
@@ -214,7 +216,7 @@ export function createShipmentsBoard({
         min: '0',
         max: '60',
         inputmode: 'numeric',
-        placeholder: String(STANDARD_FREE_TIME[name]),
+        placeholder: String(STANDARD_FREE_TIME[name] ?? '—'),
       });
       control.addEventListener('change', () => {
         board.setDefaults({ [name]: control.value });
@@ -326,17 +328,24 @@ export function createShipmentsBoard({
             doc,
             'span',
             'shipment-clock-day',
-            clock.closed
-              ? t('{day} · done', { day: displayDay(clock.day) })
-              : clock.estimated
+            clock.pending
+              ? clock.day
                 ? t('{day} (est.) · {when}', {
                     day: displayDay(clock.day),
-                    when: relativeDays(clock.daysLeft),
+                    when: describePendingShort(clock),
                   })
-                : t('{day} · {when}', {
-                    day: displayDay(clock.day),
-                    when: relativeDays(clock.daysLeft),
-                  }),
+                : describePendingRule(clock)
+              : clock.closed
+                ? t('{day} · done', { day: displayDay(clock.day) })
+                : clock.estimated
+                  ? t('{day} (est.) · {when}', {
+                      day: displayDay(clock.day),
+                      when: relativeDays(clock.daysLeft),
+                    })
+                  : t('{day} · {when}', {
+                      day: displayDay(clock.day),
+                      when: relativeDays(clock.daysLeft),
+                    }),
           ),
         );
         row.append(chip);
