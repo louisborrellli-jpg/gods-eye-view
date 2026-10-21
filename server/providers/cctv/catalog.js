@@ -6,6 +6,7 @@ import { loadGroundHeights, joinGroundHeights } from './groundHeights.js';
 import { cameraRegion, normalizeSourceItem } from './normalize.js';
 import { loadLithuaniaSources } from './lithuania.js';
 import { loadTaiwanSources } from './taiwan.js';
+import { loadCoastGuardSources } from './coastguard.js';
 import {
   loadAustinSourcesFromOpenData,
   loadCaltransSourcesFromOpenData,
@@ -164,6 +165,14 @@ const LIVE_PACKS = [
     name: 'taiwan',
     enabled: () => envEnabled('CCTV_TAIWAN_ENABLED'),
     load: loadTaiwanSources,
+  },
+  {
+    // Opt-in: the Canadian Coast Guard publishes these river cameras "as a
+    // courtesy" for navigation, with no stated re-use licence (see
+    // DATA_SOURCES.md).
+    name: 'coastguard',
+    enabled: () => envOptIn('CCTV_COASTGUARD_ENABLED'),
+    load: () => loadCoastGuardSources(),
   },
 ];
 /**
