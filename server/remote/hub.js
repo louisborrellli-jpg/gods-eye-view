@@ -9,15 +9,65 @@
  */
 
 import { randomBytes, randomInt, timingSafeEqual } from 'node:crypto';
+import { validateValue } from '../../src/tools/schema.js';
+import { GEV_ACTION_SCHEMAS } from '../../src/voice/actionSchemas.js';
+import { VOICE_TOGGLE_LAYER_IDS } from '../../src/voice/layerManifest.js';
 
-export const REMOTE_LAYERS = Object.freeze([
-  'cctv',
-  'flights',
-  'weather-radar',
-  'ais-live-vessels',
-  'traffic',
-  'weather-lightning',
-]);
+/** Every layer the app can switch on and off. */
+export const REMOTE_LAYERS = VOICE_TOGGLE_LAYER_IDS;
+
+/**
+ * App actions the phone may run, through the same runner (and the same
+ * argument schemas) the voice agent uses. Left out on purpose: anything that
+ * edits saved data (camera calibration, annotations, scenes) or calls a paid
+ * model (analyst_query).
+ */
+const REMOTE_ACTIONS = Object.freeze({
+  fly_to_location: null,
+  set_layer_visibility: null,
+  set_map_stack: null,
+  set_hud: null,
+  set_detection: null,
+  set_context_mode: null,
+  select_nearest_aircraft: null,
+  frame_overhead: null,
+  track_entity: null,
+  stop_tracking: null,
+  zoom_to_globe: null,
+  next_iss_pass: null,
+  control_radio: null,
+  control_cctv: {
+    action: [
+      'enable',
+      'disable',
+      'select',
+      'next',
+      'prev',
+      'nearest',
+      'focus',
+      'autohop',
+    ],
+  },
+});
+const ACTION_SCHEMAS = new Map(
+  GEV_ACTION_SCHEMAS.filter((s) => Object.hasOwn(REMOTE_ACTIONS, s.name)).map(
+    (s) => [s.name, s.parameters],
+  ),
+);
+
+/** Validate an app action from the phone: {name, args} or null. */
+export function parseRemoteAction(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  const name = typeof value.name === 'string' ? value.name : '';
+  const schema = ACTION_SCHEMAS.get(name);
+  if (!schema) return null;
+  const args = value.args ?? {};
+  if (validateValue(schema, args).length) return null;
+  const narrower = REMOTE_ACTIONS[name];
+  for (const [key, allowed] of Object.entries(narrower ?? {}))
+    if (Object.hasOwn(args, key) && !allowed.includes(args[key])) return null;
+  return { name, args };
+}
 
 export const REMOTE_CROSSINGS = Object.freeze([
   'ambassador-bridge',
@@ -48,6 +98,22 @@ const COMMANDS = Object.freeze({
   orbit: null,
   style: REMOTE_STYLES,
   clean: null,
+  // Continuous motion: `hold` on press and as a keep-alive, `release` on lift.
+  hold: [
+    'zoom-in',
+    'zoom-out',
+    'forward',
+    'back',
+    'left',
+    'right',
+    'turn-left',
+    'turn-right',
+    'tilt-up',
+    'tilt-down',
+  ],
+  release: null,
+  smooth: null,
+  advanced: null,
 });
 
 const MAX_FAILS_PER_CLIENT = 5;
@@ -59,8 +125,12 @@ const MAX_TOKENS = 16;
 export function parseRemoteCommand(body) {
   if (!body || typeof body !== 'object') return null;
   const cmd = typeof body.cmd === 'string' ? body.cmd : '';
-  if (!Object.hasOwn(COMMANDS, cmd)) return null;
+  if (!Object.hasOwn(COMMANDS, cmd) && cmd !== 'action') return null;
   const allowed = COMMANDS[cmd];
+  if (cmd === 'action') {
+    const action = parseRemoteAction(body.arg);
+    return action ? { cmd, arg: action } : null;
+  }
   if (allowed === null) return { cmd, arg: null };
   const arg = typeof body.arg === 'string' ? body.arg : '';
   return allowed.includes(arg) ? { cmd, arg } : null;

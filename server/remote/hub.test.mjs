@@ -21,12 +21,85 @@ test('only whitelisted commands and arguments get through', () => {
     cmd: 'zoom',
     arg: 'in',
   });
+  assert.deepEqual(parseRemoteCommand({ cmd: 'hold', arg: 'zoom-in' }), {
+    cmd: 'hold',
+    arg: 'zoom-in',
+  });
+  assert.deepEqual(parseRemoteCommand({ cmd: 'release' }), {
+    cmd: 'release',
+    arg: null,
+  });
+  assert.equal(parseRemoteCommand({ cmd: 'hold', arg: 'spin' }), null);
   assert.equal(parseRemoteCommand({ cmd: 'layer', arg: 'everything' }), null);
   assert.equal(parseRemoteCommand({ cmd: 'eval', arg: 'x' }), null);
   assert.equal(parseRemoteCommand({ cmd: '__proto__' }), null);
   assert.equal(parseRemoteCommand({ cmd: 'zoom' }), null);
   assert.equal(parseRemoteCommand(null), null);
   assert.equal(parseRemoteCommand('home'), null);
+});
+
+test('app actions are checked against the voice schemas and an allowlist', () => {
+  assert.deepEqual(
+    parseRemoteCommand({
+      cmd: 'action',
+      arg: { name: 'fly_to_location', args: { query: 'Belle Isle' } },
+    }),
+    {
+      cmd: 'action',
+      arg: { name: 'fly_to_location', args: { query: 'Belle Isle' } },
+    },
+  );
+  assert.ok(
+    parseRemoteCommand({
+      cmd: 'action',
+      arg: {
+        name: 'set_layer_visibility',
+        args: { layerId: 'satellites', enabled: true },
+      },
+    }),
+  );
+  // Wrong argument types, unknown args, and actions left out on purpose.
+  assert.equal(
+    parseRemoteCommand({
+      cmd: 'action',
+      arg: {
+        name: 'set_layer_visibility',
+        args: { layerId: 'nope', enabled: true },
+      },
+    }),
+    null,
+  );
+  assert.equal(
+    parseRemoteCommand({
+      cmd: 'action',
+      arg: { name: 'fly_to_location', args: { query: 'x', evil: 1 } },
+    }),
+    null,
+  );
+  assert.equal(
+    parseRemoteCommand({
+      cmd: 'action',
+      arg: { name: 'analyst_query', args: {} },
+    }),
+    null,
+  );
+  assert.equal(
+    parseRemoteCommand({
+      cmd: 'action',
+      arg: { name: 'control_cctv', args: { action: 'adjust' } },
+    }),
+    null,
+  );
+  assert.ok(
+    parseRemoteCommand({
+      cmd: 'action',
+      arg: { name: 'control_cctv', args: { action: 'autohop', enabled: true } },
+    }),
+  );
+  assert.equal(
+    parseRemoteCommand({ cmd: 'action', arg: 'fly_to_location' }),
+    null,
+  );
 });
 
 test('PINs are four digits', () => {

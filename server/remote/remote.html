@@ -29,6 +29,7 @@
         --bad: #ff6b6b;
         --good: #6bffb0;
         --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+        --tabbar: 64px;
       }
       * {
         box-sizing: border-box;
@@ -42,21 +43,24 @@
       }
       body {
         font: 14px/1.4 var(--mono);
-        padding: calc(env(safe-area-inset-top) + 14px) 16px
-          calc(env(safe-area-inset-bottom) + 24px);
+        padding: calc(env(safe-area-inset-top) + 12px) 16px
+          calc(env(safe-area-inset-bottom) + var(--tabbar) + 20px);
         max-width: 520px;
         margin: 0 auto;
         user-select: none;
         -webkit-user-select: none;
         touch-action: manipulation;
       }
-      button {
+      button,
+      input {
         font: inherit;
         color: inherit;
+      }
+      button {
         background: var(--panel);
         border: 1px solid var(--line);
         border-radius: 14px;
-        padding: 14px 8px;
+        padding: 13px 8px;
         cursor: pointer;
         transition:
           transform 0.06s,
@@ -67,17 +71,21 @@
       button.pressed {
         transform: scale(0.96);
         border-color: var(--line-hi);
+        background: #12293a;
       }
       button[aria-pressed='true'] {
         background: var(--on);
         border-color: var(--line-hi);
         color: #fff;
       }
+      [data-hold] {
+        touch-action: none;
+      }
       header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
       }
       header h1 {
         margin: 0;
@@ -106,8 +114,8 @@
       .now {
         border: 1px solid var(--line);
         border-radius: 14px;
-        padding: 10px 12px;
-        margin-bottom: 14px;
+        padding: 9px 12px;
+        margin-bottom: 12px;
         font-size: 12px;
         color: var(--dim);
         min-height: 40px;
@@ -116,50 +124,89 @@
         color: var(--text);
         font-weight: 600;
       }
+      .now .err {
+        color: var(--slow);
+      }
       h2 {
         font-size: 10px;
         letter-spacing: 2.5px;
         color: var(--accent);
         font-weight: 600;
         margin: 18px 0 8px;
+        display: flex;
+        justify-content: space-between;
+      }
+      h2 span:last-child {
+        color: var(--dim);
+        letter-spacing: 1px;
+      }
+      h2 span:first-child {
+        color: var(--accent);
+        letter-spacing: 2.5px;
+      }
+
+      /* Search */
+      .search {
+        display: flex;
+        gap: 8px;
+      }
+      .search input {
+        flex: 1;
+        min-width: 0;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 13px 12px;
+        font-size: 16px; /* no iOS zoom */
+        outline: none;
+        user-select: text;
+        -webkit-user-select: text;
+      }
+      .search input:focus {
+        border-color: var(--line-hi);
+      }
+      .search button {
+        padding: 0 18px;
+        background: var(--on);
+        border-color: var(--line-hi);
       }
 
       /* D-pad */
       .pad {
         position: relative;
-        width: 236px;
-        height: 236px;
-        margin: 4px auto 10px;
+        width: 228px;
+        height: 228px;
+        margin: 14px auto 10px;
       }
       .pad button {
         position: absolute;
-        width: 76px;
-        height: 76px;
+        width: 74px;
+        height: 74px;
         font-size: 22px;
         border-radius: 20px;
         padding: 0;
       }
       .pad .up {
-        left: 80px;
+        left: 77px;
         top: 0;
       }
       .pad .down {
-        left: 80px;
+        left: 77px;
         bottom: 0;
       }
       .pad .left {
         left: 0;
-        top: 80px;
+        top: 77px;
       }
       .pad .right {
         right: 0;
-        top: 80px;
+        top: 77px;
       }
       .pad .home {
-        left: 80px;
-        top: 80px;
+        left: 77px;
+        top: 77px;
         border-radius: 50%;
-        font-size: 13px;
+        font-size: 12px;
         letter-spacing: 1px;
         background: #102433;
       }
@@ -177,8 +224,8 @@
         margin-top: 8px;
       }
       .big {
-        font-size: 20px;
-        padding: 12px 0;
+        font-size: 22px;
+        padding: 10px 0;
       }
       .lbl {
         display: block;
@@ -186,6 +233,26 @@
         color: var(--dim);
         letter-spacing: 1px;
         margin-top: 2px;
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .chips button {
+        padding: 10px 14px;
+        border-radius: 999px;
+        font-size: 12px;
+      }
+      .layers {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .layers button {
+        text-align: left;
+        padding: 12px;
+        font-size: 13px;
       }
 
       table {
@@ -227,15 +294,48 @@
         color: var(--dim);
         margin-top: 6px;
       }
-      .chips {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
+
+      /* Tabs */
+      .tab {
+        display: none;
       }
-      .chips button {
-        padding: 10px 14px;
-        border-radius: 999px;
-        font-size: 12px;
+      .tab.active {
+        display: block;
+      }
+      nav {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: calc(var(--tabbar) + env(safe-area-inset-bottom));
+        padding-bottom: env(safe-area-inset-bottom);
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        background: rgba(5, 9, 15, 0.96);
+        border-top: 1px solid var(--line);
+        backdrop-filter: blur(8px);
+      }
+      nav button {
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        color: var(--dim);
+        font-size: 11px;
+        letter-spacing: 1px;
+        padding: 8px 0 0;
+      }
+      nav button b {
+        display: block;
+        font-size: 20px;
+        font-weight: 400;
+        margin-bottom: 2px;
+      }
+      nav button[aria-selected='true'] {
+        color: var(--accent);
+      }
+      nav button:active {
+        transform: none;
+        background: transparent;
       }
 
       /* Pairing */
@@ -247,7 +347,8 @@
       body.unpaired #pair {
         display: block;
       }
-      body.unpaired #main {
+      body.unpaired #main,
+      body.unpaired nav {
         display: none;
       }
       #pair p {
@@ -317,123 +418,189 @@
       </header>
       <div class="now" id="now">Connecting…</div>
 
-      <div class="pad">
-        <button
-          class="up"
-          data-cmd="move"
-          data-arg="forward"
-          data-repeat
-          aria-label="Forward"
-        >
-          ▲
-        </button>
-        <button
-          class="left"
-          data-cmd="move"
-          data-arg="left"
-          data-repeat
-          aria-label="Left"
-        >
-          ◀
-        </button>
-        <button class="home" data-cmd="home" aria-label="Windsor">
-          ⌂<br />HOME
-        </button>
-        <button
-          class="right"
-          data-cmd="move"
-          data-arg="right"
-          data-repeat
-          aria-label="Right"
-        >
-          ▶
-        </button>
-        <button
-          class="down"
-          data-cmd="move"
-          data-arg="back"
-          data-repeat
-          aria-label="Back"
-        >
-          ▼
-        </button>
-      </div>
+      <!-- DRIVE -->
+      <section class="tab active" id="tab-drive">
+        <form class="search" id="search">
+          <input
+            id="search-input"
+            type="search"
+            enterkeyhint="go"
+            autocomplete="off"
+            placeholder="Place or address…"
+          />
+          <button type="submit">Go</button>
+        </form>
+        <div class="chips" style="margin-top: 10px">
+          <button data-cmd="home">⌂ Windsor</button>
+          <button data-place="Renaissance Center, Detroit">
+            Downtown Detroit
+          </button>
+          <button data-place="Belle Isle Park, Detroit">Belle Isle</button>
+          <button data-cmd="crossing" data-arg="ambassador-bridge">
+            Ambassador
+          </button>
+          <button data-cmd="crossing" data-arg="gordie-howe-bridge">
+            Gordie Howe
+          </button>
+          <button data-place="Detroit Metropolitan Wayne County Airport">
+            DTW Airport
+          </button>
+          <button data-place="Point Pelee National Park">Point Pelee</button>
+          <button data-action="zoom_to_globe">🌍 Whole Earth</button>
+        </div>
 
-      <div class="row c3">
-        <button class="big" data-cmd="zoom" data-arg="out" data-repeat>
-          −<span class="lbl">ZOOM</span>
-        </button>
-        <button class="big" data-cmd="turn" data-arg="left" data-repeat>
-          ⟲<span class="lbl">TURN</span>
-        </button>
-        <button class="big" data-cmd="tilt" data-arg="up" data-repeat>
-          ⤒<span class="lbl">TILT UP</span>
-        </button>
-      </div>
-      <div class="row c3">
-        <button class="big" data-cmd="zoom" data-arg="in" data-repeat>
-          +<span class="lbl">ZOOM</span>
-        </button>
-        <button class="big" data-cmd="turn" data-arg="right" data-repeat>
-          ⟳<span class="lbl">TURN</span>
-        </button>
-        <button class="big" data-cmd="tilt" data-arg="down" data-repeat>
-          ⤓<span class="lbl">TILT DOWN</span>
-        </button>
-      </div>
+        <div class="pad">
+          <button class="up" data-hold="forward" aria-label="Forward">▲</button>
+          <button class="left" data-hold="left" aria-label="Left">◀</button>
+          <button class="home" data-cmd="home" aria-label="Windsor">
+            ⌂<br />HOME
+          </button>
+          <button class="right" data-hold="right" aria-label="Right">▶</button>
+          <button class="down" data-hold="back" aria-label="Back">▼</button>
+        </div>
+        <div class="row c3">
+          <button class="big" data-hold="zoom-in">
+            +<span class="lbl">ZOOM IN</span>
+          </button>
+          <button class="big" data-hold="turn-left">
+            ⟲<span class="lbl">TURN</span>
+          </button>
+          <button class="big" data-hold="tilt-up">
+            ⤒<span class="lbl">TILT UP</span>
+          </button>
+        </div>
+        <div class="row c3">
+          <button class="big" data-hold="zoom-out">
+            −<span class="lbl">ZOOM OUT</span>
+          </button>
+          <button class="big" data-hold="turn-right">
+            ⟳<span class="lbl">TURN</span>
+          </button>
+          <button class="big" data-hold="tilt-down">
+            ⤓<span class="lbl">TILT DOWN</span>
+          </button>
+        </div>
+        <div class="note" style="text-align: center">
+          Hold a button to keep moving. Let go to stop.
+        </div>
+        <div class="row c2" style="margin-top: 12px">
+          <button id="orbit-btn" data-cmd="orbit">↻ Slow orbit</button>
+          <button data-action="stop_tracking">■ Stop following</button>
+        </div>
+      </section>
 
-      <h2>CAMERAS</h2>
-      <div class="row c3">
-        <button data-cmd="cam" data-arg="prev">◀ Prev</button>
-        <button data-cmd="cam" data-arg="nearest">◎ Nearest</button>
-        <button data-cmd="cam" data-arg="next">Next ▶</button>
-      </div>
+      <!-- WATCH -->
+      <section class="tab" id="tab-watch">
+        <h2><span>TRAFFIC CAMERAS</span><span></span></h2>
+        <div class="row c3">
+          <button data-cmd="cam" data-arg="prev">◀ Prev</button>
+          <button data-cmd="cam" data-arg="nearest">◎ Nearest</button>
+          <button data-cmd="cam" data-arg="next">Next ▶</button>
+        </div>
+        <div class="row c2">
+          <button id="autohop-btn" data-autohop>⟳ Auto tour</button>
+          <button data-layer="cctv">◉ Cameras layer</button>
+        </div>
 
-      <h2>LAYERS</h2>
-      <div class="row c3" id="layers">
-        <button data-cmd="layer" data-arg="cctv">◉ Cameras</button>
-        <button data-cmd="layer" data-arg="flights">✈ Flights</button>
-        <button data-cmd="layer" data-arg="weather-radar">☂ Radar</button>
-        <button data-cmd="layer" data-arg="ais-live-vessels">⚓ Ships</button>
-        <button data-cmd="layer" data-arg="traffic">≋ Traffic</button>
-        <button data-cmd="layer" data-arg="weather-lightning">
-          ϟ Lightning
-        </button>
-      </div>
+        <h2><span>WHAT'S OVERHEAD</span><span></span></h2>
+        <div class="row c2">
+          <button
+            data-action="select_nearest_aircraft"
+            data-args='{"layerId":"flights"}'
+          >
+            ✈ Follow nearest plane
+          </button>
+          <button data-action="frame_overhead" data-args='{"target":"flights"}'>
+            ✈ Planes above
+          </button>
+        </div>
+        <div class="row c2">
+          <button data-action="frame_overhead" data-args='{"target":"vessels"}'>
+            ⚓ Ships nearby
+          </button>
+          <button
+            data-action="frame_overhead"
+            data-args='{"target":"satellites"}'
+          >
+            🛰 Satellites above
+          </button>
+        </div>
+        <div class="row c2">
+          <button data-action="next_iss_pass">🛰 Next ISS pass</button>
+          <button data-action="stop_tracking">■ Stop following</button>
+        </div>
 
-      <h2 style="display: flex; justify-content: space-between">
-        <span>BORDER WAIT · TAP TO FLY</span
-        ><span id="border-at" style="color: var(--dim)"></span>
-      </h2>
-      <table>
-        <thead>
-          <tr>
-            <th>min</th>
-            <th>→ US</th>
-            <th>→ CA</th>
-          </tr>
-        </thead>
-        <tbody id="border"></tbody>
-      </table>
-      <div class="note">Cars, standard lanes. Orange 15+, red 30+.</div>
+        <h2>
+          <span>BORDER WAIT · TAP TO FLY</span><span id="border-at"></span>
+        </h2>
+        <table>
+          <thead>
+            <tr>
+              <th>min</th>
+              <th>→ US</th>
+              <th>→ CA</th>
+            </tr>
+          </thead>
+          <tbody id="border"></tbody>
+        </table>
+        <div class="note">Cars, standard lanes. Orange 15+, red 30+.</div>
+      </section>
 
-      <h2>LOOK</h2>
-      <div class="chips" id="styles">
-        <button data-cmd="style" data-arg="normal">Normal</button>
-        <button data-cmd="style" data-arg="surveillance">Night vision</button>
-        <button data-cmd="style" data-arg="thermal">Thermal</button>
-        <button data-cmd="style" data-arg="retro">Retro</button>
-        <button data-cmd="style" data-arg="noir">Noir</button>
-        <button data-cmd="style" data-arg="anime">Anime</button>
-        <button data-cmd="style" data-arg="snow">Snow</button>
-      </div>
+      <!-- LAYERS -->
+      <section class="tab" id="tab-layers">
+        <h2><span>LAYERS</span><span id="layer-count"></span></h2>
+        <div class="layers" id="layers"></div>
+      </section>
 
-      <h2>TV</h2>
-      <div class="row c2">
-        <button id="orbit-btn" data-cmd="orbit">↻ Slow orbit</button>
-        <button id="clean-btn" data-cmd="clean">▣ Hide panels</button>
-      </div>
+      <!-- LOOK -->
+      <section class="tab" id="tab-look">
+        <h2><span>VISION</span><span></span></h2>
+        <div class="chips" id="styles">
+          <button data-cmd="style" data-arg="normal">Normal</button>
+          <button data-cmd="style" data-arg="surveillance">Night vision</button>
+          <button data-cmd="style" data-arg="thermal">Thermal</button>
+          <button data-cmd="style" data-arg="retro">Retro</button>
+          <button data-cmd="style" data-arg="noir">Noir</button>
+          <button data-cmd="style" data-arg="anime">Anime</button>
+          <button data-cmd="style" data-arg="snow">Snow</button>
+        </div>
+
+        <h2><span>MAP</span><span></span></h2>
+        <div class="chips" id="maps">
+          <button data-map="photoreal">3D city</button>
+          <button data-map="esri-imagery">Satellite</button>
+          <button data-map="bing-aerial">Aerial</button>
+          <button data-map="bing-labels">Aerial + labels</button>
+          <button data-map="osm">Street map</button>
+        </div>
+
+        <h2><span>OVERLAYS</span><span></span></h2>
+        <div class="row c2">
+          <button id="hud-btn" data-hud>⌖ HUD</button>
+          <button id="detect-btn" data-detect>▢ Object boxes</button>
+        </div>
+
+        <h2><span>TV</span><span></span></h2>
+        <div class="row c3">
+          <button id="clean-btn" data-cmd="clean">▣ Hide panels</button>
+          <button id="advanced-btn" data-cmd="advanced">
+            ☰ Full controls
+          </button>
+          <button id="smooth-btn" data-cmd="smooth">⚡ Smooth</button>
+        </div>
+        <div class="note">
+          Smooth renders a bit softer so the laptop can keep up while it mirrors
+          to the TV. Full controls shows every panel on the TV.
+        </div>
+      </section>
     </main>
+
+    <nav id="tabs">
+      <button data-tab="drive" aria-selected="true"><b>✥</b>DRIVE</button>
+      <button data-tab="watch"><b>◉</b>WATCH</button>
+      <button data-tab="layers"><b>≡</b>LAYERS</button>
+      <button data-tab="look"><b>◐</b>LOOK</button>
+    </nav>
     <script src="/remote.js"></script>
   </body>
 </html>

@@ -102,11 +102,20 @@ Restart `npm run dev`. The terminal and the TV both show the address and a
 4-digit PIN. On your phone (same Wi-Fi), open that address, e.g.
 `http://192.168.1.23:4180`, enter the PIN, then Share → Add to Home Screen.
 
-The remote has a D-pad (hold to keep moving), zoom/turn/tilt, Home, cameras
-(previous/next steps through local cameras nearest downtown first), layer
-toggles, the live border board (tap a crossing to fly there), the visual
-looks, a slow orbit for leaving it running, and **Hide panels** for a clean
-TV picture.
+The remote has four tabs:
+
+- **Drive**: search any place or address and fly there, quick places
+  (Windsor, Downtown Detroit, Belle Isle, the bridges, DTW, Point Pelee,
+  whole Earth), and press-and-hold controls that move the view smoothly
+  until you let go: D-pad, zoom, turn, tilt. Slow orbit for leaving it running.
+- **Watch**: traffic cameras (prev/next nearest downtown first, nearest,
+  auto tour), follow the nearest plane, planes/ships/satellites overhead,
+  next ISS pass, and the live border board (tap a crossing to fly there).
+- **Layers**: every layer the app has, on/off.
+- **Look**: vision modes, map style (3D city, satellite, aerial, street),
+  HUD, object boxes, Hide panels, Full controls (every panel on the TV) and
+  Smooth (renders a bit softer so the laptop keeps up while mirroring; on by
+  default).
 
 Safety: the globe server still only listens on this computer (it holds your
 API keys). The remote is a separate tiny server that only serves the remote

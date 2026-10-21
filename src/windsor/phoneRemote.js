@@ -15,22 +15,27 @@ import {
   stepCamera,
   viewCentre,
 } from './phoneRemoteCore.js';
+import { createRemoteMotion } from './remoteMotion.js';
+import {
+  VOICE_LAYER_MANIFEST,
+  VOICE_TOGGLE_LAYER_IDS,
+} from '../voice/layerManifest.js';
 
 const CROSSING_VIEWS = Object.freeze({
   'ambassador-bridge': { lat: 42.3118, lon: -83.074 },
   'windsor-detroit-tunnel': { lat: 42.3213, lon: -83.0405 },
   'gordie-howe-bridge': { lat: 42.2893, lon: -83.0985 },
 });
-const REPORT_LAYERS = Object.freeze([
-  'cctv',
-  'flights',
-  'weather-radar',
-  'ais-live-vessels',
-  'traffic',
-  'weather-lightning',
-]);
+// Every layer the app can toggle (the same list the voice agent uses).
+const REPORT_LAYERS = VOICE_TOGGLE_LAYER_IDS;
 const STATE_EVERY_MS = 4000;
 const INFO_EVERY_MS = 10_000;
+const SMOOTH_KEY = 'gev:phone-remote:smooth';
+// Smooth mode: render at ~70% resolution and load slightly coarser 3D tiles.
+// On a laptop that is also encoding a screen-mirror stream this roughly
+// doubles the frame rate, and on a TV across the room it's hard to tell.
+const SMOOTH_RESOLUTION = 0.7;
+const SMOOTH_TILE_ERROR = 32;
 
 const CSS = `
 #phone-remote-badge {
@@ -64,6 +69,66 @@ async function waitForApp(win, timeoutMs = 60_000) {
     await new Promise((r) => setTimeout(r, 250));
   }
   return null;
+}
+
+/** Friendly names for the layer list (falls back to the first spoken alias). */
+const LAYER_NAMES = Object.freeze({
+  cctv: 'Traffic cameras',
+  flights: 'Flights',
+  military: 'Military aircraft',
+  'local-adsb': 'Local ADS-B',
+  'ais-live-vessels': 'Ships',
+  satellites: 'Satellites',
+  'rocket-launches': 'Rocket launches',
+  earthquakes: 'Earthquakes',
+  'local-firms': 'Active fires',
+  'fire-perimeters': 'Fire perimeters',
+  'weather-cyclones': 'Hurricanes',
+  'weather-radar': 'Rain radar',
+  'weather-satellite': 'Weather satellite',
+  'weather-lightning': 'Lightning',
+  wind: 'Wind',
+  'air-quality': 'Air quality',
+  traffic: 'Traffic flow',
+  transit: 'Transit',
+  bikeshare: 'Bike share',
+  'alpr-cameras': 'Plate-reader sites',
+  radio: 'Radio',
+  'street-level': 'Street level',
+  'recent-imagery': 'Recent imagery',
+  directions: 'Directions',
+  'military-installations': 'Military bases',
+  'local-datacenters': 'Data centres',
+  'local-dams': 'Dams',
+  'telegeography-submarine-cables': 'Undersea cables',
+  'gnss-integrity': 'GPS interference',
+});
+export const REMOTE_LAYER_LIST = Object.freeze(
+  VOICE_LAYER_MANIFEST.filter((e) => e.toggle).map((e) => ({
+    id: e.id,
+    name: LAYER_NAMES[e.id] ?? e.aliases?.[0] ?? e.id,
+  })),
+);
+
+/** One short line for the phone from whatever the action runner returned. */
+export function summarizeResult(result) {
+  const pick = (...values) =>
+    values.find((v) => typeof v === 'string' && v.trim())?.trim();
+  if (!result || typeof result !== 'object') return { ok: true, text: 'Done' };
+  const failed = result.ok === false || Boolean(result.error);
+  const text =
+    pick(
+      failed ? result.error : null,
+      result.say,
+      result.display?.text,
+      result.summary,
+      result.message,
+      failed ? 'That didn’t work' : 'Done',
+    ) ?? 'Done';
+  return {
+    ok: !failed,
+    text: text.length > 140 ? `${text.slice(0, 137)}…` : text,
+  };
 }
 
 export async function startPhoneRemote({
@@ -140,7 +205,45 @@ export async function startPhoneRemote({
       styleManager.orbitController.stop();
   }
 
+  const motion = app.viewer
+    ? createRemoteMotion({
+        viewer: app.viewer,
+        beforeStart: () => {
+          stopOrbit();
+          styleManager.supersedeDeferredNavigation?.();
+        },
+      })
+    : null;
+
+  // ── Smooth mode ─────────────────────────────────────────
+  const baseResolution = app.viewer?.resolutionScale ?? 1;
+  const baseTileError = app.tileset?.maximumScreenSpaceError;
+  let smooth = false;
+  function setSmooth(on) {
+    smooth = on;
+    if (app.viewer)
+      app.viewer.resolutionScale = on ? SMOOTH_RESOLUTION : baseResolution;
+    if (app.tileset && typeof baseTileError === 'number')
+      app.tileset.maximumScreenSpaceError = on
+        ? Math.max(baseTileError, SMOOTH_TILE_ERROR)
+        : baseTileError;
+    try {
+      win.localStorage.setItem(SMOOTH_KEY, on ? '1' : '0');
+    } catch {
+      /* best effort */
+    }
+    app.requestRender?.('phone-remote-smooth');
+  }
+  let smoothSaved = '1'; // on by default once a remote is in use
+  try {
+    smoothSaved = win.localStorage.getItem(SMOOTH_KEY) ?? '1';
+  } catch {
+    /* default */
+  }
+  setSmooth(smoothSaved === '1');
+
   function flyTo(view, duration = 2.4) {
+    motion?.stop();
     stopOrbit();
     const go = () => styleManager.applyCameraState(view, duration);
     if (typeof styleManager.runImmediateLocationNavigation === 'function')
@@ -249,6 +352,23 @@ export async function startPhoneRemote({
       case 'cam':
         if (arg === 'nearest') return nearestCam();
         return stepCam(arg === 'prev' ? -1 : 1);
+      case 'hold':
+        return motion?.hold(arg);
+      case 'release':
+        return motion?.release();
+      case 'action':
+        return runAction(arg);
+      case 'advanced': {
+        // Show or hide the full control surface on the TV.
+        const simpleBtn = doc.getElementById('windsor-simple-btn');
+        const advancedBtn = doc.querySelector('#windsor-panel .wm-advanced');
+        if (doc.body.classList.contains('windsor-mode')) advancedBtn?.click();
+        else simpleBtn?.click();
+        return;
+      }
+      case 'smooth':
+        setSmooth(!smooth);
+        return say(smooth ? 'Smooth mode on' : 'Full quality');
       case 'move':
       case 'zoom':
       case 'turn':
@@ -266,6 +386,33 @@ export async function startPhoneRemote({
     }
   }
 
+  // App actions go through the voice agent's own runner, so the phone gets
+  // place search, every layer, plane following, map styles and more without
+  // re-implementing any of it here. The server already checked them against
+  // the action schemas.
+  let lastResult = null;
+  async function runAction({ name, args }) {
+    const runner = app.voiceCommands?.runner;
+    if (typeof runner !== 'function') {
+      lastResult = { ok: false, text: 'Not available in this build' };
+      return;
+    }
+    if (name !== 'set_layer_visibility') {
+      motion?.stop();
+      stopOrbit();
+    }
+    let result;
+    try {
+      result = await runner(name, args);
+    } catch (error) {
+      result = { ok: false, error: error?.message || String(error) };
+    }
+    lastResult = summarizeResult(result);
+    if (!lastResult.ok) say(lastResult.text);
+    keepRendering(3);
+    postState();
+  }
+
   // ── State back to the phone ─────────────────────────────
   function snapshot() {
     const layers = {};
@@ -277,12 +424,25 @@ export async function startPhoneRemote({
       }
     }
     const control = styleManager.getControlState?.() ?? {};
-    const cam = cctv()?.getUIState?.()?.activeCamera ?? null;
+    const cctvUi = cctv()?.getUIState?.();
+    const cam = cctvUi?.activeCamera ?? null;
     return {
+      mapStack: control.mapStack ?? null,
+      hud: Boolean(control.hud?.visible),
+      autoHop: Boolean(cctvUi?.autoHop),
+      tracking: Boolean(app.viewer?.trackedEntity),
+      advanced: !doc.body.classList.contains('windsor-mode'),
+      detection: Boolean(
+        control.detection?.detectionMode &&
+        String(control.detection.detectionMode).toUpperCase() !== 'OFF',
+      ),
+      result: lastResult,
       layers,
+      layerList: REMOTE_LAYER_LIST,
       style: control.style ?? 'normal',
       orbit: Boolean(control.orbiting),
       clean: Boolean(control.cleanView),
+      smooth,
       camera: cam ? { name: cam.name ?? '', city: cam.city ?? '' } : null,
     };
   }
@@ -309,18 +469,20 @@ export async function startPhoneRemote({
     } catch {
       return;
     }
+    const continuous = command?.cmd === 'hold' || command?.cmd === 'release';
     try {
       run(command);
-      keepRendering(1);
+      if (!continuous) keepRendering(1);
     } catch (error) {
       console.warn('[phone remote] command failed', command, error);
     }
     // Let the change land before reporting it.
-    setTimeout(postState, 400);
+    if (!continuous) setTimeout(postState, 400);
   };
 
   return () => {
     events.close();
+    motion?.stop();
     for (const t of timers) clearInterval(t);
     clearTimeout(toastTimer);
     badge.remove();
