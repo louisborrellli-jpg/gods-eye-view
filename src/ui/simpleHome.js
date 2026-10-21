@@ -13,6 +13,7 @@ import {
 } from '../layers/shipments/model.js';
 import { searchShipments } from '../layers/shipments/search.js';
 import { createShipmentsBackend } from '../layers/shipments/backend.js';
+import { createAppTabs } from './appTabs.js';
 import { createShipmentTrackingSource } from '../layers/shipments/source.js';
 import { SHIPMENTS_FOCUS_KEY } from '../layers/shipments/store.js';
 import {
@@ -164,6 +165,7 @@ export function createSimpleHome({
     const day = localDay(now());
     const shipments = store.list();
     root.replaceChildren();
+    root.append(createAppTabs(doc, 'home'));
 
     root.append(
       el(
@@ -351,6 +353,23 @@ export function createSimpleHome({
     if (!value) return;
     const day = localDay(now());
     const found = searchShipments(store.list(), value);
+    // Anything else (a ship, a zone, a layer, a place): the map's search.
+    const onMap = el(
+      'button',
+      'hm-result hm-result-map',
+      el('span', 'hm-action-icon', icon('globe')),
+      el(
+        'span',
+        'hm-result-text',
+        el('strong', '', t('Search the map for “{query}”', { query: value })),
+        el('span', '', t('Ships, zones, map layers and places')),
+      ),
+      el('span', 'hm-action-chevron', icon('chevron')),
+    );
+    onMap.type = 'button';
+    onMap.addEventListener('click', () =>
+      navigate(`/?search=${encodeURIComponent(value)}`),
+    );
     if (!found.length) {
       resultsHost.append(
         el(
@@ -361,6 +380,7 @@ export function createSimpleHome({
           }),
         ),
       );
+      resultsHost.append(el('div', 'sp-group-list', onMap));
       return;
     }
     const list = el('div', 'sp-group-list');
@@ -404,6 +424,7 @@ export function createSimpleHome({
       );
       list.append(item);
     }
+    list.append(onMap);
     resultsHost.append(list);
   }
 

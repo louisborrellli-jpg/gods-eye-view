@@ -12,15 +12,15 @@ const ASSISTANT_NAME = 'GEV';
 export function voiceStatusLabel(status) {
   switch (status) {
     case 'idle':
-      return t('OFF', { context: 'voice' });
+      return t('Off', { context: 'voice' });
     case 'connecting':
-      return t('CONNECTING', { context: 'voice' });
+      return t('Connecting', { context: 'voice' });
     case 'listening':
-      return t('LISTENING', { context: 'voice' });
+      return t('Listening', { context: 'voice' });
     case 'executing':
-      return t('EXECUTING', { context: 'voice' });
+      return t('Executing', { context: 'voice' });
     case 'error':
-      return t('ERROR', { context: 'voice' });
+      return t('Error', { context: 'voice' });
     default:
       return String(status || '').toUpperCase();
   }
@@ -44,35 +44,35 @@ export function createVoiceControl({ reset = false } = {}) {
         <select id="gev-voice-provider" aria-label="${t('Voice provider')}" title="${t('Changing provider reconnects voice if it is on.')}"></select>
       </label>
       <div class="gev-voice-heading">
-        <div class="gev-voice-kicker">${t('AI AGENT')}</div>
+        <div class="gev-voice-kicker">${t('AI agent')}</div>
         <div id="gev-voice-status">${voiceStatusLabel('idle')}</div>
         <div class="gev-voice-cost">
-          <button id="gev-voice-tier" class="gev-voice-tier-btn" type="button" aria-pressed="false" title="${t('Voice model tier — applies next session')}">${t('STD')}</button>
+          <button id="gev-voice-tier" class="gev-voice-tier-btn" type="button" aria-pressed="false" title="${t('Voice model tier — applies next session')}">${t('Std')}</button>
           <span id="gev-voice-cost-value" class="gev-voice-cost-value" data-level="ok" title="${t('Estimated session cost')}">~$0.00</span>
         </div>
       </div>
       <button id="gev-voice-button" type="button" aria-label="${t('Voice control — activate to toggle voice; hold Space to speak')}" aria-describedby="gev-voice-help">
         <span class="gev-mic-orbit"><img src="/mic.svg" alt="" /></span>
-        <span class="gev-mic-label">${t('ON/OFF')}</span>
+        <span class="gev-mic-label">${t('On/off')}</span>
       </button>
       <div class="gev-voice-visualizer" aria-hidden="true">
         ${Array.from({ length: 15 }, (_, index) => `<span style="--bar:${index}"></span>`).join('')}
       </div>
       <div class="gev-voice-readout">
-        <div id="gev-voice-detail">${t('VOICE STANDBY')}</div>
+        <div id="gev-voice-detail">${t('Voice standby')}</div>
       </div>
       <div id="gev-voice-help" class="gev-voice-help-tray" role="tooltip">
-        <span class="gev-voice-help-kicker">${t('VOICE CONTROL')}</span>
+        <span class="gev-voice-help-kicker">${t('Voice control')}</span>
         <span class="gev-voice-help-detail">${t('Hold Space to speak · tap Space to activate focused controls')}</span>
       </div>
       <section id="gev-voice-card" class="gev-voice-card" hidden aria-label="${t('Voice assistant')}">
         <div class="gev-voice-card-header">
-          <span class="gev-voice-card-kicker">${t('VOICE')}</span>
+          <span class="gev-voice-card-kicker">${t('Voice')}</span>
           <span id="gev-voice-card-phase" class="gev-voice-card-phase"></span>
           <button id="gev-voice-card-dismiss" class="gev-voice-card-dismiss" type="button" aria-label="${t('Dismiss voice card')}">×</button>
         </div>
-        <p id="gev-voice-card-user" class="gev-voice-card-caption" data-role="user" hidden><span class="gev-voice-card-who">${t('YOU')}</span><span id="gev-voice-card-user-text" class="gev-voice-card-text"></span></p>
-        <p id="gev-voice-card-pointer" class="gev-voice-card-pointer" hidden><span id="gev-voice-card-pointer-kind" class="gev-voice-card-who">${t('THIS')}</span><span class="gev-voice-card-sr">: </span><span id="gev-voice-card-pointer-text" class="gev-voice-card-pointer-label"></span></p>
+        <p id="gev-voice-card-user" class="gev-voice-card-caption" data-role="user" hidden><span class="gev-voice-card-who">${t('You')}</span><span id="gev-voice-card-user-text" class="gev-voice-card-text"></span></p>
+        <p id="gev-voice-card-pointer" class="gev-voice-card-pointer" hidden><span id="gev-voice-card-pointer-kind" class="gev-voice-card-who">${t('This')}</span><span class="gev-voice-card-sr">: </span><span id="gev-voice-card-pointer-text" class="gev-voice-card-pointer-label"></span></p>
         <p id="gev-voice-card-assistant" class="gev-voice-card-caption" data-role="assistant" hidden><span class="gev-voice-card-who">${ASSISTANT_NAME}</span><span id="gev-voice-card-assistant-text" class="gev-voice-card-text"></span></p>
         <ol id="gev-voice-card-plan" class="gev-voice-card-plan" aria-label="${t('Plan')}" hidden></ol>
         <div id="gev-voice-card-result" class="gev-voice-card-result" hidden>
@@ -81,7 +81,7 @@ export function createVoiceControl({ reset = false } = {}) {
           <ul id="gev-voice-card-lines" class="gev-voice-card-lines"></ul>
           <ol id="gev-voice-card-referents" class="gev-voice-card-referents" aria-label="${t('Referenced items')}" hidden></ol>
           <details id="gev-voice-card-notes" class="gev-voice-card-notes" hidden>
-            <summary>${t('NOTES & SOURCES')}</summary>
+            <summary>${t('Notes & sources')}</summary>
             <ul id="gev-voice-card-note-list" class="gev-voice-card-lines"></ul>
           </details>
         </div>
@@ -89,8 +89,8 @@ export function createVoiceControl({ reset = false } = {}) {
       </section>
       <div class="gev-voice-error-tray" role="alert" aria-live="assertive">
         <div class="gev-voice-error-header">
-          <span>${t('VOICE SYSTEM ERROR')}</span>
-          <button class="gev-voice-error-dismiss" type="button">${t('DISMISS')}</button>
+          <span>${t('Voice system error')}</span>
+          <button class="gev-voice-error-dismiss" type="button">${t('Dismiss')}</button>
         </div>
         <div id="gev-voice-error-detail"></div>
         <div class="gev-voice-error-hint">${t('Check microphone permission and network access, then try again.')}</div>

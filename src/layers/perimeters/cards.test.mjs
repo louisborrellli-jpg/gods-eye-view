@@ -111,7 +111,7 @@ test('a full incident row renders name, size, containment, and ages', () => {
     now,
   );
   assert.equal(card.id, 'fire-perimeter-card:2026-NMGNF-000123');
-  assert.equal(card.title, 'FIRE · Frijoles');
+  assert.equal(card.title, 'Fire · Frijoles');
   assert.deepEqual(card.details, [
     '15,956 ac · 74% contained · US-NM',
     'Natural cause · Active · Type 3 Incident',
@@ -142,7 +142,7 @@ test('missing attributes degrade to available facts instead of placeholders', ()
     },
     1758000000000,
   );
-  assert.equal(card.title, 'FIRE · Unnamed incident');
+  assert.equal(card.title, 'Fire · Unnamed incident');
   assert.deepEqual(card.details, ['containment unknown · RX']);
 });
 

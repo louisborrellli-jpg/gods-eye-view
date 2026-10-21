@@ -49,7 +49,7 @@ export class RealtimeCost {
     const pendingTier = resolveVoiceModel(this.voiceTier).tier;
     const isMini = pendingTier === 'mini';
     if (this.ui?.tierButton) {
-      this.ui.tierButton.textContent = isMini ? t('MINI') : t('STD');
+      this.ui.tierButton.textContent = isMini ? t('Mini') : t('Std');
       this.ui.tierButton.setAttribute(
         'aria-pressed',
         isMini ? 'true' : 'false',
@@ -74,7 +74,7 @@ export class RealtimeCost {
       if (liveAuth === 'oauth') {
         const { responses, input, output, captions } = this.oauthUsage;
         this.ui.costValue.hidden = false;
-        this.ui.costValue.textContent = t('COST UNKNOWN');
+        this.ui.costValue.textContent = t('Cost unknown');
         this.ui.costValue.dataset.level = 'unknown';
         this.ui.costValue.title =
           t(
@@ -157,8 +157,8 @@ export class RealtimeCost {
       // The tier as the interface names it; the stored value stays English.
       const tier =
         resolveVoiceModel(this.voiceTier).tier === 'mini'
-          ? t('MINI')
-          : t('STANDARD');
+          ? t('Mini')
+          : t('Standard');
       this.setStatus(this.status, t('{tier} applies next session', { tier }));
     }
     return this.voiceTier;

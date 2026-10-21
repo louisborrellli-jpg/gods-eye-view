@@ -220,7 +220,7 @@ export function createTracking({
   function _buildTrackedLabel(info, icao24) {
     const stale =
       flightState.records.missingPolls.get(icao24) || flightState.feed._backoff
-        ? ` · ${t('STALE')}`
+        ? ` · ${t('Stale')}`
         : '';
     const callsign =
       (parts.queries._toCleanText(info?.callsign) ||

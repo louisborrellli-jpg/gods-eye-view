@@ -158,7 +158,7 @@ test('clicking a perimeter publishes its incident card; empty space clears it', 
   const entries = h.overlay.entries.get('fire-perimeters');
   assert.equal(entries.length, 1);
   assert.equal(entries[0].id, 'fire-perimeter-card:2026-NMGNF-000123');
-  assert.equal(entries[0].title, 'FIRE · Fixture Fire');
+  assert.equal(entries[0].title, 'Fire · Fixture Fire');
   assert.ok(entries[0].position, 'card must carry a world anchor');
 
   pickResult = { id: 'other-layer:aircraft-1' };

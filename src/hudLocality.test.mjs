@@ -143,7 +143,7 @@ test('the HUD formatter translates the catalogued city, then upper-cases it', ()
   const tokyo = { poi: 'Tokyo Tower', city: 'Tokyo', distKm: 2 };
   assert.equal(
     composeLocalityTag(tokyo, 35.66, 139.75, LOCALIZED_LOCALITY),
-    'NEAR TOKYO TOWER (TOKYO) 2KM',
+    'Near TOKYO TOWER (TOKYO) 2KM',
   );
   setLocale('ru');
   try {

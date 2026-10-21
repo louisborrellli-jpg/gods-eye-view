@@ -365,7 +365,7 @@ export class RealtimeInput {
   updateVoiceButtonLabel() {
     if (!this.ui.buttonLabel) return;
     // The mic button's caption; the first-run tip names it the same way.
-    this.ui.buttonLabel.textContent = t('MIC');
+    this.ui.buttonLabel.textContent = t('Mic');
     if (this.ui.helpDetail) {
       this.ui.helpDetail.textContent = resolveVoiceControlHint(
         this.pushToTalkMode,

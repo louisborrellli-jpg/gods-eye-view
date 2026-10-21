@@ -47,21 +47,21 @@ export const COCKPIT_REGIONAL_REFRESH_DISTANCE_M = 25_000;
 export const COCKPIT_BRIEF_PAGES = [
   {
     id: 'signals',
-    kickerKey: msg('LIVE SIGNALS'),
-    subtitleKey: msg('OBSERVED / MAPPED PINGS'),
-    sourceKey: msg('SOURCE-BACKED EVENTS · NO SYNTHETIC NEWS'),
+    kickerKey: msg('Live signals'),
+    subtitleKey: msg('Observed / mapped pings'),
+    sourceKey: msg('Source-backed events · No synthetic news'),
   },
   {
     id: 'news',
-    kickerKey: msg('REGIONAL NEWS'),
-    subtitleKey: msg('LATEST LOCATION-MATCHED REPORTING'),
-    sourceKey: msg('{source} · LOCATION QUERY · RECENT'),
+    kickerKey: msg('Regional news'),
+    subtitleKey: msg('Latest location-matched reporting'),
+    sourceKey: msg('{source} · Location query · Recent'),
     sourceName: 'GOOGLE NEWS RSS', // i18n-ignore: provider name
   },
   {
     id: 'local',
-    kickerKey: msg('LOCAL INFO'),
-    subtitleKey: msg('PLACE / CONDITIONS / POSITION'),
+    kickerKey: msg('Local info'),
+    subtitleKey: msg('Place / conditions / position'),
     // Attribution stays English.
     source: 'NATURAL EARTH · OPEN-METEO · UTC',
   },
@@ -85,13 +85,13 @@ export function isRenderedOnScreen(element) {
 
 export function formatCockpitBriefAge(value) {
   const timestamp = Date.parse(value);
-  if (!Number.isFinite(timestamp)) return t('TIME UNKNOWN');
+  if (!Number.isFinite(timestamp)) return t('Time unknown');
   const minutes = Math.max(0, Math.round((Date.now() - timestamp) / 60_000));
-  if (minutes < 60) return t('{count}M AGO', { count: minutes });
+  if (minutes < 60) return t('{count}m ago', { count: minutes });
   const hours = Math.round(minutes / 60);
   return hours < 48
-    ? t('{count}H AGO', { count: hours })
-    : t('{count}D AGO', { count: Math.round(hours / 24) });
+    ? t('{count}h ago', { count: hours })
+    : t('{count}d ago', { count: Math.round(hours / 24) });
 }
 
 /** Compass point codes in display order and the label shown for each. */
@@ -152,7 +152,7 @@ export function formatCockpitDistance(distanceM) {
 }
 
 export function formatCockpitWindDirection(value) {
-  if (!Number.isFinite(value)) return t('DIR UNKNOWN');
+  if (!Number.isFinite(value)) return t('Dir unknown');
   const labels = Object.keys(COMPASS_POINT_LABELS);
   const normalized = ((value % 360) + 360) % 360;
   return `${compassPointLabel(labels[Math.round(normalized / 45) % labels.length])} · ${Math.round(normalized)}°`;

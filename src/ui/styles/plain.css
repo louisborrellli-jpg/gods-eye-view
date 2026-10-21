@@ -1,0 +1,277 @@
+/* ═══════════════════════════════════════════════
+   Plain look — loaded last
+   ═══════════════════════════════════════════════
+   The app is used day to day by people who are not analysts: text has to be
+   big enough to read at a glance and nothing should glow, flicker or look
+   like a film prop. These rules undo the instrument styling that sits in the
+   component sheets above, in one place. */
+
+/* No glows behind panels, titles or values. */
+.panel-glow,
+.title-glow,
+#title-bar .title-glow {
+  display: none !important;
+}
+
+#title-bar h1,
+#title-bar .title-logo,
+#style-indicator .indicator-value,
+.panel-title,
+.panel-header,
+.scene-btn,
+.style-btn,
+.data-toggle,
+.toggle-label {
+  text-shadow: none !important;
+  filter: none;
+}
+
+/* A short, calm title; the slogan and the "active style" readout are gone
+   (the style is shown in the Map look tray). */
+#title-bar h1 {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  font-weight: 600;
+  gap: 10px;
+}
+
+#title-bar .title-logo {
+  width: 38px;
+}
+
+#title-bar .title-accent {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+#title-bar .subtitle,
+#style-indicator {
+  display: none;
+}
+
+/* Panel headings: normal words at a readable size. */
+.panel-title,
+.pp-header-label,
+.location-toolbar-label {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Solid, quiet panels instead of tinted glass with neon edges. */
+:root {
+  --glass-bg: rgba(22, 24, 29, 0.92);
+  --glass-border: rgba(255, 255, 255, 0.12);
+}
+
+/* ── Top bar: tabs on the left, search in the middle, labelled actions ── */
+#title-bar h1 > span[translate='no'] {
+  display: none;
+}
+
+.app-tabs {
+  position: fixed;
+  top: max(30px, var(--safe-top));
+  left: calc(max(36px, var(--safe-left)) + 50px);
+  z-index: 101;
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+}
+
+.app-tab {
+  padding: 8px 14px;
+  border-radius: 9px;
+  color: var(--text-secondary);
+  font: 600 15px/1.2 var(--font-sans);
+  text-decoration: none;
+}
+
+.app-tab:hover,
+.app-tab:focus-visible {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.app-tab.is-current {
+  color: #0b0c10;
+  background: var(--text-primary);
+}
+
+.global-search {
+  position: fixed;
+  top: max(28px, var(--safe-top));
+  left: 50%;
+  z-index: 102;
+  width: min(560px, 42vw);
+  transform: translateX(-50%);
+}
+
+.global-search-form {
+  position: relative;
+}
+
+.global-search-input {
+  width: 100%;
+  height: 46px;
+  padding: 0 16px 0 44px;
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23aab0b8' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-4-4'/%3E%3C/svg%3E")
+      no-repeat 14px center / 20px,
+    var(--glass-bg);
+  color: var(--text-primary);
+  font: 400 16px/1 var(--font-sans);
+  outline: none;
+}
+
+.global-search-input::placeholder {
+  color: var(--text-dim);
+}
+
+.global-search-input:focus {
+  border-color: var(--accent);
+}
+
+.global-search-results {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: min(60vh, 520px);
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  background: var(--menu-bg);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
+.global-search-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 52px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.global-search-option[aria-selected='true'],
+.global-search-option:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.global-search-icon {
+  flex: 0 0 28px;
+  color: var(--accent);
+  font-size: 18px;
+  text-align: center;
+}
+
+.global-search-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.global-search-text strong {
+  overflow: hidden;
+  font: 600 15px/1.3 var(--font-sans);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.global-search-text span {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.global-search-link {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* The globe buttons say what they do. */
+#top-center-actions {
+  top: calc(max(28px, var(--safe-top)) + 56px);
+  gap: 6px;
+}
+
+#top-center-actions button {
+  width: auto;
+  height: 36px;
+  gap: 6px;
+  padding: 0 12px 0 10px;
+  border-radius: 999px;
+  color: var(--text-primary);
+}
+
+#top-center-actions button:hover,
+#top-center-actions button:focus-visible {
+  transform: none;
+}
+
+#top-center-actions .action-label {
+  font: 500 14px/1 var(--font-sans);
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .app-tabs {
+    top: max(12px, var(--safe-top));
+    left: max(12px, var(--safe-left));
+  }
+  #title-bar {
+    display: none;
+  }
+  .global-search {
+    top: calc(max(12px, var(--safe-top)) + 52px);
+    left: max(12px, var(--safe-left));
+    right: max(12px, var(--safe-right));
+    width: auto;
+    transform: none;
+  }
+  #top-center-actions {
+    top: calc(max(12px, var(--safe-top)) + 108px);
+  }
+  #top-center-actions .action-label {
+    display: none;
+  }
+  #top-center-actions button {
+    width: var(--touch-min);
+    height: var(--touch-min);
+    padding: 0;
+    justify-content: center;
+  }
+}
+
+/* The North-up button's floating "N" would sit on its label. */
+#north-up-view .camera-compass-n {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  /* Below the tabs, the search box and the action row. */
+  #left-panel-stack {
+    top: calc(max(12px, var(--safe-top)) + 164px) !important;
+  }
+}

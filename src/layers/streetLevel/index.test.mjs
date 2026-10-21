@@ -94,7 +94,7 @@ test('coverage asks for no tiles before the key status is known, and none withou
       );
       assert.deepEqual(
         [layer.getStats().loadingLabel, layer.getStats().error],
-        ['KEY REQUIRED', 'KEY REQUIRED'],
+        ['Key required', 'Key required'],
       );
       assert.equal(layer.getUIState().keyRequired, true);
       assert.equal(layer.getUIState().keyRejected, false);
@@ -151,17 +151,17 @@ test('a key status that never answers gives up, so the next switch-on asks again
   const { layer, viewer } = await startLayer(t, { source, view: true });
   assert.equal(asked, 1);
   assert.equal(timeouts[0].ms, 10_000, 'the check can be cut short');
-  assert.equal(layer.getUIState().coverage.loading, true, 'LOADING meanwhile');
+  assert.equal(layer.getUIState().coverage.loading, true, 'Loading meanwhile');
   timeouts[0].fire();
   await settle();
   assert.equal(layer.getUIState().coverage.loading, false);
-  assert.equal(layer.getUIState().keyRequired, true, 'no token: KEY REQUIRED');
+  assert.equal(layer.getUIState().keyRequired, true, 'no token: Key required');
   layer.disable();
   layer.enable(viewer);
   assert.equal(asked, 2, 'asked again, not stuck on the first');
 });
 
-test('a rejected key gates the layer as KEY REJECTED until it goes off', async (t) => {
+test('a rejected key gates the layer as Key rejected until it goes off', async (t) => {
   const rejected = Object.assign(new Error('Mapillary rejected the token'), {
     keyRejected: true,
   });
@@ -174,7 +174,7 @@ test('a rejected key gates the layer as KEY REJECTED until it goes off', async (
   await settle();
   const stats = layer.getStats();
   assert.equal(stats.keyRequired, true);
-  assert.equal(stats.loadingLabel, 'KEY REJECTED');
+  assert.equal(stats.loadingLabel, 'Key rejected');
   assert.match(stats.error, /rejected MAPILLARY_CLIENT_TOKEN/);
   const ui = layer.getUIState();
   assert.deepEqual([ui.keyRequired, ui.keyRejected], [true, true]);
@@ -991,7 +991,7 @@ test('with no Mapillary token, the layer points at Street View, on Google 3D onl
   const stats = layer.getStats();
   assert.equal(stats.keyRequired, true);
   assert.deepEqual(stats.keyAlternatives, [
-    { id: 'google', label: 'GOOGLE STREET VIEW', requiresKeyId: 'google-maps' },
+    { id: 'google', label: 'Google street view', requiresKeyId: 'google-maps' },
   ]);
   assert.deepEqual(layer.getUIState().keyAlternatives, stats.keyAlternatives);
   stack.switchTo('esri-imagery');

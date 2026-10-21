@@ -145,25 +145,25 @@ export function localAdsbCardModel(
   return {
     title: localAdsbTitle(record),
     details: [
-      `ICAO ${icao} · ${record?.callsign || t('NO CALLSIGN')}`,
+      `ICAO ${icao} · ${record?.callsign || t('No callsign')}`,
       localAdsbClassLine(record, aircraftClass || {}),
       identity,
       routeLine,
-      t('ALT {altitude} FT · GS {speed} KT · TRK {track}', {
+      t('ALT {altitude} ft · GS {speed} kt · TRK {track}', {
         altitude: grouped(altitude),
         speed: speed === null ? DASH : speed,
         track: track === null ? DASH : `${track}°`,
       }),
       vertical === null
         ? t('V/S {rate}', { rate: DASH })
-        : t('V/S {rate} FPM', {
+        : t('V/S {rate} fpm', {
             rate: `${vertical > 0 ? '+' : ''}${grouped(vertical)}`,
           }),
       [
         ageS === null
-          ? t('POSITION {age}', { age: DASH })
-          : t('POSITION {seconds} S AGO', { seconds: ageS }),
-        tn(messages, '{count} MSG', '{count} MSGS'),
+          ? t('Position {age}', { age: DASH })
+          : t('Position {seconds} s ago', { seconds: ageS }),
+        tn(messages, '{count} msg', '{count} msgs'),
       ].join(' · '),
       localAdsbReceiverLine(record),
     ].filter(Boolean),

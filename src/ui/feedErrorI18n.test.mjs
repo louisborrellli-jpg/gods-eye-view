@@ -1,4 +1,4 @@
-// Flights / Military feed failure texts reach the DATA LAYERS row in the
+// Flights / Military feed failure texts reach the Data layers row in the
 // UI language; the feeds keep them in English.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -45,7 +45,7 @@ test('en: feed failure texts stay English', () => {
   for (const [, message] of cases)
     assert.equal(
       flightsRow(message),
-      `STALE · OpenSky · ${message} · retry 45s`,
+      `Stale · OpenSky · ${message} · retry 45s`,
     );
 });
 

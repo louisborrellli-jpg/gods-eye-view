@@ -36,8 +36,8 @@
   padding: 0.45rem 0.6rem;
   color: rgba(225, 244, 248, 0.92);
   font-family: var(--font-mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.09rem;
+  font-size: 0.75rem;
+  letter-spacing: 0;
   line-height: 1;
   background: linear-gradient(
     145deg,
@@ -131,9 +131,9 @@
   padding: 0.2rem 0.4rem 0.45rem;
   color: rgba(85, 223, 245, 0.85);
   font-family: var(--font-mono);
-  font-size: 0.55rem;
-  letter-spacing: 0.14rem;
-  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .locale-picker-search {
@@ -143,7 +143,7 @@
   padding: 0.45rem 0.55rem;
   color: var(--text-primary);
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(54, 220, 255, 0.28);
   border-radius: 0.35rem;
@@ -210,8 +210,8 @@
   gap: 0.35rem;
   color: rgba(199, 225, 231, 0.6);
   font-family: var(--font-mono);
-  font-size: 0.55rem;
-  letter-spacing: 0.05rem;
+  font-size: 0.75rem;
+  letter-spacing: 0;
 }
 
 .locale-picker-check {
@@ -227,7 +227,7 @@
   padding: 0.5rem;
   color: rgba(199, 225, 231, 0.62);
   font-family: var(--font-mono);
-  font-size: 0.6rem;
+  font-size: 0.75rem;
 }
 
 .locale-picker-empty[hidden] {

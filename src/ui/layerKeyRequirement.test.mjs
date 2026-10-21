@@ -58,7 +58,7 @@ test('the fire layer names the key it needs and reports when it is missing', () 
   assert.equal(stats.keyRequired, true);
   assert.equal(
     stats.error,
-    'KEY REQUIRED',
+    'Key required',
     'the human string the row already shows is unchanged',
   );
 });

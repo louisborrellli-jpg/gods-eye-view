@@ -21,7 +21,7 @@ import {
 import { createShipmentsBackend } from './backend.js';
 import { SHIPMENTS_FOCUS_KEY } from './store.js';
 import { TRACKING_KEY_NOTE } from './tracker.js';
-import { estimatePosition } from './geo.js';
+import { estimatePosition, shipLeader } from './geo.js';
 import {
   createShipmentTrackingSource,
   createShipmentVesselSource,
@@ -155,7 +155,17 @@ export function createShipmentsLayer({
    * @returns {null|{lat:number, lon:number, mode:'live'|'heard'|'est',
    *   line:Array<[number, number]>}}
    */
+  /** Where a container is: where its ship is, shared by every box aboard. */
   function positionFor(shipment) {
+    const leader = shipLeader(shipment, store.list(), {
+      nowMs: now(),
+      heardMs: HEARD_POSITION_MS,
+      atSea: followsShip,
+    });
+    return ownPosition(leader);
+  }
+
+  function ownPosition(shipment) {
     const stage = shipmentStage(shipment);
     const estimate = estimatePosition(shipment, stage, now(), {
       rampEta: rampEtaFor(shipment).day,

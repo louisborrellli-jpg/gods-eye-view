@@ -53,6 +53,6 @@ export const AIM_AT_GROUND_MESSAGE = msg(
 
 /** The key gate's label for the pill and the layer list, or null when the key is fine. */
 export function keyStatusLabel({ keyRequired, keyRejected }) {
-  if (keyRejected) return msg('KEY REJECTED');
-  return keyRequired ? msg('KEY REQUIRED') : null;
+  if (keyRejected) return msg('Key rejected');
+  return keyRequired ? msg('Key required') : null;
 }

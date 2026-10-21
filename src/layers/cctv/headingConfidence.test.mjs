@@ -40,7 +40,7 @@ test('a curated catalog entry overrides a low pack flag', () => {
 test('HUD token tags a synthetic bearing and rounds the degrees', () => {
   assert.equal(
     headingHudToken({ headingDeg: 194.4, headingConfidence: 'low' }),
-    'HDG 194° (ESTIMATED)',
+    'HDG 194° (estimated)',
   );
 });
 

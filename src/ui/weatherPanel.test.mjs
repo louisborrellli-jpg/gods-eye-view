@@ -304,7 +304,7 @@ test('settings, reading and footer actions pass the layer id, params and user or
     settings: [
       {
         id: 'units',
-        label: 'UNITS',
+        label: 'Units',
         chips: [{ id: 'units-mph', label: 'mph', params: { units: 'mph' } }],
       },
     ],
@@ -322,7 +322,7 @@ test('settings, reading and footer actions pass the layer id, params and user or
   const result = f.find((n) => n.className === 'rail-card-result');
   const header = result.children[0];
   assert.equal(header.className, 'rail-card-result-header');
-  assert.equal(header.children[0].textContent, 'WIND AT 26.59°N 123.34°W');
+  assert.equal(header.children[0].textContent, 'Wind at 26.59°N 123.34°W');
   assert.equal(header.children[1].textContent, '×');
   assert.equal(header.children[1].getAttribute('aria-label'), 'Clear reading');
   assert.deepEqual(

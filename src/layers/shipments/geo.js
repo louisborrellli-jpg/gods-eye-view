@@ -276,3 +276,59 @@ export function estimatePosition(shipment, stage, nowMs, extra = {}) {
   if (stage === 'at-ramp') return ramp ? at(ramp, 'ramp', []) : null;
   return null;
 }
+
+/**
+ * Which ship a container is on, as one key: IMO, else MMSI, else the name.
+ * Empty when the ship is not known.
+ * @param {object} shipment
+ * @returns {string}
+ */
+export function shipKeyOf(shipment) {
+  const own = shipment?.vessel ?? {};
+  const auto = shipment?.auto?.vessel ?? {};
+  const imo = String(own.imo || auto.imo || '').trim();
+  if (imo) return `imo:${imo}`;
+  const mmsi = String(own.mmsi || auto.mmsi || '').trim();
+  if (mmsi) return `mmsi:${mmsi}`;
+  const name = String(own.query || auto.name || '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, ' ')
+    .trim();
+  return name ? `name:${name}` : '';
+}
+
+/**
+ * Containers on one ship are in one place. Of the at-sea containers sharing
+ * `shipment`'s ship, the one whose position stands for all of them: the one
+ * whose ship was heard most recently (within `heardMs`), else the one that
+ * boarded last — its loading port is the ship's latest port of call, so its
+ * leg is the one the ship is sailing now.
+ *
+ * @param {object} shipment
+ * @param {Array<object>} shipments Every listed shipment.
+ * @param {{nowMs: number, heardMs: number, atSea: (s: object) => boolean}} options
+ * @returns {object} `shipment` itself when it stands alone.
+ */
+export function shipLeader(shipment, shipments, { nowMs, heardMs, atSea }) {
+  const key = shipKeyOf(shipment);
+  if (!key || !atSea(shipment)) return shipment;
+  const crew = shipments.filter(
+    (other) => atSea(other) && shipKeyOf(other) === key,
+  );
+  if (crew.length < 2) return shipment;
+  const heard = crew
+    .filter((other) => nowMs - (other.lastSeen?.at ?? -Infinity) < heardMs)
+    .sort((a, b) => b.lastSeen.at - a.lastSeen.at);
+  if (heard.length) return heard[0];
+  const today = new Date(nowMs).toISOString().slice(0, 10);
+  const boarded = (other) => {
+    const day = other.auto?.dates?.departed || other.auto?.dates?.loaded || '';
+    return day && day <= today ? day : '';
+  };
+  return [...crew].sort((a, b) => {
+    const da = boarded(a);
+    const db = boarded(b);
+    if (da !== db) return da < db ? 1 : -1;
+    return a.id < b.id ? -1 : 1;
+  })[0];
+}

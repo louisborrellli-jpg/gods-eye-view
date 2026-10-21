@@ -46,6 +46,6 @@ export function isHeadingEstimated(camera) {
 export function headingHudToken(camera) {
   const hdg = Math.round(Number(camera?.headingDeg) || 0);
   return isHeadingEstimated(camera)
-    ? t('HDG {value}° (ESTIMATED)', { value: hdg })
+    ? t('HDG {value}° (estimated)', { value: hdg })
     : t('HDG {value}°', { value: hdg });
 }

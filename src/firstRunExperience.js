@@ -37,9 +37,9 @@ export const FIRST_RUN_SESSION_KEY = 'gev:first-run-mission-session:v1';
 export const ENVIRONMENTAL_LABEL_CHOICE = 'ENVIRONMENTAL';
 
 const ENVIRONMENTAL_LABEL_KEYS = Object.freeze({
-  ENVIRONMENTAL: msg('ENVIRONMENTAL'),
-  EARTH_WATCH: msg('EARTH WATCH'),
-  ACTIVE_EVENTS: msg('ACTIVE EVENTS'),
+  ENVIRONMENTAL: msg('Environmental'),
+  EARTH_WATCH: msg('Earth watch'),
+  ACTIVE_EVENTS: msg('Active events'),
 });
 
 /**

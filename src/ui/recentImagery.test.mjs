@@ -366,7 +366,7 @@ test('the readout mounts in the rail body, hides while the layer is off and open
   assert.equal(panel.hidden, false);
   assert.equal(f.collapse.clicked, 1, 'first appearance expands');
   assert.equal(panel.classList.contains('collapsed'), false);
-  assert.equal(f.count.textContent, '4 DAYS');
+  assert.equal(f.count.textContent, '4 days');
   f.collapse.click();
   f.layer.disable();
   f.layer.enable();
@@ -638,7 +638,7 @@ test('no control changes place in the tree, no block is hidden and every fixed-h
   assert.equal(states.length, 12);
 });
 
-test('cards carry thumbnail, date, sensor, cloud, START HERE and PREVIEW; the chips follow the mode without moving', async () => {
+test('cards carry thumbnail, date, sensor, cloud, Start here and Preview; the chips follow the mode without moving', async () => {
   const f = fixture();
   await f.ready();
   f.thumbnails.setStatus(S18, 'present');
@@ -653,7 +653,7 @@ test('cards carry thumbnail, date, sensor, cloud, START HERE and PREVIEW; the ch
   assert.equal(f.part(s18, 'ri-card-cloud').textContent, '12% cloud');
   assert.equal(f.part(s18, 'ri-card-start').hidden, false);
   assert.match(f.part(s18, 'ri-card-start').title, /Newest low-cloud day/);
-  assert.equal(f.part(s18, 'ri-card-flag').textContent, 'PREVIEW');
+  assert.equal(f.part(s18, 'ri-card-flag').textContent, 'Preview');
   assert.equal(
     f.part(f.card(V21), 'ri-card-cloud').textContent,
     'cloud unknown',
@@ -667,7 +667,7 @@ test('cards carry thumbnail, date, sensor, cloud, START HERE and PREVIEW; the ch
     f.part(f.card(L16), 'ri-card-sensor').textContent,
     'Landsat 8/9 · 30\u00a0m',
   );
-  // IMAGE: one SHOW chip; the B chip keeps its box but is invisible.
+  // Image: one Show chip; the B chip keeps its box but is invisible.
   const [a, b] = [f.chip(S18, 'a'), f.chip(S18, 'b')];
   assert.deepEqual(
     [
@@ -676,7 +676,7 @@ test('cards carry thumbnail, date, sensor, cloud, START HERE and PREVIEW; the ch
       b.classList.contains('is-reserved'),
       b.disabled,
     ],
-    ['SHOW', 'false', true, true],
+    ['Show', 'false', true, true],
   );
   assert.equal(a.getAttribute('aria-label'), 'Show Sep 18');
   a.click();
@@ -732,14 +732,14 @@ test('the selection bar reads the mode, both rows and a preview, with × reserve
       node.getAttribute('aria-checked'),
     ]),
     [
-      ['IMAGE', 'radio', 'true'],
-      ['VS BASEMAP', 'radio', 'false'],
+      ['Image', 'radio', 'true'],
+      ['VS basemap', 'radio', 'false'],
       ['A / B', 'radio', 'false'],
     ],
   );
   assert.equal(
     rowText(f, 'a'),
-    'IMAGE | Sep 18 · Sentinel-2 · 30\u00a0m · preview',
+    'Image | Sep 18 · Sentinel-2 · 30\u00a0m · preview',
   );
   assert.equal(f.byId('ri-slot-a').dataset.state, 'preview');
   assert.equal(rowText(f, 'b'), 'VS | Basemap');
@@ -754,7 +754,7 @@ test('the selection bar reads the mode, both rows and a preview, with × reserve
     [true, true, '×'],
   );
   f.key('s');
-  assert.equal(rowText(f, 'a'), 'IMAGE | Sep 18 · Sentinel-2 · 30\u00a0m');
+  assert.equal(rowText(f, 'a'), 'Image | Sep 18 · Sentinel-2 · 30\u00a0m');
   assert.equal(f.byId('ri-slot-a').dataset.state, 'pinned');
   assert.equal(unpinA.disabled, false);
   assert.equal(unpinA.getAttribute('aria-label'), 'Unpin the image');
@@ -813,7 +813,7 @@ test('strip keys: arrows preview after the debounce, S / A / B pin, Enter previe
   assert.equal(f.snap().preview.key, S18, 'Enter previews the focused day');
 });
 
-test('clicks: a card previews and focuses the strip, a chip pins, SELECT BOX toggles the tool, USE VIEW and CLEAR drive the layer', async () => {
+test('clicks: a card previews and focuses the strip, a chip pins, Select box toggles the tool, Use view and Clear drive the layer', async () => {
   const f = fixture();
   await f.ready();
   f.card(L16).click();
@@ -860,7 +860,7 @@ test('Escape clears the preview first, then cancels the box tool, then blurs the
   assert.equal(idle.defaultPrevented, false);
 });
 
-test('the notice line shows the refusal, then errors, then CLEAR, then the Esri note; the hint names the next step and that SWAP trades the sides', async () => {
+test('the notice line shows the refusal, then errors, then Clear, then the Esri note; the hint names the next step and that Swap trades the sides', async () => {
   const controller = fakeController();
   let active = 'photoreal';
   controller.getActiveId = () => active;
@@ -895,11 +895,11 @@ test('the notice line shows the refusal, then errors, then CLEAR, then the Esri 
   f.chip(S18, 'a').click();
   assert.equal(hint.textContent, 'S on another day replaces it · × unpins');
   f.layer.setMode('basemap');
-  assert.equal(hint.textContent, 'Drag the divider · SWAP trades sides');
+  assert.equal(hint.textContent, 'Drag the divider · Swap trades sides');
   f.layer.setMode('ab');
   assert.equal(hint.textContent, '← → preview the other side · A or B pins it');
   f.chip(L16, 'b').click();
-  assert.equal(hint.textContent, 'Drag the divider · SWAP trades sides');
+  assert.equal(hint.textContent, 'Drag the divider · Swap trades sides');
   f.layer.setAssignment('b', null);
   f.layer.setAssignment('a', null);
   assert.equal(hint.textContent, '← → preview · A or B pins the focused day');
@@ -908,7 +908,7 @@ test('the notice line shows the refusal, then errors, then CLEAR, then the Esri 
   assert.equal(notice.classList.contains('info'), true);
 });
 
-test('an oversized box offers ZOOM IN in a fixed slot at the end of the notice line; it asks the layer to fit', async () => {
+test('an oversized box offers Zoom in in a fixed slot at the end of the notice line; it asks the layer to fit', async () => {
   const f = fixture();
   const flights = [];
   f.viewer.scene.canvas.clientHeight = 500;
@@ -922,7 +922,7 @@ test('an oversized box offers ZOOM IN in a fixed slot at the end of the notice l
   const notice = f.byId('ri-notice');
   const zoom = f.byId('ri-zoom-in');
   assert.equal(zoom.tagName, 'BUTTON');
-  assert.equal(zoom.textContent, 'ZOOM IN');
+  assert.equal(zoom.textContent, 'Zoom in');
   assert.equal(notice.children.at(-1), zoom, 'the right end of the line');
   const reserved = () => [
     zoom.classList.contains('is-reserved'),
@@ -957,7 +957,7 @@ test('an oversized box offers ZOOM IN in a fixed slot at the end of the notice l
   assert.deepEqual(reserved(), [true, true, 'true', false]);
 });
 
-test('the divider exists only while a swipe is live, labelled A / B or IMAGE / BASEMAP; SWAP trades its sides and Space does nothing', async () => {
+test('the divider exists only while a swipe is live, labelled A / B or Image / Basemap; Swap trades its sides and Space does nothing', async () => {
   const f = fixture();
   const swap = f.byId('ri-swap');
   const swapState = () => [
@@ -975,7 +975,7 @@ test('the divider exists only while a swipe is live, labelled A / B or IMAGE / B
     return [owned.a?.splitDirection, owned.b?.splitDirection];
   };
   assert.equal(swap.tagName, 'BUTTON');
-  assert.equal(swap.textContent, 'SWAP');
+  assert.equal(swap.textContent, 'Swap');
   assert.equal(swap.parentNode, f.byId('ri-controls'));
   await f.ready();
   await f.settleLease();
@@ -985,18 +985,18 @@ test('the divider exists only while a swipe is live, labelled A / B or IMAGE / B
   assert.equal(f.snap().swapped, false, 'no swipe, nothing to swap');
   f.layer.setMode('basemap');
   assert.equal(f.splits.length, 1);
-  assert.deepEqual(labels(), ['IMAGE', 'BASEMAP']);
+  assert.deepEqual(labels(), ['Image', 'Basemap']);
   assert.equal(f.splits[0].options.id, 'recent-imagery-split-line');
   assert.deepEqual(swapState(), [false, false, 'false', 'false']);
   assert.deepEqual(directions(), ['left', undefined]);
-  // VS BASEMAP: SWAP puts the image right of the basemap, and back.
+  // VS basemap: Swap puts the image right of the basemap, and back.
   swap.click();
   assert.equal(f.snap().swapped, true);
-  assert.deepEqual(labels(), ['BASEMAP', 'IMAGE']);
+  assert.deepEqual(labels(), ['Basemap', 'Image']);
   assert.deepEqual(directions(), ['right', undefined]);
   assert.deepEqual(swapState(), [false, false, 'false', 'true']);
   swap.click();
-  assert.deepEqual(labels(), ['IMAGE', 'BASEMAP']);
+  assert.deepEqual(labels(), ['Image', 'Basemap']);
   assert.deepEqual(directions(), ['left', undefined]);
   f.layer.setMode('ab');
   f.layer.setAssignment('a', S18);
@@ -1021,7 +1021,7 @@ test('the divider exists only while a swipe is live, labelled A / B or IMAGE / B
   }
   assert.equal(f.splits.at(-1), split, 'the divider is untouched');
   assert.equal(f.snap().swapped, false);
-  // SWAP: A moves right and B left, the labels follow; the divider stays.
+  // Swap: A moves right and B left, the labels follow; the divider stays.
   swap.click();
   assert.equal(split.destroyed, true);
   assert.deepEqual(labels(), ['B', 'A']);
@@ -1038,13 +1038,13 @@ test('the divider exists only while a swipe is live, labelled A / B or IMAGE / B
   assert.deepEqual(labels(), ['A', 'B']);
   assert.deepEqual(directions(), ['left', 'right']);
   assert.equal(swap.getAttribute('aria-pressed'), 'false');
-  // Unpinning B ends the swipe and SWAP goes back to its reserved slot.
+  // Unpinning B ends the swipe and Swap goes back to its reserved slot.
   f.byId('ri-unpin-b').click();
   assert.equal(f.splits.at(-1).destroyed, true);
   assert.deepEqual(swapState(), [true, true, 'true', 'false']);
 });
 
-test('opacity drives both images; EXPORT downloads the pin or the preview and EXPORT B only exists in A / B', async () => {
+test('opacity drives both images; Export downloads the pin or the preview and Export B only exists in A / B', async () => {
   const f = fixture();
   await f.ready();
   const exportA = f.byAction('export-a');
@@ -1056,7 +1056,7 @@ test('opacity drives both images; EXPORT downloads the pin or the preview and EX
       exportB.classList.contains('is-reserved'),
       exportB.disabled,
     ],
-    ['EXPORT', false, true, true],
+    ['Export', false, true, true],
   );
   f.byId('ri-opacity').value = '40';
   f.byId('ri-opacity').dispatch('input');
@@ -1086,7 +1086,7 @@ test('opacity drives both images; EXPORT downloads the pin or the preview and EX
       exportB.textContent,
       exportB.classList.contains('is-reserved'),
     ],
-    ['EXPORT A', 'EXPORT B', false],
+    ['Export A', 'Export B', false],
   );
   const failing = fixture({
     fetchImpl: async () => response({ ok: false, status: 503 }),
@@ -1115,7 +1115,7 @@ test('DETAILS is a collapsed rail card holding every note, and the empty-days to
   assert.match(text, /Sep 18, 2026 17:12Z/);
   assert.match(text, /Acquired 17:12Z–17:14Z · Coverage full/);
   assert.match(text, /S30-2026-09-18 · 17:12Z · 12% cloud/);
-  assert.match(text, /START HERE · newest clear day/);
+  assert.match(text, /Start here · newest clear day/);
   assert.match(
     text,
     /Daily overview for today may still be empty until the pass/,
@@ -1125,10 +1125,10 @@ test('DETAILS is a collapsed rail card holding every note, and the empty-days to
   const toggle = f.byAction('toggle-empty');
   assert.equal(toggle.disabled, true, 'nothing hidden yet');
   f.thumbnails.probe(L16, 'empty');
-  assert.equal(toggle.textContent, 'SHOW EMPTY DAYS · 1');
+  assert.equal(toggle.textContent, 'Show empty days · 1');
   toggle.click();
   assert.equal(f.snap().showUnavailable, true);
-  assert.equal(toggle.textContent, 'HIDE EMPTY DAYS');
+  assert.equal(toggle.textContent, 'Hide empty days');
   header.click();
   assert.equal(article.dataset.open, 'false');
 });

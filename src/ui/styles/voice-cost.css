@@ -24,8 +24,8 @@
   border-radius: 0.18rem;
   color: var(--text-secondary);
   font-family: var(--font-mono);
-  font-size: 0.4rem;
-  letter-spacing: 0.045rem;
+  font-size: 0.75rem;
+  letter-spacing: 0;
   line-height: 1;
   cursor: pointer;
   transition:
@@ -51,7 +51,7 @@
 .gev-voice-cost-value {
   color: var(--text-dim);
   font-family: var(--font-mono);
-  font-size: 0.4rem;
+  font-size: 0.75rem;
   letter-spacing: 0.02rem;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -160,7 +160,7 @@ html:not([lang='en'])
   background: var(--bg-panel, #09121b);
   color: var(--text-secondary);
   font-family: var(--font-mono);
-  font-size: 0.5rem;
+  font-size: 0.75rem;
   opacity: 0;
   pointer-events: none;
 }
@@ -176,7 +176,7 @@ html:not([lang='en'])
   border: 1px solid var(--glass-border);
   border-radius: 4px;
   font: inherit;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
 }
 #gev-voice-control:hover .gev-voice-provider-field,
 #gev-voice-control:focus-within .gev-voice-provider-field {

@@ -1,7 +1,7 @@
 import { readShellSource } from './testSupport/readShellSource.mjs';
 import { expandApplicationHtml } from '../build/application-html.js';
 import { readStylesheet } from './testSupport/readStylesheet.mjs';
-// MAP STACK chip row — the dropdown's replacement control surface.
+// Map STACK chip row — the dropdown's replacement control surface.
 //
 // The owner's complaint was two clicks (open panel → open dropdown) to change
 // basemap. These tests pin the three things that make the row a faithful swap:
@@ -491,7 +491,7 @@ test('the Visual Presets tray owns Map Source and the retired left panel is abse
   assert.doesNotMatch(
     html,
     /map-stack-select/,
-    'the SOURCE dropdown is replaced by the chip row',
+    'the Source dropdown is replaced by the chip row',
   );
   assert.match(
     html,
@@ -500,11 +500,11 @@ test('the Visual Presets tray owns Map Source and the retired left panel is abse
   assert.doesNotMatch(
     html,
     /id="stack-panel"/,
-    'the duplicate left MAP STACK panel is retired',
+    'the duplicate left Map STACK panel is retired',
   );
   assert.match(
     html,
-    /id="map-source-label">MAP SOURCE<[\s\S]*?id="map-stack-status"/,
+    /id="map-source-label">Map source<[\s\S]*?id="map-stack-status"/,
   );
   assert.match(
     html,

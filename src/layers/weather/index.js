@@ -755,12 +755,12 @@ export function createWeatherLayer({
           ? [
               {
                 id: 'region',
-                label: t('REGION'),
+                label: t('Region'),
                 chips: controls.chips.filter(({ params }) => params.product),
               },
               {
                 id: 'image',
-                label: t('IMAGE'),
+                label: t('Image'),
                 chips: controls.chips.filter(
                   ({ params }) => params.infrared !== undefined,
                 ),
@@ -771,7 +771,7 @@ export function createWeatherLayer({
                   max: 100,
                   step: 1,
                   value: infrared,
-                  label: t('FILTER'),
+                  label: t('Filter'),
                   unit: '%',
                   ariaLabel: t('Cloud filter strength'),
                   commitOnChange: true,
@@ -781,7 +781,7 @@ export function createWeatherLayer({
           : []),
         {
           id: 'opacity',
-          label: t('OPACITY'),
+          label: t('Opacity'),
           chips: controls.chips.filter(({ params }) => params.opacity),
         },
       ];

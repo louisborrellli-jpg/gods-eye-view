@@ -8,7 +8,7 @@
   /* Panoramax's orange; the darker one sits behind white text. */
   --sl-panoramax: #ff6f00;
   --sl-panoramax-fill: #b84e00;
-  --sl-text: 0.6rem;
+  --sl-text: 0.8125rem;
 }
 
 #street-level-panel .panel-glow {
@@ -53,7 +53,7 @@
   font: inherit;
   font-family: var(--font-mono);
   font-size: var(--sl-text);
-  letter-spacing: 0.1em;
+  letter-spacing: 0;
   padding: 2px 7px;
   border-radius: 999px;
   border: 1px solid var(--glass-border-hover);
@@ -209,7 +209,7 @@ html:not([lang='en']) .sl-meta-row .sl-nearest-btn {
 /* ── Errors ──────────────────────────────────────────────────────────────── */
 .sl-error {
   font-family: var(--font-sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   line-height: 1.4;
   color: #ff8a80;
 }
@@ -240,7 +240,7 @@ html:not([lang='en']) .sl-meta-row .sl-nearest-btn {
 .sl-seg-btn {
   font-family: var(--font-mono);
   font-size: var(--sl-text);
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
   padding: 4px 9px;
   border: 0;
   background: transparent;
@@ -306,7 +306,7 @@ html:not([lang='en']) .sl-meta-row .sl-nearest-btn {
   grid-column: 2;
   font-family: var(--font-mono);
   font-size: var(--sl-text);
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
   color: var(--text-primary);
 }
 
@@ -441,7 +441,7 @@ html:not([lang='en']) .sl-meta-row .sl-nearest-btn {
   padding: 6px 10px;
   font-family: var(--font-mono);
   font-size: var(--sl-text);
-  letter-spacing: 0.06em;
+  letter-spacing: 0;
   color: var(--text-secondary);
   background: rgba(0, 0, 0, 0.7);
   display: flex;
@@ -473,7 +473,7 @@ html:not([lang='en']) .sl-meta-row .sl-nearest-btn {
 .sl-image-link {
   color: var(--sl-green);
   text-decoration: none;
-  letter-spacing: 0.1em;
+  letter-spacing: 0;
 }
 
 .sl-image-link[hidden] {
@@ -487,7 +487,7 @@ html:not([lang='en']) .sl-meta-row .sl-nearest-btn {
 .sl-meta {
   font-family: var(--font-mono);
   font-size: var(--sl-text);
-  letter-spacing: 0.06em;
+  letter-spacing: 0;
   color: var(--text-secondary);
 }
 

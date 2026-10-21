@@ -180,8 +180,8 @@ export function mountSceneSharing(
   bar.dataset.directorAuthoring = '';
   bar.className = 'scene-controls';
   const entries = [
-    [t('EDIT DETAILS'), edit],
-    [t('SHARE SCENE'), share],
+    [t('Edit details'), edit],
+    [t('Share scene'), share],
   ];
   const removers = [];
   for (const [text, fn] of entries) {

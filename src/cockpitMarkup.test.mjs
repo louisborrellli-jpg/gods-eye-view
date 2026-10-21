@@ -73,7 +73,7 @@ test('Cockpit has one reset action beside its bottom exit path', () => {
   assert.doesNotMatch(html, /id="cockpit-exit"/);
   assert.match(
     html,
-    /id="map-view-switch"[^>]*aria-label="Exit cockpit view"[^>]*aria-keyshortcuts="Escape C"[\s\S]*?close_fullscreen[\s\S]*?EXIT COCKPIT/,
+    /id="map-view-switch"[^>]*aria-label="Exit cockpit view"[^>]*aria-keyshortcuts="Escape C"[\s\S]*?close_fullscreen[\s\S]*?Exit cockpit/,
   );
   const topCenterActions = html.match(
     /<nav id="top-center-actions"[\s\S]*?<\/nav>/,
@@ -107,7 +107,7 @@ test('Cockpit has one reset action beside its bottom exit path', () => {
   );
   assert.match(
     viewSwitcher[0],
-    /id="cockpit-reset-globe"[^>]*type="button"[^>]*aria-label="Reset cockpit to full globe view"[^>]*hidden[\s\S]*?public[\s\S]*?RESET[\s\S]*?id="map-view-switch"/,
+    /id="cockpit-reset-globe"[^>]*type="button"[^>]*aria-label="Reset cockpit to full globe view"[^>]*hidden[\s\S]*?public[\s\S]*?Reset[\s\S]*?id="map-view-switch"/,
   );
 
   const actions = html.match(
@@ -151,11 +151,11 @@ test('Cockpit vision cycle exposes every map preset exactly once', () => {
   );
   assert.match(
     setVisionMode.toString(),
-    /const labels = \{\s*optical: t\('NORMAL'\),\s*crt: t\('RETRO'\),\s*nvg: t\('NVG'\),\s*thermal: t\('FLIR'\),\s*anime: t\('ANIME'\),\s*noir: t\('NOIR'\),\s*snow: t\('SNOW'\),?\s*\};/,
+    /const labels = \{\s*optical: t\('Normal'\),\s*crt: t\('Retro'\),\s*nvg: t\('NVG'\),\s*thermal: t\('FLIR'\),\s*anime: t\('Anime'\),\s*noir: t\('Noir'\),\s*snow: t\('Snow'\),?\s*\};/,
   );
   assert.doesNotMatch(setVisionMode.toString(), /none: 'NONE'/);
   assert.doesNotMatch(ui, /getInheritedVisionLabel/);
-  assert.match(html, /id="cockpit-vision-current-label"[^>]*>NORMAL<\/strong>/);
+  assert.match(html, /id="cockpit-vision-current-label"[^>]*>Normal<\/strong>/);
   assert.match(
     cockpitEnter.toString(),
     /this\.setVisionMode\(this\.getInitialVisionMode\(\)\)/,
@@ -241,11 +241,11 @@ test('Cockpit shortcut failures do not leak and open Radio owns the first Escape
   );
 });
 
-test('the Contact panel never hides itself out from under its own NEXT button', () => {
+test('the Contact panel never hides itself out from under its own Next button', () => {
   const updateContext = cockpitContext.toString();
   assert.ok(updateContext, 'Cockpit updateContext is missing');
   const body = updateContext;
-  // Pin the real presentation owner to the readout policy: PREVIOUS/NEXT
+  // Pin the real presentation owner to the readout policy: Previous/Next
   // remains reachable unless no Context snapshot exists at all.
   assert.match(body, /resolveCockpitContextReadout\(\{ snapshot, info \}\)/);
   assert.match(
@@ -265,32 +265,32 @@ test('the Contact panel never hides itself out from under its own NEXT button', 
   // A foreign subject dashes the nose-relative arrow/bearing only.
   assert.match(body, /readout\.aircraftRelative/);
   assert.match(body, /'BRG —'/);
-  // A culled subject holds last-known content behind the CONTACT LOST cue.
+  // A culled subject holds last-known content behind the Contact lost cue.
   assert.match(body, /readout\.contactLost/);
-  assert.match(body, /CONTACT LOST/);
+  assert.match(body, /Contact lost/);
   assert.match(body, /this\.context\.dataset\.state = 'lost'/);
   assert.match(
     body,
     /if \(readout\.contactLost\) \{/,
-    'the CONTACT LOST branch is missing',
+    'the Contact lost branch is missing',
   );
-  // PREVIOUS/NEXT must be written before any early return, so the operator can
+  // Previous/Next must be written before any early return, so the operator can
   // always step off the current contact — including a lost one.
   const navIndex = body.indexOf('this.contextNext.disabled');
   const lostIndex = body.indexOf('if (readout.contactLost)');
   assert.ok(
     navIndex >= 0 && lostIndex > navIndex,
-    'nav state must be written before the CONTACT LOST return',
+    'nav state must be written before the Contact lost return',
   );
   assert.equal(
     (body.match(/this\.contextNext\.disabled/g) || []).length,
     1,
-    'one owner for the NEXT enabled state, reached by every visible path',
+    'one owner for the Next enabled state, reached by every visible path',
   );
   assert.match(
     css,
     /\.cockpit-context-window\[data-state='lost'\]/,
-    'CONTACT LOST reuses the panel-level data-state cue that "uncertain" already uses',
+    'Contact lost reuses the panel-level data-state cue that "uncertain" already uses',
   );
 });
 
@@ -752,7 +752,7 @@ test('fresh Cockpit entry temporarily collapses map panels and exit restores the
   assert.doesNotMatch(
     navigation,
     /COCKPIT_ENTRY_COLLAPSE_PANEL_IDS|setPanelCollapsed/,
-    'NEXT/PREVIOUS must preserve panels opened after entry',
+    'Next/Previous must preserve panels opened after entry',
   );
 });
 
@@ -950,13 +950,13 @@ test('Cockpit panel corridors reserve the owned topline readouts', () => {
   assert.match(
     signalLayout,
     /resolveCockpitUtilityAnchor\(\{[\s\S]*?recBottom: recBounds \? recBounds\.bottom : 0,[\s\S]*?signalTop: signalBounds\.top,[\s\S]*?stripHeight: utilityBounds\.height,/,
-    'the strip hangs off the REC readout and is clamped by the briefing card it shares the margin with',
+    'the strip hangs off the Rec readout and is clamped by the briefing card it shares the margin with',
   );
   assert.match(signalLayout, /#intel-hud \.hud-top-right/);
   assert.match(
     signalLayout,
     /const recBounds = isRenderedOnScreen\(recReadout\)\s*\? recReadout\.getBoundingClientRect\(\)\s*: null;/,
-    'HUD Off retires the Intel HUD with visibility/opacity, which leaves the REC ' +
+    'HUD Off retires the Intel HUD with visibility/opacity, which leaves the Rec ' +
       'readout a rect — a rect test alone would anchor the strip to an invisible readout',
   );
   assert.match(
@@ -966,7 +966,7 @@ test('Cockpit panel corridors reserve the owned topline readouts', () => {
   assert.match(
     layout,
     /_leftStackHudTransitionHandler = \(event\) => \{[\s\S]*?_scheduleLeftPanelLayout\(\{ reconsiderAutoCollapse: true \}\);[\s\S]*?this\.scheduleCockpitLayout\(\);/,
-    'the strip must remeasure on the same HUD fade the accordion does — the REC ' +
+    'the strip must remeasure on the same HUD fade the accordion does — the Rec ' +
       'readout keeps its rect until the transition ends',
   );
   assert.doesNotMatch(
@@ -1185,14 +1185,14 @@ test('cockpit weather control is off before JavaScript restores an explicit opt-
   assert.ok(match, 'cockpit weather toggle markup is missing');
   assert.match(match[0], /aria-label="Enable cockpit weather effects"/);
   assert.match(match[0], /aria-pressed="false"/);
-  assert.match(match[0], /id="cockpit-weather-state">OFF</);
+  assert.match(match[0], /id="cockpit-weather-state">Off</);
 });
 
 test('cockpit summary presents the focused item as Contact', () => {
   const match = html.match(/<aside id="cockpit-context"[\s\S]*?<\/aside>/);
   assert.ok(match, 'cockpit Contact summary is missing');
   assert.match(match[0], /aria-label="Contact cockpit summary"/);
-  assert.match(match[0], /class="cockpit-context-kicker">CONTACT</);
+  assert.match(match[0], /class="cockpit-context-kicker">Contact</);
   assert.match(match[0], /aria-label="Contact navigation"/);
   assert.match(
     match[0],
@@ -1222,8 +1222,8 @@ test('Global Context names its mixed contact cycle without changing the stable m
     /<button id="global-context-flights-btn"[\s\S]*?<\/button>/,
   );
   assert.ok(match, 'Global Context contacts button is missing');
-  assert.match(match[0], />CONTACTS</);
-  assert.match(match[0], /aria-label="CONTACTS"/);
+  assert.match(match[0], />Contacts</);
+  assert.match(match[0], /aria-label="Contacts"/);
   assert.match(
     match[0],
     /title="Cycles the nearest contacts of whatever type you select — planes, vessels, installations\. Satellites track independently\."/,
@@ -1256,8 +1256,8 @@ test('Global Context uses its dedicated right rail without a duplicate Data Laye
 test('Global Context standby describes both chooser modes', () => {
   const match = html.match(/<div id="context-mode-standby"[\s\S]*?<\/div>/);
   assert.ok(match, 'Global Context standby is missing');
-  assert.match(match[0], /CONTACTS — nearest planes · vessels · sites/);
-  assert.match(match[0], /SPACE MISSIONS — launches &amp; orbital assets/);
+  assert.match(match[0], /Contacts — nearest planes · vessels · sites/);
+  assert.match(match[0], /Space missions — launches &amp; orbital assets/);
 });
 
 test('cockpit briefing cycle control keeps its state as the accessible name', () => {
@@ -1265,9 +1265,9 @@ test('cockpit briefing cycle control keeps its state as the accessible name', ()
     /<button\s+id="cockpit-brief-auto"[\s\S]*?<\/button>/,
   );
   assert.ok(match, 'cockpit briefing cycle toggle is missing');
-  assert.match(match[0], /aria-label="CYCLE OFF"/);
+  assert.match(match[0], /aria-label="Cycle off"/);
   assert.match(match[0], /aria-pressed="false"/);
-  assert.match(match[0], />CYCLE OFF<\/button>/);
+  assert.match(match[0], />Cycle off<\/button>/);
   assert.match(
     match[0],
     /title="Cycle briefing pages automatically every 9 seconds \(Signals → News → Local\)\./,
@@ -1277,7 +1277,7 @@ test('cockpit briefing cycle control keeps its state as the accessible name', ()
   assert.ok(update, 'cockpit briefing cycle state updater is missing');
   assert.match(
     update,
-    /const label = this\.briefAutoRotateEnabled \? 'CYCLE ON' : 'CYCLE OFF';/,
+    /const label = this\.briefAutoRotateEnabled \? 'Cycle on' : 'Cycle off';/,
   );
   assert.match(update, /setAttribute\('aria-label', label\)/);
   assert.match(update, /\.title = help;/);
@@ -1355,7 +1355,7 @@ test('voice Cockpit entry refuses when the entry gate is shut', () => {
 });
 
 test('cockpit state cannot report entryAllowed while already active', () => {
-  // Cockpit takes the entity off viewer.trackedEntity on entry and NEXT puts
+  // Cockpit takes the entity off viewer.trackedEntity on entry and Next puts
   // one back, so this flipped true/false between calls while active stayed
   // true — read by the voice model as a broken half-entered state.
   const state = ui.slice(

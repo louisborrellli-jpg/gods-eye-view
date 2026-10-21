@@ -5,20 +5,20 @@ import { formatNumber, msg, t } from '../i18n/index.js';
 // match STYLE_STATUS_LABELS in visualPresets.js, which this package cannot
 // import (it pulls in the shaders).
 const STYLE_LABELS = Object.freeze({
-  normal: msg('NORMAL'),
-  retro: msg('RETRO'),
+  normal: msg('Normal'),
+  retro: msg('Retro'),
   surveillance: msg('NVG'),
   thermal: msg('FLIR'),
-  anime: msg('ANIME'),
-  noir: msg('NOIR'),
-  snow: msg('SNOW'),
+  anime: msg('Anime'),
+  noir: msg('Noir'),
+  snow: msg('Snow'),
 });
 
 const DETECTION_MODE_LABELS = Object.freeze({
-  OFF: msg('OFF'),
-  SPARSE: msg('SPARSE'),
-  BALANCED: msg('BALANCED'),
-  DENSE: msg('DENSE'),
+  OFF: msg('Off'),
+  SPARSE: msg('Sparse'),
+  BALANCED: msg('Balanced'),
+  DENSE: msg('Dense'),
 });
 
 export function sceneElements(root = document) {
@@ -123,7 +123,7 @@ export function renderSceneShots(
     actions.className = 'scene-shot-actions';
     const loadButton = document.createElement('button');
     loadButton.className = 'scene-shot-btn';
-    loadButton.textContent = t('LOAD');
+    loadButton.textContent = t('Load');
     listen(loadButton, 'click', () => load(scene.id, shot.id));
     const deleteButton = document.createElement('button');
     deleteButton.className = 'scene-shot-btn scene-shot-danger';

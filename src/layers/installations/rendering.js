@@ -272,7 +272,7 @@ export function createRendering({
       entity.gevTrackedId = `installations:${record.id}`;
       entity.gevDisplayPosition = () => displayPosition;
       entity.gevLabelModel = {
-        title: installationTitle(record.name) || t('MAPPED INSTALLATION'),
+        title: installationTitle(record.name) || t('Mapped installation'),
         details: [
           installationClassLabel(record.class),
           ...(record.memberNames || []).slice(0, 3),

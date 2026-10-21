@@ -280,14 +280,14 @@ export function voiceCardView(state) {
   return {
     visible: Boolean(state.visible),
     busy: running,
-    phase: running ? t('WORKING') : state.steps.length ? t('DONE') : '',
+    phase: running ? t('Working') : state.steps.length ? t('Done') : '',
     user: {
       visible: state.user !== null,
       text: state.user || '…',
     },
     pointer: {
       visible: Boolean(state.pointer),
-      kind: state.pointer?.kind === 'here' ? t('HERE') : t('THIS'),
+      kind: state.pointer?.kind === 'here' ? t('Here') : t('This'),
       text: spokenLabel(state.pointer?.label || '', 32),
     },
     assistant: {

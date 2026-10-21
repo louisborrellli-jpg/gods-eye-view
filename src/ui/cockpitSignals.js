@@ -128,11 +128,11 @@ export function updateCockpitSignals(snapshot, unknownCount) {
       key: `flight:${subject.layerId}:${subject.id}`,
       tone: 'track',
       title: subject.label || subject.id,
-      detail: t('{aircraftClass} · CURRENT', {
+      detail: t('{aircraftClass} · Current', {
         aircraftClass:
           subject.layerId === 'military'
-            ? t('MILITARY FLIGHT')
-            : t('COMMERCIAL FLIGHT'),
+            ? t('Military flight')
+            : t('Commercial flight'),
       }),
       target: { layerId: subject.layerId, id: String(subject.id) },
       distanceM: -1,
@@ -155,11 +155,11 @@ export function updateCockpitSignals(snapshot, unknownCount) {
         detail: t('{aircraftClass} · {distance}', {
           aircraftClass:
             cohort.id === 'military'
-              ? t('MILITARY FLIGHT')
-              : t('COMMERCIAL FLIGHT'),
+              ? t('Military flight')
+              : t('Commercial flight'),
           distance: Number.isFinite(item.distanceM)
             ? formatCockpitDistance(item.distanceM)
-            : t('DISTANCE UNKNOWN'),
+            : t('Distance unknown'),
         }),
         target: { layerId: cohort.id, id: String(id) },
         distanceM: item.distanceM ?? Infinity,
@@ -182,10 +182,10 @@ export function updateCockpitSignals(snapshot, unknownCount) {
       tone: 'warning',
       title: tn(
         unknownCount,
-        '{count} INPUT UNKNOWN',
-        '{count} INPUTS UNKNOWN',
+        '{count} input unknown',
+        '{count} inputs unknown',
       ),
-      detail: sources || t('SOURCE STATUS UNAVAILABLE'),
+      detail: sources || t('Source status unavailable'),
       target: null,
       timestamp:
         previous.get('input-status')?.timestamp ||

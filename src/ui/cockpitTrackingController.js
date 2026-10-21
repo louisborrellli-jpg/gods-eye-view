@@ -184,15 +184,15 @@ export function enter() {
   this.showBriefPage(0);
   this.startBriefRotation();
   const trackLabel =
-    info.callsign || info.registration || info.icao24 || t('AIRCRAFT');
+    info.callsign || info.registration || info.icao24 || t('Aircraft');
   const trackHeading = String(
     Math.round(normalizeHeading(info.track ?? 0)),
   ).padStart(3, '0');
   this.pushCockpitSignal(
     'track',
     'track',
-    t('TRACK ACQUIRED'),
-    t('{label} · COURSE {heading}°', {
+    t('Track acquired'),
+    t('{label} · Course {heading}°', {
       label: trackLabel,
       heading: trackHeading,
     }),

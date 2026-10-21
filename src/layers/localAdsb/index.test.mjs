@@ -640,9 +640,9 @@ test('the click card lists identity, kinematics, freshness and the receiver line
   assert.equal(card.accent, '#ff4fd8');
   assert.deepEqual(card.details, [
     'ICAO AE5D8A · SHINR42',
-    'ALT 1,600 FT · GS 130 KT · TRK 331°',
-    'V/S +64 FPM',
-    'POSITION 4 S AGO · 48 MSGS',
+    'ALT 1,600 ft · GS 130 kt · TRK 331°',
+    'V/S +64 fpm',
+    'Position 4 s ago · 48 msgs',
     'Heard by your receiver · 1090 MHz · browser SDR',
   ]);
   assert.equal(HEARD_BY_RECEIVER, 'Heard by your receiver');
@@ -659,10 +659,10 @@ test('the click card lists identity, kinematics, freshness and the receiver line
   );
   assert.equal(bare.title, 'ABC123');
   assert.deepEqual(bare.details.slice(0, 4), [
-    'ICAO ABC123 · NO CALLSIGN',
-    'ALT — FT · GS — KT · TRK —',
-    'V/S -1,280 FPM',
-    'POSITION 0 S AGO · 1 MSG',
+    'ICAO ABC123 · No callsign',
+    'ALT — ft · GS — kt · TRK —',
+    'V/S -1,280 fpm',
+    'Position 0 s ago · 1 msg',
   ]);
 });
 

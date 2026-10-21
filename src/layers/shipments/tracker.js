@@ -5,6 +5,7 @@
  */
 import { msg } from '../../i18n/marker.js';
 import { shipmentStage } from './model.js';
+import { TRACKING_VERSION } from './tracking.js';
 
 /**
  * How often each container's milestones are refreshed. FindTEU updates its
@@ -32,8 +33,13 @@ export function createShipmentTracker({
   let running = null;
 
   function due(shipment, force) {
-    if (shipmentStage(shipment) === 'done' || shipment.auto?.completed)
-      return false;
+    if (shipmentStage(shipment) === 'done') return false;
+    // Read by an older parser: fetch once more for the fields it missed
+    // (the loading date), even for a box the line calls finished.
+    const outdated =
+      Boolean(shipment.auto) && (shipment.auto.version ?? 0) < TRACKING_VERSION;
+    if (outdated && !lastTry.has(shipment.id)) return true;
+    if (shipment.auto?.completed && !outdated) return false;
     const last = Math.max(
       lastTry.get(shipment.id) ?? 0,
       shipment.auto?.fetchedAt ?? 0,

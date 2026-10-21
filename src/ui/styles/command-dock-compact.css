@@ -82,8 +82,8 @@
 #command-dock .panel-title,
 #command-dock .location-toolbar-label {
   width: max-content;
-  font-size: 0.45rem;
-  letter-spacing: 0.12rem;
+  font-size: 0.75rem;
+  letter-spacing: 0;
   white-space: nowrap;
 }
 
@@ -92,7 +92,7 @@
   content: '›';
   margin-left: 0.45rem;
   color: rgba(54, 220, 255, 0.68);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
 }
 
 #command-dock #control-panel .panel-title::after {
@@ -141,7 +141,7 @@
 #command-dock #location-search.expanded {
   height: 1.75rem;
   padding: 0.3rem 0.45rem;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
 }
 
 #command-dock .location-pills {
@@ -161,7 +161,7 @@
   min-height: 1.75rem;
   padding: 0.3rem 0.55rem;
   border-radius: 0.2rem;
-  font-size: 0.52rem;
+  font-size: 0.75rem;
   white-space: nowrap;
 }
 
@@ -206,11 +206,11 @@
 }
 
 #command-dock .btn-icon {
-  font-size: 0.78rem;
+  font-size: 0.8125rem;
 }
 
 #command-dock .btn-label {
-  font-size: 0.43rem;
+  font-size: 0.75rem;
   letter-spacing: 0.02rem;
 }
 
@@ -243,8 +243,8 @@
   grid-row: 1;
   align-self: center;
   color: rgba(190, 221, 230, 0.58);
-  font-size: 0.39rem;
-  letter-spacing: 0.07rem;
+  font-size: 0.75rem;
+  letter-spacing: 0;
   text-align: center;
 }
 
@@ -279,7 +279,7 @@
 }
 
 #command-dock .gev-mic-label {
-  font-size: 0.35rem;
+  font-size: 0.75rem;
   color: rgba(190, 221, 230, 0.72);
   letter-spacing: 0.02rem;
 }
@@ -338,7 +338,7 @@
   grid-row: 2;
   align-self: start;
   padding-top: 0.2rem;
-  font-size: 0.45rem;
+  font-size: 0.75rem;
   text-align: right;
 }
 
@@ -348,8 +348,8 @@
   align-self: center;
   max-width: none;
   margin: 0;
-  font-size: 0.39rem;
-  letter-spacing: 0.08rem;
+  font-size: 0.75rem;
+  letter-spacing: 0;
   text-align: center;
 }
 

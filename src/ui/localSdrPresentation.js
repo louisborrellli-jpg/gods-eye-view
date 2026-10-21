@@ -9,12 +9,12 @@ import { formatQuantity } from './unitLabels.js';
 
 // Receiver status codes shown on the connection chip and the connect button.
 const STATUS_LABELS = Object.freeze({
-  idle: msg('IDLE'),
-  connecting: msg('CONNECTING'),
-  tuning: msg('TUNING'),
-  streaming: msg('STREAMING'),
-  error: msg('ERROR'),
-  unsupported: msg('UNSUPPORTED'),
+  idle: msg('Idle'),
+  connecting: msg('Connecting'),
+  tuning: msg('Tuning'),
+  streaming: msg('Streaming'),
+  error: msg('Error'),
+  unsupported: msg('Unsupported'),
 });
 
 function statusLabel(status) {
@@ -137,15 +137,15 @@ export function localSdrCardView(state) {
   return {
     connectionLabel: state.connected
       ? adsbActive
-        ? tn(state.aircraftHeard || 0, '{count} HEARD', '{count} HEARD')
-        : t('STREAMING')
+        ? tn(state.aircraftHeard || 0, '{count} heard', '{count} heard')
+        : t('Streaming')
       : statusLabel(state.status),
     connectionActive: Boolean(state.connected),
     connectLabel: transitional
       ? statusLabel(state.status)
       : state.connected
-        ? t('DISCONNECT')
-        : t('CONNECT'),
+        ? t('Disconnect')
+        : t('Connect'),
     connectDisabled: transitional || !state.webUsbSupported,
     connectPressed: Boolean(state.connected),
     fmActive,
@@ -153,10 +153,10 @@ export function localSdrCardView(state) {
     modeDisabled: transitional,
     locateLabel:
       state.locationStatus === 'requesting'
-        ? t('LOCATING…')
+        ? t('Locating…')
         : state.locationStatus === 'ready'
-          ? t('LOCATED')
-          : t('LOCATE'),
+          ? t('Located')
+          : t('Locate'),
     locateDisabled: state.locationStatus === 'requesting',
     locateActive: state.locationStatus === 'ready',
     changeDeviceDisabled: transitional || !state.webUsbSupported,

@@ -27,7 +27,7 @@ const row = {
 test('en: the fire card keeps its English wording', () => {
   setLocale('en');
   const card = buildIncidentCard(row, now, { link: 'https://inciweb.example' });
-  assert.equal(card.title, 'FIRE · Lake');
+  assert.equal(card.title, 'Fire · Lake');
   assert.deepEqual(card.details, [
     '1,200 ac · 40% contained · CA',
     'part of North Complex',
@@ -36,7 +36,7 @@ test('en: the fire card keeps its English wording', () => {
     'discovered 2h ago · updated 1h ago',
     'InciWeb ↗ · click card to open',
   ]);
-  assert.equal(card.accessibilityLabel, 'Open FIRE · Lake on InciWeb');
+  assert.equal(card.accessibilityLabel, 'Open Fire · Lake on InciWeb');
 });
 
 for (const locale of ['es', 'ru']) {
@@ -55,7 +55,7 @@ for (const locale of ['es', 'ru']) {
         ' | ',
       );
       for (const english of [
-        'FIRE',
+        'Fire ·',
         ' ac ',
         'contained',
         'discovered',
@@ -88,13 +88,13 @@ const expected = {
   es: {
     situation: 'causa: humana · actividad moderada · incidente de tipo 3',
     cost: '4,2 M$ hasta la fecha',
-    unnamed: 'INCENDIO · Sin nombre',
+    unnamed: 'Incendio · Sin nombre',
   },
   ru: {
     situation:
       'причина: деятельность человека · умеренная активность · инцидент 3-го типа',
     cost: '4,2 млн $ на сегодня',
-    unnamed: 'ПОЖАР · Без названия',
+    unnamed: 'Пожар · Без названия',
   },
 };
 

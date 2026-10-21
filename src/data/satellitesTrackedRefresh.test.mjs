@@ -234,13 +234,13 @@ test('a tracked docked cluster consolidates its companions onto one card', () =>
   // consolidated companions stay last.
   assert.equal(
     details[0],
-    'STATION · ISS',
+    'Station · ISS',
     'the class line names what this is',
   );
   assert.match(details[1], /NORAD 25544$/, 'the altitude line is unchanged');
   assert.equal(
     details[2],
-    'DOCKED · PROGRESS-MS 34 · +1',
+    'Docked · PROGRESS-MS 34 · +1',
     'companions are consolidated, named, and counted on the tracked card',
   );
 
@@ -272,7 +272,7 @@ test('satellite pre-render refreshes the tracked altitude on each propagated fra
 
   _runSatellitePreRenderForTest();
   assert.equal(entity.gevLabelModel.title, 'ISS (ZARYA)');
-  assert.equal(entity.gevLabelModel.details[0], 'STATION · ISS');
+  assert.equal(entity.gevLabelModel.details[0], 'Station · ISS');
   // formatQuantity keeps the number and its unit together with a no-break space.
   assert.equal(entity.gevLabelModel.details[1], '353\u00a0km · NORAD 25544');
 
@@ -282,7 +282,7 @@ test('satellite pre-render refreshes the tracked altitude on each propagated fra
   assert.equal(entity.gevLabelModel.details[1], '366\u00a0km · NORAD 25544');
   assert.equal(
     entity.gevLabelModel.details[0],
-    'STATION · ISS',
+    'Station · ISS',
     'the class line survives an altitude-only republish',
   );
 });

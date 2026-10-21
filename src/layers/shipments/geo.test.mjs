@@ -1,6 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  shipKeyOf,
+  shipLeader,
   PORTS,
   alongLine,
   estimatePosition,
@@ -96,5 +98,37 @@ test('a ship halfway through its voyage is estimated mid-ocean', () => {
   assert.equal(
     estimatePosition(done, shipmentStage(done), at('2026-11-16')),
     null,
+  );
+});
+
+test('containers on one ship share where that ship is', () => {
+  const nowMs = Date.UTC(2026, 9, 21, 12);
+  const box = (id, pol, departed, extra = {}) => ({
+    id,
+    auto: {
+      vessel: { name: 'MSC TEST', imo: '9000001' },
+      pol: { port: pol },
+      dates: { departed },
+    },
+    ...extra,
+  });
+  const atSea = () => true;
+  const salerno = box('a', 'Salerno', '2026-10-05');
+  const gioia = box('b', 'Gioia Tauro', '2026-10-08');
+  const list = [salerno, gioia];
+  const options = { nowMs, heardMs: 3_600_000, atSea };
+  // Not heard: the box that boarded last shows the leg the ship is on.
+  assert.equal(shipLeader(salerno, list, options), gioia);
+  assert.equal(shipLeader(gioia, list, options), gioia);
+  // Heard: the live position wins for every box aboard.
+  salerno.lastSeen = { at: nowMs - 60_000, lat: 40, lon: -30 };
+  assert.equal(shipLeader(gioia, list, options), salerno);
+  // A box on another ship stands alone.
+  const other = box('c', 'Naples', '2026-10-09');
+  other.auto.vessel = { name: 'OTHER SHIP' };
+  assert.equal(shipLeader(other, [...list, other], options), other);
+  assert.equal(
+    shipKeyOf({ auto: { vessel: { name: 'Msc  Test' } } }),
+    'name:MSC TEST',
   );
 });

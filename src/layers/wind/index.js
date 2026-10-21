@@ -408,7 +408,7 @@ export function createWindLayer({
           model: model === 'ifs' ? 'ECMWF IFS' : 'GFS',
           field: label,
           unit: unitLabel(legendUnit),
-        })}${historyStatus ? `\n${historyStatus}` : ''}\n${t('Valid: {time}', { time: valid || t('Unavailable') })}${loading ? ` · ${t('loading')}` : preparing ? ` · ${t('preparing')}` : ''}\n${t('Issued: {time}', { time: run || t('Unavailable') })}${manifest?.stale ? ` · ${t('STALE')}` : ''}${error ? `\n${presentWindProblem(error)}` : ''}${scalarMissing ? `\n${t('Selected field unavailable · wind remains visible')}` : ''}${imageryError && !scalarMissing ? `\n${t('{error} · wind remains visible', { error: imageryError })}` : ''}`,
+        })}${historyStatus ? `\n${historyStatus}` : ''}\n${t('Valid: {time}', { time: valid || t('Unavailable') })}${loading ? ` · ${t('loading')}` : preparing ? ` · ${t('preparing')}` : ''}\n${t('Issued: {time}', { time: run || t('Unavailable') })}${manifest?.stale ? ` · ${t('Stale')}` : ''}${error ? `\n${presentWindProblem(error)}` : ''}${scalarMissing ? `\n${t('Selected field unavailable · wind remains visible')}` : ''}${imageryError && !scalarMissing ? `\n${t('{error} · wind remains visible', { error: imageryError })}` : ''}`,
         infoTitle: t(
           'Surface wind at 10 m. Approximately 1° global grid. Curves follow the 10 m wind field, lifted 12 km for visibility; display height is not weather altitude. View lighting is for readability. Animation shows flow through one fixed forecast; it does not advance time. Color fields drape the globe basemap or the active photorealistic 3D Tiles.',
         ),
@@ -421,12 +421,12 @@ export function createWindLayer({
         chips: controls.chips.filter((chip) => chip.id.startsWith(prefix)),
       });
       controls.summary.settings = [
-        setting('model', t('MODEL'), 'model-'),
-        setting('field', t('FIELD'), 'overlay-'),
+        setting('model', t('Model'), 'model-'),
+        setting('field', t('Field'), 'overlay-'),
         ...(controls.chips.some(({ id }) => id.startsWith('units-'))
-          ? [{ id: 'units', label: t('UNITS'), chips: windUnitChips(units) }]
+          ? [{ id: 'units', label: t('Units'), chips: windUnitChips(units) }]
           : []),
-        setting('motion', t('MOTION'), 'motion'),
+        setting('motion', t('Motion'), 'motion'),
       ];
       controls.summary.actions = controls.chips.filter(
         ({ id }) => id === 'read-wind',

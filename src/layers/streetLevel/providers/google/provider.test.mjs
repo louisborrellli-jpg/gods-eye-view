@@ -64,7 +64,7 @@ function setup({ key = 'browser-key', nearest = () => 'fresh' } = {}) {
 test('the provider registers beside Mapillary, off by default, gated on the browser Maps key', () => {
   const { def } = setup();
   assert.equal(def.id, 'google');
-  assert.equal(def.label, 'GOOGLE STREET VIEW');
+  assert.equal(def.label, 'Google street view');
   assert.deepEqual(def.filters, [], 'no imagery filter applies');
   assert.deepEqual(def.marker, { kind: 'view-cone', color: '#4285f4' });
   assert.equal(def.requiresKeyId, 'google-maps');
@@ -136,7 +136,7 @@ test('an aborted lookup gives up before asking Google', async () => {
   );
 });
 
-test('a key Google refuses reads KEY REJECTED, shows why, and stops lookups', async () => {
+test('a key Google refuses reads Key rejected, shows why, and stops lookups', async () => {
   const { instance, loader, reported } = setup();
   instance.activate();
   assert.equal(instance.coverageStats().hint, GROUND_CLICK_HINT);

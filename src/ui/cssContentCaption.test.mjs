@@ -1,4 +1,4 @@
-// The CCTV "ACQUIRING FRAME" caption lives in CSS `content:` and the
+// The CCTV "Acquiring frame" caption lives in CSS `content:` and the
 // i18n scanner (scripts/i18n.mjs) never reads CSS, so es/ru show it in English.
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -28,7 +28,12 @@ test('no user-visible text in CSS content: outside decorative themes', () => {
 
 test('the CCTV acquisition caption has es and ru translations', () => {
   for (const lang of ['es', 'ru']) {
-    const dict = JSON.parse(readFileSync(path.join(LOCALES, `${lang}.json`), 'utf8'));
-    assert.ok('ACQUIRING FRAME' in dict, `${lang}.json lacks "ACQUIRING FRAME"`);
+    const dict = JSON.parse(
+      readFileSync(path.join(LOCALES, `${lang}.json`), 'utf8'),
+    );
+    assert.ok(
+      'Acquiring frame' in dict,
+      `${lang}.json lacks "Acquiring frame"`,
+    );
   }
 });

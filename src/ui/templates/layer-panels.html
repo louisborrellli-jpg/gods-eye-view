@@ -4,7 +4,7 @@
     <div class="panel-glow"></div>
     <div class="data-panel-inner">
       <div class="panel-header">
-        <span class="panel-title" data-i18n>DATA LAYERS</span>
+        <span class="panel-title" data-i18n>Map layers</span>
         <span class="panel-divider"></span>
         <button class="panel-collapse-btn" data-collapse-target="data-panel" title="Collapse panel" data-i18n-title>+</button>
       </div>
@@ -17,40 +17,40 @@
     <div class="panel-glow"></div>
     <div class="cctv-panel-inner" data-rail-scroller>
       <div class="panel-header">
-        <span class="panel-title" data-i18n>CCTV</span>
+        <span class="panel-title" data-i18n>Cameras</span>
         <span class="panel-divider"></span>
         <button class="panel-collapse-btn" data-collapse-target="cctv-panel" title="Collapse panel" data-i18n-title>+</button>
       </div>
       <div class="cyber-panel-body" data-rail-scroller>
       <div id="cctv-frame-wrap" class="cctv-frame-wrap">
-        <span class="cctv-frame-caption" aria-hidden="true" data-i18n>ACQUIRING FRAME</span>
+        <span class="cctv-frame-caption" aria-hidden="true" data-i18n>Acquiring frame</span>
         <img id="cctv-frame" alt="CCTV feed frame" />
         <canvas id="cctv-video" class="cctv-frame" hidden></canvas>
       </div>
-      <div id="cctv-source-badge" role="status" aria-live="polite" data-i18n>SOURCE · UNKNOWN</div>
+      <div id="cctv-source-badge" role="status" aria-live="polite" data-i18n>Source · Unknown</div>
       <div id="cctv-meta" data-i18n>Enable CCTV to load camera intersections</div>
       <div class="cctv-controls">
-        <button id="cctv-enable-btn" class="scene-btn" data-i18n>CCTV OFF</button>
-        <button id="cctv-nearest-btn" class="scene-btn" data-i18n>NEAREST</button>
+        <button id="cctv-enable-btn" class="scene-btn" data-i18n>CCTV off</button>
+        <button id="cctv-nearest-btn" class="scene-btn" data-i18n>Nearest</button>
       </div>
       <div class="cctv-controls">
-        <button id="cctv-prev-btn" class="scene-btn" data-i18n>PREV</button>
+        <button id="cctv-prev-btn" class="scene-btn" data-i18n>Prev</button>
         <select id="cctv-camera-select" aria-label="CCTV camera" data-i18n-aria-label></select>
-        <button id="cctv-next-btn" class="scene-btn" data-i18n>NEXT</button>
+        <button id="cctv-next-btn" class="scene-btn" data-i18n>Next</button>
       </div>
       <div class="cctv-controls">
-        <button id="cctv-focus-btn" class="scene-btn" data-i18n>FOCUS</button>
-        <button id="cctv-coverage-btn" class="scene-btn" data-i18n>COVERAGE OFF</button>
-        <button id="cctv-auto-hop-btn" class="scene-btn" data-i18n>AUTO HOP OFF</button>
+        <button id="cctv-focus-btn" class="scene-btn" data-i18n>Focus</button>
+        <button id="cctv-coverage-btn" class="scene-btn" data-i18n>Coverage off</button>
+        <button id="cctv-auto-hop-btn" class="scene-btn" data-i18n>Auto hop off</button>
       </div>
       <div class="cctv-controls">
-        <button id="cctv-projection-btn" class="scene-btn" data-i18n>PROJECTION ON</button>
+        <button id="cctv-projection-btn" class="scene-btn" data-i18n>Projection on</button>
         <span id="cctv-quality-chip" data-i18n-runtime>CAL · --</span>
       </div>
       <div class="cctv-calibration-block">
         <div class="cctv-calibration-header">
-          <div class="cctv-summary-label" data-i18n>CALIBRATION</div>
-          <button id="cctv-adjust-btn" class="scene-btn" title="Drag the camera in the world: rings rotate, arrows move, handles set range/FOV" data-i18n-title data-i18n>ADJUST</button>
+          <div class="cctv-summary-label" data-i18n>Calibration</div>
+          <button id="cctv-adjust-btn" class="scene-btn" title="Drag the camera in the world: rings rotate, arrows move, handles set range/FOV" data-i18n-title data-i18n>Adjust</button>
         </div>
         <div id="cctv-cal-readout" class="cctv-cal-readout" aria-label="Camera pose — click a value to type" data-i18n-aria-label>
           <button class="cctv-cal-value" data-cal-field="heading" title="Heading (compass °) — click to type" data-i18n-title data-i18n-runtime>HDG --</button>
@@ -62,11 +62,11 @@
           <button class="cctv-cal-value" data-cal-field="east" title="East offset from catalog position (m) — click to type" data-i18n-title>ΔE --</button>
         </div>
         <div class="cctv-controls cctv-calibration-actions">
-          <button id="cctv-calib-save-btn" class="scene-btn" data-i18n>SAVE CAL</button>
-          <button id="cctv-calib-reset-btn" class="scene-btn" data-i18n>RESET CAL</button>
+          <button id="cctv-calib-save-btn" class="scene-btn" data-i18n>Save CAL</button>
+          <button id="cctv-calib-reset-btn" class="scene-btn" data-i18n>Reset CAL</button>
         </div>
       </div>
-      <div class="cctv-summary-label" data-i18n>SCENE SUMMARY</div>
+      <div class="cctv-summary-label" data-i18n>Scene summary</div>
       <div id="cctv-summary" data-i18n>Enable CCTV to start camera-linked intelligence summaries.</div>
       </div>
     </div>
@@ -77,19 +77,19 @@
     <div class="panel-glow"></div>
     <div class="street-level-panel-inner" data-rail-scroller>
       <div class="panel-header">
-        <span class="panel-title" data-i18n>STREET LEVEL</span>
+        <span class="panel-title" data-i18n>Street view</span>
         <span class="panel-divider"></span>
-        <button id="sl-status" class="sl-status" type="button" aria-pressed="false" title="Turn Street Level on or off" data-i18n-title data-i18n>OFF</button>
+        <button id="sl-status" class="sl-status" type="button" aria-pressed="false" title="Turn Street Level on or off" data-i18n-title data-i18n>Off</button>
         <button class="panel-collapse-btn" data-collapse-target="street-level-panel" title="Expand panel" data-i18n-title>◀</button>
       </div>
       <div id="sl-body" class="sl-body">
         <div id="sl-viewer-wrap" class="sl-viewer-wrap" hidden>
           <div class="sl-viewer-bar">
             <div class="sl-viewer-tools">
-              <button id="sl-viewer-expand" class="scene-btn" type="button" aria-pressed="false" title="Show the street-level view full screen (Esc shrinks it)" data-i18n-title><span class="sl-btn-icon" aria-hidden="true">⤢</span><span class="sl-btn-text" data-i18n>EXPAND</span></button>
+              <button id="sl-viewer-expand" class="scene-btn" type="button" aria-pressed="false" title="Show the street-level view full screen (Esc shrinks it)" data-i18n-title><span class="sl-btn-icon" aria-hidden="true">⤢</span><span class="sl-btn-text" data-i18n>Expand</span></button>
               <div class="sl-seg" role="radiogroup" aria-label="Image fit" data-i18n-aria-label>
-                <button type="button" class="sl-seg-btn is-active" data-sl-render="letterbox" role="radio" aria-checked="true" title="Fit: show the whole photo, with dark bars where its shape differs from the frame" data-i18n-title data-i18n>FIT</button>
-                <button type="button" class="sl-seg-btn" data-sl-render="fill" role="radio" aria-checked="false" tabindex="-1" title="Fill: fill the frame edge to edge, cropping the photo" data-i18n-title data-i18n>FILL</button>
+                <button type="button" class="sl-seg-btn is-active" data-sl-render="letterbox" role="radio" aria-checked="true" title="Fit: show the whole photo, with dark bars where its shape differs from the frame" data-i18n-title data-i18n>Fit</button>
+                <button type="button" class="sl-seg-btn" data-sl-render="fill" role="radio" aria-checked="false" tabindex="-1" title="Fill: fill the frame edge to edge, cropping the photo" data-i18n-title data-i18n>Fill</button>
               </div>
             </div>
             <div class="sl-viewer-tools sl-viewer-tools-right">
@@ -109,7 +109,7 @@
           </div>
         </div>
         <div class="sl-providers" role="group" aria-label="Imagery providers" data-i18n-aria-label>
-          <span class="cctv-summary-label" data-i18n>PROVIDERS</span>
+          <span class="cctv-summary-label" data-i18n>Providers</span>
           <div id="sl-provider-chips" class="sl-chips"></div>
         </div>
         <div id="sl-error" class="sl-error" role="alert" hidden><span aria-hidden="true">⚠</span> <span id="sl-error-text"></span></div>
@@ -117,17 +117,17 @@
              focusable so their tooltip can say how to add the key. -->
         <fieldset id="sl-controls" class="sl-controls">
           <div id="sl-pano-row" class="sl-filters" role="group" aria-label="Imagery filters" data-i18n-aria-label>
-            <span class="cctv-summary-label" data-i18n>IMAGERY</span>
+            <span class="cctv-summary-label" data-i18n>Imagery</span>
             <div class="sl-seg" role="radiogroup" aria-label="Panorama filter" data-i18n-aria-label>
-              <button type="button" class="sl-seg-btn is-active" data-sl-pano="all" role="radio" aria-checked="true" data-i18n>ALL</button>
+              <button type="button" class="sl-seg-btn is-active" data-sl-pano="all" role="radio" aria-checked="true" data-i18n>All</button>
               <button type="button" class="sl-seg-btn" data-sl-pano="pano" role="radio" aria-checked="false" tabindex="-1">360°</button>
-              <button type="button" class="sl-seg-btn" data-sl-pano="flat" role="radio" aria-checked="false" tabindex="-1" data-i18n>FLAT</button>
+              <button type="button" class="sl-seg-btn" data-sl-pano="flat" role="radio" aria-checked="false" tabindex="-1" data-i18n>Flat</button>
             </div>
           </div>
           <div id="sl-since-row" class="sl-since">
-            <label class="cctv-summary-label" for="sl-since" data-i18n>SINCE</label>
+            <label class="cctv-summary-label" for="sl-since" data-i18n>Since</label>
             <input id="sl-since" class="sl-range" type="range" min="0" max="8" step="1" value="0" aria-valuetext="ANY DATE" aria-describedby="sl-since-label sl-since-note" />
-            <output id="sl-since-label" class="sl-since-label" for="sl-since" data-i18n>ANY DATE</output>
+            <output id="sl-since-label" class="sl-since-label" for="sl-since" data-i18n>Any date</output>
             <small id="sl-since-note" class="sl-since-note" hidden></small>
           </div>
         </fieldset>
@@ -145,29 +145,29 @@
     <div class="panel-glow"></div>
     <div class="scene-panel-inner">
       <div class="panel-header">
-        <span class="panel-title" data-i18n>SCENES</span>
+        <span class="panel-title" data-i18n>Scenes</span>
         <span class="panel-divider"></span>
         <button class="panel-collapse-btn" data-collapse-target="scene-panel" title="Collapse panel" data-i18n-title>+</button>
       </div>
       <div class="scene-controls">
         <select id="scene-select" aria-label="Scene recipe" data-i18n-aria-label></select>
-        <button id="scene-new-btn" class="scene-btn" data-i18n>NEW</button>
+        <button id="scene-new-btn" class="scene-btn" data-i18n>New</button>
         <button id="scene-delete-btn" class="scene-btn scene-btn-danger" data-i18n>DEL</button>
       </div>
       <div class="scene-controls">
-        <button id="scene-capture-btn" class="scene-btn" data-i18n>CAPTURE SHOT</button>
-        <button id="scene-update-shot-btn" class="scene-btn" data-i18n>UPDATE SHOT</button>
+        <button id="scene-capture-btn" class="scene-btn" data-i18n>Capture shot</button>
+        <button id="scene-update-shot-btn" class="scene-btn" data-i18n>Update shot</button>
       </div>
       <div id="scene-shot-list" class="scene-shot-list"></div>
       <div class="scene-controls">
-        <button id="scene-start-btn" class="scene-btn" data-i18n>START</button>
-        <button id="scene-stop-btn" class="scene-btn scene-btn-danger" data-i18n>STOP</button>
-        <button id="scene-next-btn" class="scene-btn" data-i18n>NEXT</button>
+        <button id="scene-start-btn" class="scene-btn" data-i18n>Start</button>
+        <button id="scene-stop-btn" class="scene-btn scene-btn-danger" data-i18n>Stop</button>
+        <button id="scene-next-btn" class="scene-btn" data-i18n>Next</button>
       </div>
       <div class="scene-controls">
-        <button id="scene-export-btn" class="scene-btn" data-i18n>EXPORT PRESETS</button>
-        <button id="scene-import-btn" class="scene-btn" data-i18n>IMPORT</button>
-        <button id="scene-download-btn" class="scene-btn" data-i18n>RUN LOG</button>
+        <button id="scene-export-btn" class="scene-btn" data-i18n>Export presets</button>
+        <button id="scene-import-btn" class="scene-btn" data-i18n>Import</button>
+        <button id="scene-download-btn" class="scene-btn" data-i18n>Run log</button>
         <input type="file" id="scene-import-file" accept="application/json,.json" hidden />
       </div>
       <div class="scene-progress">

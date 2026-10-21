@@ -13,12 +13,12 @@ import { formatCockpitDistance } from './cockpitPresentation.js';
 /** The Context scope line in the active language (see cockpitMath.js). */
 const LOCALIZED_CONTEXT_SCOPE = Object.freeze({
   window: ({ label, radiusKm }) =>
-    t('{label} · {radius} AIR/SEA WINDOW', {
+    t('{label} · {radius} air/sea window', {
       label,
       radius: `${radiusKm === null ? '—' : formatNumber(radiusKm)}\u00a0${unitLabel('km').toUpperCase()}`,
     }),
   installations: ({ scope, coverage }) =>
-    t('{scope} · INSTALLATIONS {coverage}', { scope, coverage }),
+    t('{scope} · Installations {coverage}', { scope, coverage }),
 });
 
 export function updateContext(info, heading) {
@@ -34,8 +34,8 @@ export function updateContext(info, heading) {
     this.pushCockpitSignal(
       'context-status',
       'info',
-      t('CONTEXT STANDBY'),
-      t('ENABLE GLOBAL CONTEXT FOR PROXIMITY PINGS'),
+      t('Context standby'),
+      t('Enable global context for proximity pings'),
     );
     return;
   }
@@ -68,7 +68,7 @@ export function updateContext(info, heading) {
     this.context.dataset.state = 'lost';
     if (this.contextUncertainty) {
       this.contextUncertainty.textContent = t(
-        'CONTACT LOST · LAST KNOWN READOUT · NOT AN ALL-CLEAR',
+        'Contact lost · Last known readout · Not an all-clear',
       );
     }
     // The cue changes the footer's height; re-run layout once on the way in
@@ -77,10 +77,10 @@ export function updateContext(info, heading) {
     this.pushCockpitSignal(
       'context-status',
       'warning',
-      t('CONTACT LOST · {subject}', {
+      t('Contact lost · {subject}', {
         subject: snapshot.subject.label || snapshot.subject.id || 'SUBJECT',
       }),
-      t('SUBJECT LEFT ITS FEED · READOUT HOLDING LAST KNOWN'),
+      t('Subject left its feed · Readout holding last known'),
     );
     return;
   }
@@ -105,7 +105,7 @@ export function updateContext(info, heading) {
           cohort: closest.cohort.label.toUpperCase(),
           contact: closestLabel,
         })
-      : t('NO AVAILABLE EXAMPLE');
+      : t('No available example');
     this.contextNearestLabel.setAttribute(
       'aria-label',
       closest && closestLabel === '—'
@@ -158,7 +158,7 @@ export function updateContext(info, heading) {
   if (this.contextBearing) {
     if (relative === null) this.contextBearing.textContent = t('BRG —');
     else if (Math.abs(relative) < 8)
-      this.contextBearing.textContent = t('AHEAD');
+      this.contextBearing.textContent = t('Ahead');
     else {
       this.contextBearing.textContent = t('{side} {angle}', {
         side: relative < 0 ? t('L') : t('R'),
@@ -170,10 +170,10 @@ export function updateContext(info, heading) {
     this.contextUncertainty.textContent = unknownCount
       ? tn(
           unknownCount,
-          '{count} INPUT UNKNOWN · NOT AN ALL-CLEAR',
-          '{count} INPUTS UNKNOWN · NOT AN ALL-CLEAR',
+          '{count} input unknown · Not an all-clear',
+          '{count} inputs unknown · Not an all-clear',
         )
-      : t('AVAILABLE INPUTS CURRENT · NOT AN ALL-CLEAR');
+      : t('Available inputs current · Not an all-clear');
   }
   if (this.contextUpdated) {
     this.contextUpdated.textContent = Number.isFinite(snapshot.evaluatedAt)

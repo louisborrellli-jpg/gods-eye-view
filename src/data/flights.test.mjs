@@ -315,7 +315,7 @@ test('a newly seen aircraft appears at its delayed position, not ahead of it', a
   }
 });
 
-test('flights poll refreshes tracked callsign/FL/kts and marks a missed poll STALE', async () => {
+test('flights poll refreshes tracked callsign/FL/kts and marks a missed poll Stale', async () => {
   const icao24 = 'a1b2c3';
   const entity = { gevLabelModel: { title: 'OLD', details: [] } };
   const billboard = {
@@ -395,7 +395,7 @@ test('flights poll refreshes tracked callsign/FL/kts and marks a missed poll STA
     await flightsLayer.update(viewer);
     assert.match(
       [entity.gevLabelModel.title, ...entity.gevLabelModel.details].join(' · '),
-      /STALE/,
+      /Stale/,
     );
   } finally {
     globalThis.fetch = realFetch;
@@ -1056,7 +1056,7 @@ test('military suppression exempts the contact this layer is still restoring', (
 // stale ground contact coasts, for up to 300 s / several hundred metres. On a
 // graded apron (KAUS spans ~119–140 m ellipsoidal) the sprite then renders
 // under the mesh it drifted over — measured to −15.5 m. These pin the fix at
-// the point of DISPLAY: read-only against the shared floor cache, grounded
+// the point of Display: read-only against the shared floor cache, grounded
 // contacts only, never when a 3D model owns the visual (T7 one-shot).
 // ---------------------------------------------------------------------------
 
@@ -1566,7 +1566,7 @@ test('display floor: a STATIONARY unresolved contact still adopts a floor that a
       ms,
     );
   assert.equal(at(1000), pos, 'nothing anywhere yet — passes through');
-  // The poll's warm batch lands the cells NEXT DOOR (this contact's own cell
+  // The poll's warm batch lands the cells Next DOOR (this contact's own cell
   // is still cold, so only the hold chain can see them).
   reportMeshFloorCell(30.2014, -97.6604, 138.0);
   reportMeshFloorCell(30.1994, -97.6604, 160.0);

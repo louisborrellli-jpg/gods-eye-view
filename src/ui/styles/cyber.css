@@ -563,7 +563,7 @@
   color: var(--text-secondary);
   font-family: var(--font-mono);
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0;
   text-shadow: none;
 }
 
@@ -766,7 +766,7 @@
 }
 
 :root[data-ui-theme='cyber'] :where(#bloom-toggle, #sharpen-toggle) .pp-label {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
 }
 
 :root[data-ui-theme='cyber']
@@ -981,8 +981,8 @@
   position: absolute;
   bottom: 0.22rem;
   color: rgba(165, 190, 196, 0.42);
-  font-size: 0.32rem;
-  letter-spacing: 0.1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0;
   pointer-events: none;
 }
 
@@ -1330,8 +1330,8 @@
   top: 0.46rem;
   left: 0.7rem;
   color: rgba(225, 102, 102, 0.78);
-  font-size: 0.4rem;
-  letter-spacing: 0.12rem;
+  font-size: 0.75rem;
+  letter-spacing: 0;
   pointer-events: none;
 }
 
@@ -1609,7 +1609,7 @@
   content: ' // CYBER';
   color: var(--cyber-red-bright);
   font-size: 0.62em;
-  letter-spacing: 0.18em;
+  letter-spacing: 0;
 }
 
 /* Cyber also owns a distinct desktop composition. Existing components keep
@@ -2173,9 +2173,9 @@
   border: 0;
   color: rgba(231, 241, 241, 0.84);
   background: none;
-  font-size: 7px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.28em;
+  letter-spacing: 0;
   text-align: center;
   white-space: nowrap;
   transform: translateX(-50%);
@@ -2226,8 +2226,8 @@
   justify-self: end;
   color: rgba(205, 225, 226, 0.6);
   background: linear-gradient(270deg, rgba(10, 27, 31, 0.72), transparent);
-  font-size: 7px;
-  letter-spacing: 0.16em;
+  font-size: 12px;
+  letter-spacing: 0;
   text-align: right;
   clip-path: polygon(12px 0, 100% 0, 100% 100%, 0 100%, 0 12px);
 }
@@ -2267,7 +2267,7 @@
 
 :root[data-ui-theme='cyber'] body.cockpit-mode #cockpit-callsign {
   font-size: 16px;
-  letter-spacing: 0.16em;
+  letter-spacing: 0;
 }
 
 :root[data-ui-theme='cyber'] body.cockpit-mode .cockpit-aircraft-meta {
@@ -2537,9 +2537,9 @@
   box-shadow: var(--cyber-panel-shadow);
   clip-path: var(--cyber-panel-frame);
   color: var(--cyber-red-bright);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 1.8px;
+  letter-spacing: 0;
 }
 
 :root[data-ui-theme='cyber']
@@ -2616,7 +2616,7 @@
 /* Keep the existing button labels/expanded semantics; match Data Layers' glyph. */
 :root[data-ui-theme='cyber'] body.cockpit-mode .cockpit-utility-glyph::after {
   content: '+';
-  font-size: 13px;
+  font-size: 14px;
 }
 
 :root[data-ui-theme='cyber']
@@ -2732,7 +2732,7 @@
 :root[data-ui-theme='cyber'] body.cockpit-mode .cockpit-help {
   bottom: 24px;
   color: rgba(205, 225, 226, 0.54);
-  font-size: 8px;
+  font-size: 12px;
 }
 
 :root[data-ui-theme='cyber'] body.cockpit-mode .cockpit-position-readout {

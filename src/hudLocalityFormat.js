@@ -28,13 +28,13 @@ export const LOCALIZED_LOCALITY = Object.freeze({
   // Translate the catalogued name (`Tokyo`), then upper-case it in the page's
   // language: the place-name table knows `Tokyo`, not `TOKYO`.
   near: ({ poi, city, distKm }) =>
-    t('NEAR {poi} ({city}) {distance}', {
+    t('Near {poi} ({city}) {distance}', {
       poi: poi.toLocaleUpperCase(getLocale()),
       city: localizePlaceName(city).toLocaleUpperCase(getLocale()),
       distance: hudQuantity(Math.round(distKm), 'km'),
     }),
   sector: ({ latDeg, lonDeg }) =>
-    t('SECTOR {lat} {lon}', {
+    t('Sector {lat} {lon}', {
       lat: hudCoordinate(latDeg, t('N'), t('S')),
       lon: hudCoordinate(lonDeg, t('E'), t('W')),
     }),

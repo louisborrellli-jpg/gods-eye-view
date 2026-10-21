@@ -84,8 +84,8 @@ export function createPanel({ state: layerState, services, parts, source }) {
   function hidePanel() {
     if (layerState.panel) {
       const markup = `<div class="military-awareness-standby">
-      <strong>${layerState.enabled ? t('CONTEXT READY') : t('GLOBAL CONTEXT OFF')}</strong>
-      <span>${layerState.enabled ? t('SELECT A FLIGHT, VESSEL, OR MAPPED INSTALLATION') : t('ENABLE TO LOAD OBSERVED / MAPPED PROXIMITY')}</span>
+      <strong>${layerState.enabled ? t('Context ready') : t('Global context off')}</strong>
+      <span>${layerState.enabled ? t('Select a flight, vessel, or mapped installation') : t('Enable to load observed / mapped proximity')}</span>
     </div>`;
       layerState.panel.hidden = false;
       if (layerState.panelMarkup !== markup) {
@@ -131,9 +131,9 @@ export function createPanel({ state: layerState, services, parts, source }) {
   function navigationControlsHtml() {
     const canPrevious = layerState.navigationIndex > 0;
     return `<div class="military-awareness-controls" role="group" aria-label="${t('Global Context navigation')}">
-    <button type="button" data-awareness-action="previous" title="${t('Previous — prior visited contact in the 250 km window')}"${canPrevious ? '' : ' disabled'}>${t('PREVIOUS')}</button>
-    <button type="button" data-awareness-action="focus">${t('FOCUS')}</button>
-    <button type="button" data-awareness-action="next" title="${t('Next — nearest unvisited contact in the 250 km window')}"${parts.navigation.canNavigateNext() ? '' : ' disabled'}>${t('NEXT')}</button>
+    <button type="button" data-awareness-action="previous" title="${t('Previous — prior visited contact in the 250 km window')}"${canPrevious ? '' : ' disabled'}>${t('Previous')}</button>
+    <button type="button" data-awareness-action="focus">${t('Focus')}</button>
+    <button type="button" data-awareness-action="next" title="${t('Next — nearest unvisited contact in the 250 km window')}"${parts.navigation.canNavigateNext() ? '' : ' disabled'}>${t('Next')}</button>
   </div>`;
   }
 
@@ -211,7 +211,7 @@ export function createPanel({ state: layerState, services, parts, source }) {
     if (!layerState.enabled || !layerState.results) return hidePanel();
     const panel = ensurePanel();
     const { subject, cohorts } = layerState.results;
-    const markup = `<div class="military-awareness-subject">${escapeHtml(subject.label)} · ${escapeHtml(t('{distance} FLIGHT / VESSEL WINDOW', { distance: presentAwarenessDistance(AWARENESS_RADIUS_M) }))}</div>
+    const markup = `<div class="military-awareness-subject">${escapeHtml(subject.label)} · ${escapeHtml(t('{distance} flight / vessel window', { distance: presentAwarenessDistance(AWARENESS_RADIUS_M) }))}</div>
     ${namedAreasHtml(subject.memberNames)}
     ${navigationControlsHtml()}
     ${cohorts.map(rowHtml).join('')}

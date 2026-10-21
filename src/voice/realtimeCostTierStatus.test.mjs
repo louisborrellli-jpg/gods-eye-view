@@ -23,16 +23,16 @@ function harness() {
 
 const EXPECTED = {
   en: {
-    mini: 'MINI applies next session',
-    standard: 'STANDARD applies next session',
+    mini: 'Mini applies next session',
+    standard: 'Standard applies next session',
   },
   ru: {
-    mini: 'МИНИ — со следующей сессии',
-    standard: 'СТАНДАРТ — со следующей сессии',
+    mini: 'Мини — со следующей сессии',
+    standard: 'Стандарт — со следующей сессии',
   },
   es: {
-    mini: 'MINI desde la próxima sesión',
-    standard: 'ESTÁNDAR desde la próxima sesión',
+    mini: 'Mini desde la próxima sesión',
+    standard: 'Estándar desde la próxima sesión',
   },
 };
 
@@ -44,7 +44,7 @@ for (const locale of Object.keys(EXPECTED)) {
       const { cost, button, statusCalls } = harness();
       assert.equal(cost.setVoiceTier(tier), tier, 'stored tier stays English');
       assert.equal(statusCalls.at(-1), EXPECTED[locale][tier]);
-      assert.equal(button.textContent, tier === 'mini' ? t('MINI') : t('STD'));
+      assert.equal(button.textContent, tier === 'mini' ? t('Mini') : t('Std'));
     }
   });
 }

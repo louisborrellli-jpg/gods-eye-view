@@ -21,7 +21,7 @@ const CCTV_CAL_FIELDS = {
     }),
   },
   pitch: {
-    label: msg('PITCH'),
+    label: msg('Pitch'),
     unit: '°',
     decimals: 1,
     get: (cam) => cam.pitchDeg,
@@ -35,7 +35,7 @@ const CCTV_CAL_FIELDS = {
     toPatch: (value, base) => ({ fovDeg: value - base.fovDeg }),
   },
   range: {
-    label: msg('RANGE'),
+    label: msg('Range'),
     unit: 'm',
     decimals: 0,
     get: (cam) => cam.rangeM,
@@ -185,7 +185,7 @@ export function _syncCctvCalReadout(enabled, activeCamera) {
   if (this._cctvAdjustBtn) {
     const adjustOn = !!this._cctvState?.calibrationMode;
     this._cctvAdjustBtn.classList.toggle('active', adjustOn && canCalibrate);
-    this._cctvAdjustBtn.textContent = adjustOn ? t('ADJUST ON') : t('ADJUST');
+    this._cctvAdjustBtn.textContent = adjustOn ? t('Adjust on') : t('Adjust');
     this._cctvAdjustBtn.disabled = !canCalibrate;
   }
   if (this._cctvCalReadout) {

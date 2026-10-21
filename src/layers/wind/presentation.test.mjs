@@ -32,7 +32,7 @@ test('captured reading reformats without changing its sample and produces a port
     section.lines.find(({ id }) => id === 'meta').text,
     'NOAA GFS · valid 09-21 12:00 UTC',
   );
-  assert.equal(section.label, 'WIND AT 41.9°N 87.6°W');
+  assert.equal(section.label, 'Wind at 41.9°N 87.6°W');
   assert.deepEqual(section.clear.params, { inspect: false });
   assert.equal(
     formatWindReading({ ...sample, from: 'Calm' }, 'm/s').wind,

@@ -154,15 +154,15 @@ export function bindRadioControls() {
     syncTunerTape(resolvedCoordinate);
     if (this._radioTunerValue) {
       this._radioTunerValue.textContent = station
-        ? t('CH {index} / {total}', {
+        ? t('Ch {index} / {total}', {
             index: String(slot.stationIndex + 1).padStart(2, '0'),
             total: String(this._radioTunerStations.length).padStart(2, '0'),
           })
-        : t('NO STATIONS');
+        : t('No stations');
     }
     if (this._radioTunerStation)
       this._radioTunerStation.textContent =
-        station?.name || t('NO STATION AVAILABLE');
+        station?.name || t('No station available');
     if (this._radioTunerSlider) {
       this._radioTunerSlider.setAttribute(
         'aria-valuetext',
@@ -323,9 +323,9 @@ export function bindRadioControls() {
       this._radioTunerBandPinnedForNavigation = false;
       if (result.reason === 'station-unavailable') {
         if (this._radioTunerValue)
-          this._radioTunerValue.textContent = t('OFF AIR');
+          this._radioTunerValue.textContent = t('Off air');
         if (this._radioTunerStation)
-          this._radioTunerStation.textContent = t('STATION UNAVAILABLE');
+          this._radioTunerStation.textContent = t('Station unavailable');
         this._radioTunerSlider?.setAttribute(
           'aria-valuetext',
           t('Station unavailable after directory refresh'),

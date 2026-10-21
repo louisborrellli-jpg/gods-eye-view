@@ -73,7 +73,7 @@ function deepMerge(target, source) {
   return out;
 }
 
-test('KEY REQUIRED disables every control and says how to add the key', () => {
+test('Key required disables every control and says how to add the key', () => {
   const view = presentStreetLevelPanel(
     snapshot({
       enabled: true,
@@ -82,12 +82,12 @@ test('KEY REQUIRED disables every control and says how to add the key', () => {
     }),
   );
   assert.equal(view.controlsDisabled, true);
-  assert.equal(view.status.text, 'KEY REQUIRED');
+  assert.equal(view.status.text, 'Key required');
   assert.equal(view.status.tone, 'warn');
   assert.match(view.error, /^Needs MAPILLARY_CLIENT_TOKEN/);
 });
 
-test('a key Mapillary rejected reads KEY REJECTED and names the fix', () => {
+test('a key Mapillary rejected reads Key rejected and names the fix', () => {
   const error =
     'Mapillary rejected MAPILLARY_CLIENT_TOKEN — replace it in Provider Settings';
   const view = presentStreetLevelPanel(
@@ -98,32 +98,32 @@ test('a key Mapillary rejected reads KEY REJECTED and names the fix', () => {
       coverage: { error },
     }),
   );
-  assert.equal(view.status.text, 'KEY REJECTED');
+  assert.equal(view.status.text, 'Key rejected');
   assert.equal(view.status.tone, 'warn');
   assert.equal(view.controlsDisabled, true);
   assert.equal(view.error, error);
 });
 
-test('a key problem outranks loading on the pill: KEY REJECTED, then KEY REQUIRED (M65)', () => {
+test('a key problem outranks loading on the pill: Key rejected, then Key required (M65)', () => {
   // A keyless layer can still report loading (its status check, a retry):
   // the pill must say what is wrong, not that something is on its way.
   const loading = { enabled: true, coverage: { loading: true } };
   assert.equal(
     presentStreetLevelPanel(snapshot({ ...loading, keyRequired: true })).status
       .text,
-    'KEY REQUIRED',
+    'Key required',
   );
   assert.equal(
     presentStreetLevelPanel(
       snapshot({ ...loading, keyRequired: true, keyRejected: true }),
     ).status.text,
-    'KEY REJECTED',
+    'Key rejected',
   );
 });
 
-test('the header pill is the on/off switch and reads OFF, LOADING or ON', () => {
+test('the header pill is the on/off switch and reads Off, Loading or On', () => {
   assert.deepEqual(presentStreetLevelPanel(snapshot()).status, {
-    text: 'OFF',
+    text: 'Off',
     tone: '',
     pressed: false,
     title: 'Turn Street Level on',
@@ -133,7 +133,7 @@ test('the header pill is the on/off switch and reads OFF, LOADING or ON', () => 
       snapshot({ enabled: true, coverage: { loading: true } }),
     ).status,
     {
-      text: 'LOADING',
+      text: 'Loading',
       tone: 'busy',
       pressed: true,
       title: 'Turn Street Level off',
@@ -141,7 +141,7 @@ test('the header pill is the on/off switch and reads OFF, LOADING or ON', () => 
   );
   assert.deepEqual(
     presentStreetLevelPanel(snapshot({ enabled: true })).status,
-    { text: 'ON', tone: 'on', pressed: true, title: 'Turn Street Level off' },
+    { text: 'On', tone: 'on', pressed: true, title: 'Turn Street Level off' },
   );
   assert.equal(
     presentStreetLevelPanel(snapshot({ enabled: true, keyRequired: true }))
@@ -172,17 +172,17 @@ test('errors from the viewer, the sequence or the coverage surface in one alert'
   );
 });
 
-test('a SINCE window from a link lands on the nearest slider stop', () => {
+test('a Since window from a link lands on the nearest slider stop', () => {
   assert.equal(sinceStopIndex(0), 0);
   assert.equal(sinceStopIndex(365), 5);
   assert.equal(sinceStopIndex(400), 5);
   assert.equal(sinceStopIndex(-4), 0);
 });
 
-test('the SINCE readout names the window and the cut-off date it means today', () => {
+test('the Since readout names the window and the cut-off date it means today', () => {
   const now = Date.UTC(2026, 8, 25);
   const any = presentStreetLevelPanel(snapshot(), { now });
-  assert.deepEqual(any.since, { index: 0, days: 0, label: 'ANY DATE' });
+  assert.deepEqual(any.since, { index: 0, days: 0, label: 'Any date' });
   const year = presentStreetLevelPanel(
     snapshot({ filter: { pano: 'pano', sinceDays: 365 } }),
     { now },
@@ -191,14 +191,14 @@ test('the SINCE readout names the window and the cut-off date it means today', (
   assert.deepEqual(year.since, {
     index: 5,
     days: 365,
-    label: 'LAST YEAR · SINCE 2025-09-25',
+    label: 'Last year · Since 2025-09-25',
   });
   const custom = presentStreetLevelPanel(
     snapshot({ filter: { pano: 'all', sinceDays: 400 } }),
     { now },
   );
   assert.equal(custom.since.index, 5);
-  assert.equal(custom.since.label, 'LAST 400 DAYS · SINCE 2025-08-21');
+  assert.equal(custom.since.label, 'Last 400 days · Since 2025-08-21');
 });
 
 test('the meta line never mixes the visible-sequence count with the selected sequence', () => {
@@ -285,7 +285,7 @@ test('an image without a creator name leaves the left caption empty', () => {
   assert.equal(view.viewer.linkLabel, '');
 });
 
-test('a Street View caption names the place, dates it by month, and offers no FIT/FILL', () => {
+test('a Street View caption names the place, dates it by month, and offers no Fit/Fill', () => {
   const view = presentStreetLevelPanel(
     snapshot({
       enabled: true,
@@ -352,7 +352,7 @@ test('OPEN STREET VIEW shows while Street View is on, and waits for street zoom'
   const ready = view({ groundClickReady: true });
   assert.deepEqual(ready, {
     visible: true,
-    label: 'OPEN STREET VIEW',
+    label: 'Open STREET VIEW',
     title: 'Open Google Street View at the centre of the view',
     disabled: false,
     providerIds: ['google'],
@@ -382,7 +382,7 @@ test('OPEN STREET VIEW shows while Street View is on, and waits for street zoom'
   );
 });
 
-test('KEY REQUIRED points at Street View when it would draw with the Google key', () => {
+test('Key required points at Street View when it would draw with the Google key', () => {
   const view = presentStreetLevelPanel(
     snapshot({
       enabled: true,
@@ -405,10 +405,10 @@ test('KEY REQUIRED points at Street View when it would draw with the Google key'
   );
   const guidance =
     'Needs MAPILLARY_CLIENT_TOKEN — add it in Provider Settings, or light STREET VIEW to use your Google Maps key';
-  assert.equal(view.status.text, 'KEY REQUIRED');
+  assert.equal(view.status.text, 'Key required');
   assert.equal(view.status.title, guidance);
   assert.equal(view.meta, guidance);
-  // Off Google 3D Street View is not listed: plain KEY REQUIRED.
+  // Off Google 3D Street View is not listed: plain Key required.
   const plain = presentStreetLevelPanel(
     snapshot({
       enabled: true,
@@ -417,7 +417,7 @@ test('KEY REQUIRED points at Street View when it would draw with the Google key'
       keyAlternatives: [],
     }),
   );
-  assert.equal(plain.status.text, 'KEY REQUIRED');
+  assert.equal(plain.status.text, 'Key required');
   assert.notEqual(plain.meta, guidance);
 });
 
