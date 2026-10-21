@@ -439,10 +439,10 @@ try {
     JSON.stringify(railPlacement),
   );
   check(
-    'the body is a rail scroller holding the readout, under a RECENT IMAGERY header',
+    'the body is a rail scroller holding the readout, under a Recent imagery header',
     railPlacement.scroller &&
       railPlacement.readoutInBody &&
-      railPlacement.title === 'RECENT IMAGERY',
+      railPlacement.title === 'Recent imagery',
     JSON.stringify(railPlacement),
   );
   const listOf = (selector, key) =>
@@ -516,7 +516,7 @@ try {
   );
   check(
     'the header count reads the day count',
-    /^\d+ DAYS?$/.test(countText),
+    /^\d+ days?$/.test(countText),
     countText,
   );
   const startHere = await page.evaluate(() =>
@@ -543,7 +543,7 @@ try {
   current = await state();
   check(
     'row A reads the previewed day, row B reads the basemap',
-    /^IMAGE.+ · preview×$/.test(current.rowA) && current.rowB === 'VSBasemap×',
+    /^Image.+ · preview×$/.test(current.rowA) && current.rowB === 'VSBasemap×',
     `${current.rowA} | ${current.rowB}`,
   );
   onPhotorealOnly(
@@ -655,7 +655,7 @@ try {
       )?.textContent,
     targetKey,
   );
-  check('the previewed card wears PREVIEW', flag === 'PREVIEW', flag);
+  check('the previewed card wears Preview', flag === 'Preview', flag);
 
   // ── IMAGE: S pins the focused day; focus no longer moves the map ────────
   await pressOnStrip('s');
@@ -676,7 +676,7 @@ try {
   );
   check(
     'row A reads the pinned day without "preview"',
-    /^IMAGE.+×$/.test(current.rowA) && !/preview/.test(current.rowA),
+    /^Image.+×$/.test(current.rowA) && !/preview/.test(current.rowA),
     current.rowA,
   );
   await checkLayout('pinned');
@@ -710,9 +710,9 @@ try {
   );
   current = await state();
   check(
-    'VS BASEMAP shows the divider, labelled IMAGE / BASEMAP',
+    'VS BASEMAP shows the divider, labelled Image / Basemap',
     basemapSwipe &&
-      JSON.stringify(current.splitLabels) === '["IMAGE","BASEMAP"]',
+      JSON.stringify(current.splitLabels) === '["Image","Basemap"]',
     JSON.stringify(current.splitLabels),
   );
   check(
@@ -741,8 +741,8 @@ try {
     current.activeStack,
   );
   check(
-    'the hint says SWAP trades the sides (VS BASEMAP)',
-    current.hintText === 'Drag the divider · SWAP trades sides',
+    'the hint says Swap trades the sides (VS BASEMAP)',
+    current.hintText === 'Drag the divider · Swap trades sides',
     current.hintText,
   );
   await checkLayout('vs basemap');
@@ -833,8 +833,8 @@ try {
     current.activeStack,
   );
   check(
-    'the hint says SWAP trades the sides (A / B)',
-    current.hintText === 'Drag the divider · SWAP trades sides',
+    'the hint says Swap trades the sides (A / B)',
+    current.hintText === 'Drag the divider · Swap trades sides',
     current.hintText,
   );
   await checkLayout('A / B, both pinned');

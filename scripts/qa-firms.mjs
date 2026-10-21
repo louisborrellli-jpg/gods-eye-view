@@ -13,7 +13,7 @@
  *         entries and is non-blank at a fire cluster (detections LOD) AND at
  *         global zoom (cell cards); aggregate cells expose no action target.
  *   (iii) KEYLESS — /api/firms intercepted to 503 {error:'no_key'}:
- *         stats.error 'KEY REQUIRED', zero fires, no crash.
+ *         stats.error 'Key required', zero fires, no crash.
  *   (iv)  STALE — /api/firms intercepted to a stale:true payload with
  *         fresh-enough detections: stats.stale true, error 'STALE · …',
  *         fires still render (old data beats a wiped map).
@@ -349,8 +349,8 @@ async function main() {
 
     const keyless = await bootAndEnable(page, { timeoutS: 20 });
     {
-      const ok = keyless.error === 'KEY REQUIRED' && keyless.count === 0;
-      record('KEYLESS: error "KEY REQUIRED", zero fires, no crash', ok,
+      const ok = keyless.error === 'Key required' && keyless.count === 0;
+      record('KEYLESS: error "Key required", zero fires, no crash', ok,
         `error=${JSON.stringify(keyless.error)} count=${keyless.count} label=${JSON.stringify(keyless.loadingLabel)}`);
       if (!ok) exitCode = 1;
       await page.screenshot({ path: path.join(SHOTS_DIR, 'firms-keyless.png') });

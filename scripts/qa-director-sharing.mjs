@@ -168,7 +168,7 @@ try {
           !window.__godsEyeView.sceneDirector.running,
       )),
   );
-  await click('EDIT DETAILS');
+  await click('Edit details');
   await click('Capture camera as anchor');
   await page.waitForFunction(() =>
     document
@@ -232,7 +232,7 @@ try {
       return create(blob);
     };
   });
-  await click('SHARE SCENE');
+  await click('Share scene');
   await click('Download scene JSON');
   const exported = await page.evaluate(async () =>
     JSON.parse(await window.__shareExports.at(-1)),
@@ -338,7 +338,7 @@ try {
         () => window.__godsEyeView.sceneDirector.getDataPackState().count === 1,
       )),
   );
-  await click('EDIT DETAILS');
+  await click('Edit details');
   await page.evaluate(() => {
     window.__godsEyeView.sceneDirector._project.scenes[0].title = 'Newer edit';
   });
@@ -352,7 +352,7 @@ try {
     ),
   );
   await page.keyboard.press('Escape');
-  await click('SHARE SCENE');
+  await click('Share scene');
   await page.setViewport({ width: 390, height: 844 });
   check(
     'modal remains within a narrow viewport',
@@ -415,7 +415,7 @@ try {
     'cancelling Apply during pending scene cleanup preserves saved project and bundle bytes',
     cancelledApply,
   );
-  await click('EDIT DETAILS');
+  await click('Edit details');
   await page.evaluate(() => {
     const fields = [
       ...document.querySelectorAll('[data-director-dialog] textarea'),
