@@ -426,6 +426,7 @@ export const VOICE_OFF_LAYERS = Object.freeze({
   'border-waits': 'CBSA border wait times; voice control is a follow-up',
   'detroit-open-data':
     'City of Detroit open data; voice control is a follow-up',
+  me: "this device's own location; voice control is a follow-up",
 });
 
 const TYPE_NAMES = Object.freeze({
