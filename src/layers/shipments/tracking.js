@@ -49,6 +49,7 @@ export const CARRIER_SCAC = Object.freeze({
 
 /** The milestone dates automatic tracking can fill. */
 export const AUTO_DATE_FIELDS = Object.freeze([
+  'loaded',
   'departed',
   'portEta',
   'discharged',
@@ -142,6 +143,14 @@ export function parseFindTeu(data, { now = Date.now() } = {}) {
 
   const atPod = (event) => pod.code && event.code === pod.code;
   const atPol = (event) => pol.code && event.code === pol.code;
+
+  // When the box went onto the ship at the loading port: actual, else
+  // planned. A transshipment loads again later; the first loading counts.
+  const loadings = events.filter(
+    (event) => atPol(event) && /loaded on|^load/i.test(event.action),
+  );
+  dates.loaded =
+    loadings.find((event) => event.actual)?.day || loadings[0]?.day || '';
 
   // When the ship left the loading port: actual, else planned.
   const departures = events.filter(

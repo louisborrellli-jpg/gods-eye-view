@@ -33,15 +33,10 @@ import {
   displayDay,
   relativeDays,
 } from '../layers/shipments/text.js';
-import {
-  SHIPMENTS_FOCUS_KEY,
-  createShipmentStore,
-} from '../layers/shipments/store.js';
+import { createShipmentsBackend } from '../layers/shipments/backend.js';
+import { SHIPMENTS_FOCUS_KEY } from '../layers/shipments/store.js';
 import { createShipmentTrackingSource } from '../layers/shipments/source.js';
-import {
-  TRACKING_KEY_NOTE,
-  createShipmentTracker,
-} from '../layers/shipments/tracker.js';
+import { TRACKING_KEY_NOTE } from '../layers/shipments/tracker.js';
 
 const AUTO_REFRESH_MS = 30 * 60_000;
 const FILTERS = Object.freeze([
@@ -65,6 +60,8 @@ const ICONS = Object.freeze({
 
 /** Milestones in journey order: which are only ever recorded once done. */
 const TIMELINE = Object.freeze([
+  ['loaded', false],
+  ['departed', false],
   ['portEta', false],
   ['discharged', true],
   ['railDeparted', true],
@@ -84,7 +81,7 @@ function browserStorage() {
 
 /**
  * @param {{root: HTMLElement, storage?: Storage|null,
- *   trackingSource?: object, now?: () => number,
+ *   trackingSource?: object, now?: () => number, backend?: object,
  *   confirm?: (text: string) => boolean}} options
  */
 export function createShipmentsDashboard({
@@ -92,12 +89,12 @@ export function createShipmentsDashboard({
   storage = browserStorage(),
   trackingSource = createShipmentTrackingSource(),
   now = () => Date.now(),
+  backend = createShipmentsBackend({ storage, now, trackingSource }),
   confirm = (text) =>
     typeof globalThis.confirm === 'function' ? globalThis.confirm(text) : true,
 }) {
   const doc = root.ownerDocument;
-  let store = createShipmentStore({ storage, now });
-  let tracker = createShipmentTracker({ store, source: trackingSource, now });
+  const { store, tracker } = backend;
   let filter = 'all';
   const params = new URLSearchParams(globalThis.location?.search ?? '');
   let query = String(params.get('q') ?? '').slice(0, 60);
@@ -332,9 +329,13 @@ export function createShipmentsDashboard({
     else if (lastRefresh)
       footer.push(t('Updated {age}', { age: age(lastRefresh) }));
     footer.push(
-      t(
-        'Saved in this browser only. Before the box is off the rail, its last free day is estimated from the expected rail arrival.',
-      ),
+      backend.mode?.() === 'server'
+        ? t(
+            'Shared with everyone on this server, and tracked even with no page open. Before the box is off the rail, its last free day is estimated from the expected rail arrival.',
+          )
+        : t(
+            'Saved in this browser only. Before the box is off the rail, its last free day is estimated from the expected rail arrival.',
+          ),
     );
     root.append(el('p', 'sp-footer', footer.join(' · ')));
     root.append(
@@ -383,6 +384,7 @@ export function createShipmentsDashboard({
         'sp-table-head',
         el('span', '', t('Container')),
         el('span', '', t('Status')),
+        el('span', '', t('Loaded')),
         el('span', '', t('Port ETA')),
         el('span', '', t('Ramp ETA')),
         el('span', '', t('Last free day')),
@@ -486,6 +488,23 @@ export function createShipmentsDashboard({
       el('span', 'sp-sub', route(shipment)),
     );
 
+    const loadedDay = shipment.auto?.dates?.loaded || '';
+    const loaded = el(
+      'span',
+      'sp-cell sp-cell-date',
+      el('span', 'sp-cell-label', t('Loaded')),
+      el('span', 'sp-date-value', loadedDay ? displayDay(loadedDay) : '—'),
+      el(
+        'span',
+        'sp-sub',
+        loadedDay
+          ? daysBetween(loadedDay, day) >= 0
+            ? relativeDays(daysBetween(day, loadedDay))
+            : t('planned')
+          : '',
+      ),
+    );
+
     const portDay = shipment.dates.discharged || latestPortEta(shipment);
     const port = el(
       'span',
@@ -584,6 +603,7 @@ export function createShipmentsDashboard({
     item.append(
       container,
       statusCell,
+      loaded,
       port,
       ramp,
       lfd,
@@ -851,7 +871,8 @@ export function createShipmentsDashboard({
         group(
           t('Journey'),
           TIMELINE.map(([field, actualOnly]) => {
-            let value = shipment.dates[field];
+            let value =
+              shipment.dates[field] || shipment.auto?.dates?.[field] || '';
             let estimated = false;
             if (field === 'rampEta' && !value && rampEta.day) {
               value = rampEta.day;
@@ -1026,13 +1047,16 @@ export function createShipmentsDashboard({
     }
   }
 
-  // Another tab (or the globe) changed the stored shipments.
+  // Another tab (or the globe) changed the list kept in this browser.
   const onStorage = (event) => {
     if (event.key && !event.key.startsWith('gev.shipments')) return;
-    store = createShipmentStore({ storage, now });
-    tracker = createShipmentTracker({ store, source: trackingSource, now });
-    if (!sheet) render();
+    backend.reread?.();
   };
+  // The list changed: a re-read, another person's edit, the server's tracking.
+  const unsubscribe =
+    backend.subscribe?.(() => {
+      if (!sheet) render();
+    }) ?? (() => {});
   globalThis.addEventListener?.('storage', onStorage);
   const onVisible = () => {
     if (doc.visibilityState === 'visible') void refresh();
@@ -1053,11 +1077,15 @@ export function createShipmentsDashboard({
   render();
   // Links from the home page: ?q= opens a search (and the box itself when
   // exactly one matches), ?add=1 opens the add sheet.
-  if (params.get('add')) openAdd();
-  else if (query.trim()) {
-    const found = searchShipments(store.list(), query);
-    if (found.length === 1) openDetail(found[0].id);
-  }
+  // The shared list arrives a moment after the page, so wait for it.
+  void Promise.resolve(backend.ready).then(() => {
+    if (sheet) return;
+    if (params.get('add')) openAdd();
+    else if (query.trim()) {
+      const found = searchShipments(store.list(), query);
+      if (found.length === 1) openDetail(found[0].id);
+    }
+  });
   void refresh();
 
   return {
@@ -1067,6 +1095,8 @@ export function createShipmentsDashboard({
       clearInterval(timer);
       closeSheet();
       globalThis.removeEventListener?.('storage', onStorage);
+      unsubscribe();
+      backend.stop?.();
       doc.removeEventListener('visibilitychange', onVisible);
       root.replaceChildren();
     },

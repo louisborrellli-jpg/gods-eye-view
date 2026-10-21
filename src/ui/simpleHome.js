@@ -12,16 +12,14 @@ import {
   shipmentStage,
 } from '../layers/shipments/model.js';
 import { searchShipments } from '../layers/shipments/search.js';
+import { createShipmentsBackend } from '../layers/shipments/backend.js';
 import { createShipmentTrackingSource } from '../layers/shipments/source.js';
-import {
-  SHIPMENTS_FOCUS_KEY,
-  createShipmentStore,
-} from '../layers/shipments/store.js';
+import { SHIPMENTS_FOCUS_KEY } from '../layers/shipments/store.js';
 import {
   describeShipmentAlert,
   describeShipmentStatus,
+  displayDay,
 } from '../layers/shipments/text.js';
-import { createShipmentTracker } from '../layers/shipments/tracker.js';
 
 /** The value of SHIPMENTS_FOCUS_KEY that asks the map for every container. */
 export const SHOW_ALL_SHIPMENTS = '*';
@@ -83,21 +81,21 @@ function browserStorage() {
 
 /**
  * @param {{root: HTMLElement, storage?: Storage|null, now?: () => number,
- *   navigate?: (href: string) => void}} options
+ *   navigate?: (href: string) => void, backend?: object}} options
  */
 export function createSimpleHome({
   root,
   storage = browserStorage(),
   now = () => Date.now(),
   navigate = (href) => globalThis.location.assign(href),
+  backend = createShipmentsBackend({
+    storage,
+    now,
+    trackingSource: createShipmentTrackingSource(),
+  }),
 }) {
   const doc = root.ownerDocument;
-  const store = createShipmentStore({ storage, now });
-  const tracker = createShipmentTracker({
-    store,
-    source: createShipmentTrackingSource(),
-    now,
-  });
+  const { store, tracker } = backend;
   let query = '';
   let resultsHost = null;
 
@@ -387,6 +385,15 @@ export function createSimpleHome({
               : null,
           ),
           el('span', '', describeShipmentStatus(shipment, day)),
+          shipment.auto?.dates?.loaded
+            ? el(
+                'span',
+                'hm-result-loaded',
+                t('Loaded {day}', {
+                  day: displayDay(shipment.auto.dates.loaded),
+                }),
+              )
+            : null,
         ),
         el('span', `sp-pill stage-${stage}`, t(STAGE_LABELS[stage])),
         el('span', 'hm-action-chevron', icon('chevron')),
@@ -402,13 +409,23 @@ export function createSimpleHome({
 
   const input = render();
   input?.focus?.();
-  // Keep the "needs attention" list current without anyone pressing a button.
-  void tracker.refresh().then(() => {
+  // Draw again whenever the list changes (it arrives from the server a moment
+  // after the page), keeping the cursor in the search box.
+  const redraw = () => {
     const focused =
       doc.activeElement === root.querySelector('.hm-search-input');
     const next = render();
     if (focused) next?.focus?.();
-  });
+  };
+  const unsubscribe = backend.subscribe?.(redraw) ?? (() => {});
+  // Keep the "needs attention" list current without anyone pressing a button.
+  void tracker.refresh().then(redraw);
 
-  return { render };
+  return {
+    render,
+    destroy() {
+      unsubscribe();
+      backend.stop?.();
+    },
+  };
 }

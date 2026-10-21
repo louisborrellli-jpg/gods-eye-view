@@ -1,7 +1,8 @@
 services:
   gods-eye-view:
     build: .
-    # Everything the app writes (.env with your keys, .gev-cache, .gev-logs)
+    # Everything the app writes (.env with your keys, .gev-cache, .gev-data
+    # with the shared shipments list, .gev-logs)
     # lands in the bind-mounted repo, so run as you, not root. UID/GID are
     # unset on Docker Desktop, where the 1000 fallback is ignored anyway.
     user: "${UID:-1000}:${GID:-1000}"

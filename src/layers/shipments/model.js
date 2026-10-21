@@ -33,6 +33,8 @@ export const DATE_FIELDS = Object.freeze([
 ]);
 
 export const DATE_LABELS = Object.freeze({
+  loaded: msg('Loaded at origin'),
+  departed: msg('Ship left origin'),
   portEta: msg('Ship ETA at port'),
   discharged: msg('Unloaded at port'),
   portLfd: msg('Port last free day'),

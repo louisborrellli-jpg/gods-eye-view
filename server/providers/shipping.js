@@ -1,5 +1,7 @@
 import { readResponseJsonCapped } from './common/http.js';
 import { makeRateLimiter, clientKey } from './common/rate-limit.js';
+import { admitSameSite } from './common/same-site.js';
+import { createShipmentsServerStore } from './shipments-store.js';
 import {
   CARRIER_SCAC,
   parseFindTeu,
@@ -32,8 +34,16 @@ const MAX_BYTES = 1024 * 1024;
 const MAX_CACHE = 200;
 const CONTAINER = /^[A-Z]{3}[UJZ]\d{7}$/;
 
-/** Vite plugin serving /api/shipments/* in dev and preview. */
-export function shippingProxy({
+/**
+ * Container tracking without HTTP: FindTEU milestones (cached per container)
+ * and a one-time Terminal49 registration. The /track route and the
+ * server's own shipments job both use it.
+ *
+ * @returns {{track: (container: string, carrier?: string) =>
+ *   Promise<{status: number, body: object}>, cached: (container: string) =>
+ *   boolean, keys: () => {findteu: boolean, terminal49: boolean}}}
+ */
+export function createShippingService({
   fetchImpl = (...args) => globalThis.fetch(...args),
   now = () => Date.now(),
   env = process.env,
@@ -42,7 +52,6 @@ export function shippingProxy({
   const cache = new Map();
   const inFlight = new Map();
   const registered = new Map(); // container → 'registered' | 'failed'
-  const allow = makeRateLimiter({ windowMs: 60_000, max: 30, globalMax: 120 });
 
   const findTeuKey = () => String(env.FINDTEU_API_KEY || '').trim();
   const terminal49Key = () => String(env.TERMINAL49_API_KEY || '').trim();
@@ -126,33 +135,39 @@ export function shippingProxy({
     while (cache.size > MAX_CACHE) cache.delete(cache.keys().next().value);
   }
 
-  async function track(req, res, send) {
-    const url = new URL(req.url || '', 'http://localhost');
-    const container = String(url.searchParams.get('container') || '')
+  function fresh(container) {
+    const cached = cache.get(container);
+    return Boolean(
+      cached &&
+      now() - cached.at < (cached.failed ? FAILURE_CACHE_MS : CACHE_MS),
+    );
+  }
+
+  async function track(rawContainer, carrier = '') {
+    const container = String(rawContainer || '')
       .toUpperCase()
       .replace(/\s+/g, '');
-    const carrier = String(url.searchParams.get('carrier') || '');
     if (!CONTAINER.test(container))
-      return send(400, { error: 'container must be 4 letters and 7 digits' });
+      return {
+        status: 400,
+        body: { error: 'container must be 4 letters and 7 digits' },
+      };
     if (!findTeuKey())
-      return send(200, {
-        configured: false,
-        tracking: null,
-        terminal49: await registerTerminal49(container, carrier),
-      });
+      return {
+        status: 200,
+        body: {
+          configured: false,
+          tracking: null,
+          terminal49: await registerTerminal49(container, carrier),
+        },
+      };
     const cached = cache.get(container);
-    const fresh =
-      cached &&
-      now() - cached.at < (cached.failed ? FAILURE_CACHE_MS : CACHE_MS);
-    if (!fresh && !inFlight.has(container) && !allow(clientKey(req)))
-      return cached && !cached.failed
-        ? send(200, { ...cached.value, stale: true })
-        : send(429, { error: 'rate_limited' });
     const terminal49 = registerTerminal49(container, carrier);
-    if (fresh)
-      return cached.failed
-        ? send(502, { ...cached.value, terminal49: await terminal49 })
-        : send(200, { ...cached.value, terminal49: await terminal49 });
+    if (fresh(container))
+      return {
+        status: cached.failed ? 502 : 200,
+        body: { ...cached.value, terminal49: await terminal49 },
+      };
     try {
       if (!inFlight.has(container))
         inFlight.set(
@@ -164,7 +179,7 @@ export function shippingProxy({
       const tracking = await inFlight.get(container);
       const value = { configured: true, tracking };
       remember(container, { at: now(), value });
-      send(200, { ...value, terminal49: await terminal49 });
+      return { status: 200, body: { ...value, terminal49: await terminal49 } };
     } catch (error) {
       const value = {
         configured: true,
@@ -172,14 +187,52 @@ export function shippingProxy({
         error: error?.upstream ? error.message : 'tracking_unavailable',
       };
       if (cached && !cached.failed)
-        return send(200, {
-          ...cached.value,
-          stale: true,
-          terminal49: await terminal49,
-        });
+        return {
+          status: 200,
+          body: { ...cached.value, stale: true, terminal49: await terminal49 },
+        };
       remember(container, { at: now(), value, failed: true });
-      send(502, { ...value, terminal49: await terminal49 });
+      return { status: 502, body: { ...value, terminal49: await terminal49 } };
     }
+  }
+
+  return {
+    track,
+    /** True when an answer for this container is still fresh in the cache. */
+    cached: (container) => fresh(String(container || '').toUpperCase()),
+    keys: () => ({
+      findteu: Boolean(findTeuKey()),
+      terminal49: Boolean(terminal49Key()),
+    }),
+  };
+}
+
+/** Vite plugin serving /api/shipments/* in dev and preview. */
+export function shippingProxy({
+  fetchImpl = (...args) => globalThis.fetch(...args),
+  now = () => Date.now(),
+  env = process.env,
+  dataDir,
+} = {}) {
+  const service = createShippingService({ fetchImpl, now, env });
+  const allow = makeRateLimiter({ windowMs: 60_000, max: 30, globalMax: 120 });
+  const store = createShipmentsServerStore({ service, now, dataDir });
+
+  async function track(req, res, send) {
+    const url = new URL(req.url || '', 'http://localhost');
+    const container = String(url.searchParams.get('container') || '')
+      .toUpperCase()
+      .replace(/\s+/g, '');
+    const carrier = String(url.searchParams.get('carrier') || '');
+    // Fresh answers are free; new lookups are rate limited per client.
+    if (
+      service.keys().findteu &&
+      !service.cached(container) &&
+      !allow(clientKey(req))
+    )
+      return send(429, { error: 'rate_limited' });
+    const answer = await service.track(container, carrier);
+    send(answer.status, answer.body);
   }
 
   async function handler(req, res) {
@@ -191,24 +244,35 @@ export function shippingProxy({
       });
       res.end(JSON.stringify(value));
     };
-    if (req.method !== 'GET') return send(405, { error: 'method_not_allowed' });
     const path = new URL(req.url || '', 'http://localhost').pathname;
-    if (path === '/status')
-      return send(200, {
-        findteu: Boolean(findTeuKey()),
-        terminal49: Boolean(terminal49Key()),
-      });
+    if (path === '/store' || path.startsWith('/store/')) {
+      // The shared list changes the server's data: same-site callers only.
+      if (admitSameSite(req, res)) return;
+      return store.handle(req, path.slice('/store'.length) || '/', send);
+    }
+    if (req.method !== 'GET') return send(405, { error: 'method_not_allowed' });
+    if (path === '/status') return send(200, service.keys());
     if (path === '/track') return track(req, res, send);
     send(404, { error: 'not_found' });
   }
 
+  const start = (server) => {
+    store.start();
+    server.httpServer?.on?.('close', () => store.stop());
+  };
+
   return {
     name: 'shipments-tracking',
-    configureServer({ middlewares }) {
-      middlewares.use('/api/shipments', handler);
+    configureServer(server) {
+      server.middlewares.use('/api/shipments', handler);
+      start(server);
     },
-    configurePreviewServer({ middlewares }) {
-      middlewares.use('/api/shipments', handler);
+    configurePreviewServer(server) {
+      server.middlewares.use('/api/shipments', handler);
+      start(server);
+    },
+    closeBundle() {
+      store.stop();
     },
   };
 }

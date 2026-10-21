@@ -1054,6 +1054,34 @@ port or ramp while it waits. Estimated pins are hollow and labelled est.; each
 container's lane is drawn dashed. Port coordinates come from a small UN/LOCODE
 table for this trade; unknown ports get no estimate.
 
+### Shared shipments list on the server
+
+When the app's own server runs (dev, preview or the standalone server), the
+shipments list lives there instead of in each browser, so everyone on the
+network sees the same containers and tracking keeps going with no page open.
+`server/providers/shipments-store.js` keeps the records in
+`.gev-data/shipments.json` (ignored by git, Docker and the dev watcher) through
+the browser store's own code, and runs the shared tracker against the server's
+FindTEU service every 20 minutes. Routes under `/api/shipments/store`
+(same-site callers only): `GET /`, `PUT /item`, `DELETE /item?id=`,
+`PUT /defaults`, `POST /merge`, `POST /refresh[?id=]`. A browser save keeps
+the server's tracking (`auto`) and a second copy of a container is refused
+with 409.
+
+`src/layers/shipments/backend.js` gives the layer, the Shipments page and the
+home page one `store` and `tracker`. It asks the server first; when the
+server answers it keeps an in-memory copy, sends each change and takes the
+server's list back, and polls once a minute while the page is visible. The
+first time, containers this browser already had are copied to the server and
+the old key is kept as `gev.shipments.v1.copied-to-server`. Without the server
+(a static host) everything stays in the browser as before. Alert "already
+announced" keys stay per browser.
+
+The loading date at origin (`auto.dates.loaded`, the first actual "loaded"
+event at the port of loading, else the planned one) has its own column on the
+Shipments page, heads the detail timeline and shows under home-page search
+results.
+
 ## Vessel components and sources
 
 `src/data/aisLiveVessels.js` assembles `createVesselLayer` from the

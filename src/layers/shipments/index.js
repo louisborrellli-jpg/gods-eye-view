@@ -18,8 +18,9 @@ import {
   shipmentStage,
   worstSeverity,
 } from './model.js';
-import { SHIPMENTS_FOCUS_KEY, createShipmentStore } from './store.js';
-import { TRACKING_KEY_NOTE, createShipmentTracker } from './tracker.js';
+import { createShipmentsBackend } from './backend.js';
+import { SHIPMENTS_FOCUS_KEY } from './store.js';
+import { TRACKING_KEY_NOTE } from './tracker.js';
 import { estimatePosition } from './geo.js';
 import {
   createShipmentTrackingSource,
@@ -80,6 +81,7 @@ const HEARD_POSITION_MS = 12 * 60 * 60_000;
  * @param {(id: string|null) => void} [options.openBoard] Opens the board.
  * @param {object|null} [options.notifier]
  * @param {() => number} [options.now]
+ * @param {object} [options.backend] Where the list lives (server or browser).
  */
 export function createShipmentsLayer({
   services,
@@ -89,10 +91,11 @@ export function createShipmentsLayer({
   openBoard = () => {},
   notifier = null,
   now = () => Date.now(),
+  backend = createShipmentsBackend({ storage, now, trackingSource }),
 } = {}) {
   if (!services?.overlays || !services?.input)
     throw new TypeError('Shipments require scene services');
-  const store = createShipmentStore({ storage, now });
+  const { store, tracker } = backend;
   let _viewer = null;
   let _dataSource = null;
   let _clickHandler = null;
@@ -104,15 +107,12 @@ export function createShipmentsLayer({
   let _lastCheck = null;
   let _feedNote = null;
   let _pendingFocus = null;
-  const tracker = createShipmentTracker({
-    store,
-    source: trackingSource,
-    now,
-  });
   /** @type {Map<string, string>} shipment id → why its ship was not found */
   const _lookupNotes = new Map();
   const _lastLookup = new Map();
   const _listeners = new Set();
+  // The shared list changed (another person, the server's tracking job).
+  const _unsubscribe = backend.subscribe?.(() => changed()) ?? (() => {});
 
   const today = () => localDay(now());
   const requestRender = () => _viewer?.scene?.requestRender?.();
@@ -637,6 +637,8 @@ export function createShipmentsLayer({
       _rowListener = null;
       _shell = null;
       _listeners.clear();
+      _unsubscribe();
+      backend.stop?.();
     },
 
     /**
@@ -762,10 +764,19 @@ export function createShipmentsLayer({
         focus = null;
       }
       if (!_shell || !focus) return;
-      if (focus !== SHOW_ALL && !store.get(focus)) return;
-      _pendingFocus = focus;
-      if (_enabled) showFocus(focus);
-      else _shell.setLayerEnabled?.(SHIPMENTS_LAYER_ID, true);
+      // The shared list may still be on its way from the server.
+      const go = () => {
+        if (!_shell || (focus !== SHOW_ALL && !store.get(focus))) return;
+        _pendingFocus = focus;
+        if (_enabled) showFocus(focus);
+        else _shell.setLayerEnabled?.(SHIPMENTS_LAYER_ID, true);
+      };
+      if (
+        !backend.ready ||
+        (focus === SHOW_ALL ? store.size : store.get(focus))
+      )
+        go();
+      else void Promise.resolve(backend.ready).then(go);
     },
 
     getStats() {
