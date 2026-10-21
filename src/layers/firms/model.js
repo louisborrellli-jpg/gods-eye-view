@@ -351,11 +351,11 @@ export function createModel({
       cullPosition: fireCullPosition(fire),
       gapPx: frpPixelSize(fire.frp),
       accent: accentForSeverity(detectionColorStop(fire).name),
-      title: t('FIRE · {frp} MW', { frp: formatFrpLabel(fire.frp) }),
+      title: t('Fire · {frp} MW', { frp: formatFrpLabel(fire.frp) }),
       details: [
         meta.join(' · '),
         formatLatLonLabel(fire.lat, fire.lon) +
-          (fire.night ? ` · ${t('NIGHT')}` : ''),
+          (fire.night ? ` · ${t('Night')}` : ''),
       ],
       selected: true,
       priority: Number.MAX_SAFE_INTEGER,
@@ -406,7 +406,7 @@ export function createModel({
 
   function buildCellCard(candidate, nowMs) {
     const cell = candidate.cell;
-    const noun = cell.count === 1 ? t('FIRE') : t('FIRES');
+    const noun = cell.count === 1 ? t('Fire') : t('Fires');
     const parts = [t('max {value} MW', { value: formatFrpLabel(cell.maxFrp) })];
     if (cell.newestAcqMs > 0) {
       const age = formatAgeLabel(nowMs - cell.newestAcqMs);

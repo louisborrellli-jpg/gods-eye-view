@@ -79,37 +79,37 @@ const HUD_COLORS = {
  * (ui/visualPresets.js), so both translate alike.
  */
 const MODE_LABELS = Object.freeze({
-  normal: msg('NORMAL'),
-  retro: msg('RETRO'),
+  normal: msg('Normal'),
+  retro: msg('Retro'),
   surveillance: msg('NVG'),
   thermal: msg('FLIR'),
-  anime: msg('ANIME'),
-  noir: msg('NOIR'),
-  snow: msg('SNOW'),
+  anime: msg('Anime'),
+  noir: msg('Noir'),
+  snow: msg('Snow'),
 });
 
 /** Region ids from _regionLabel() and the name shown for each. */
 const REGION_LABELS = Object.freeze({
-  ARCTIC: msg('ARCTIC'),
-  ANTARCTIC: msg('ANTARCTIC'),
-  'NORTH AMERICA': msg('NORTH AMERICA'),
-  'SOUTH AMERICA': msg('SOUTH AMERICA'),
-  EUROPE: msg('EUROPE'),
-  AFRICA: msg('AFRICA'),
-  ASIA: msg('ASIA'),
-  OCEANIA: msg('OCEANIA'),
-  'NORTHERN OCEANIC GRID': msg('NORTHERN OCEANIC GRID'),
-  'SOUTHERN OCEANIC GRID': msg('SOUTHERN OCEANIC GRID'),
+  ARCTIC: msg('Arctic'),
+  ANTARCTIC: msg('Antarctic'),
+  'NORTH AMERICA': msg('North America'),
+  'SOUTH AMERICA': msg('South America'),
+  EUROPE: msg('Europe'),
+  AFRICA: msg('Africa'),
+  ASIA: msg('Asia'),
+  OCEANIA: msg('Oceania'),
+  'NORTHERN OCEANIC GRID': msg('Northern oceanic grid'),
+  'SOUTHERN OCEANIC GRID': msg('Southern oceanic grid'),
 });
 
 /** Feed-state ids from hudTelemetryProvenance() and the word shown for each. */
 const FEED_STATE_LABELS = Object.freeze({
-  loading: msg('LOADING'),
-  degraded: msg('DEGRADED'),
-  stale: msg('STALE'),
-  partial: msg('PARTIAL'),
-  fallback: msg('FALLBACK'),
-  unavailable: msg('UNAVAILABLE'),
+  loading: msg('Loading'),
+  degraded: msg('Degraded'),
+  stale: msg('Stale'),
+  partial: msg('Partial'),
+  fallback: msg('Fallback'),
+  unavailable: msg('Unavailable'),
 });
 
 /**
@@ -135,15 +135,15 @@ function localizedProvenanceTag(provenance) {
 function viewBandLabel(band) {
   switch (band) {
     case 'STREET':
-      return t('STREET', { context: 'view band' });
+      return t('Street', { context: 'view band' });
     case 'CITY':
-      return t('CITY', { context: 'view band' });
+      return t('City', { context: 'view band' });
     case 'METRO':
-      return t('METRO', { context: 'view band' });
+      return t('Metro', { context: 'view band' });
     case 'REGIONAL':
-      return t('REGIONAL', { context: 'view band' });
+      return t('Regional', { context: 'view band' });
     default:
-      return t('GLOBAL', { context: 'view band' });
+      return t('Global', { context: 'view band' });
   }
 }
 
@@ -287,7 +287,7 @@ export class IntelHUD {
           <div class="hud-system">${HUD_OPTICS_LINE}</div>
           <div class="hud-mode" id="hud-mode">${t(MODE_LABELS.normal)}</div>
           <div class="hud-summary-wrap">
-            <div class="hud-summary-label">${t('SUMMARY')}</div>
+            <div class="hud-summary-label">${t('Summary')}</div>
             <div class="hud-summary" id="hud-summary">${t('Awaiting telemetry...')}</div>
           </div>
         </div>
@@ -295,7 +295,7 @@ export class IntelHUD {
 
       <div class="hud-corner hud-top-right">
         <div class="hud-content" style="text-align:right">
-          <div class="hud-rec"><span id="hud-rec-dot">●</span> ${t('REC')}  <span id="hud-timestamp">2026-01-01 00:00:00Z</span></div>
+          <div class="hud-rec"><span id="hud-rec-dot">●</span> ${t('Rec')}  <span id="hud-timestamp">2026-01-01 00:00:00Z</span></div>
           <div class="hud-orbital" id="hud-feeds">FEEDS: --</div>
         </div>
         <div class="hud-bracket">┐</div>
@@ -769,7 +769,7 @@ export class IntelHUD {
         : hudQuantity(Math.round(altDisplayM), 'm');
     const winTag = window
       ? `${hudQuantity(Math.max(1, Math.round(window.widthKm)), '')}x${hudQuantity(Math.max(1, Math.round(window.heightKm)), 'km')}`
-      : t('N/A');
+      : t('N/a');
     // NEAR the nearest catalogued POI at metro range; otherwise the lat/lon sector.
     const localityTag = composeLocalityTag(
       nearest,

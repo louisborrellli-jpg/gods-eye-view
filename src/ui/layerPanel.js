@@ -24,17 +24,17 @@ import { QUICK_VIEWS, planQuickView } from './quickViews.js';
 // Feed-state values are machine ids (QA hooks, CSS feed-* classes); only the
 // label translates.
 const FEED_STATE_LABEL_KEYS = Object.freeze({
-  nominal: msg('ON'),
-  loading: msg('LOADING'),
-  degraded: msg('DEGRADED'),
-  stale: msg('STALE'),
-  partial: msg('PARTIAL'),
-  fallback: msg('FALLBACK'),
-  unavailable: msg('UNAVAILABLE'),
+  nominal: msg('On'),
+  loading: msg('Loading'),
+  degraded: msg('Degraded'),
+  stale: msg('Stale'),
+  partial: msg('Partial'),
+  fallback: msg('Fallback'),
+  unavailable: msg('Unavailable'),
 });
 
 function lifecycleStateLabel(lifecycleState) {
-  return t(lifecycleState === 'enabling' ? msg('ENABLING') : msg('DISABLING'));
+  return t(lifecycleState === 'enabling' ? msg('Enabling') : msg('Disabling'));
 }
 
 // Presentation order is independent of catalog registration and startup order.
@@ -838,15 +838,15 @@ export class LayerPanel {
     const stateText = transitioning
       ? lifecycleStateLabel(layer.lifecycleState)
       : uncertain
-        ? t('UNCERTAIN')
+        ? t('Uncertain')
         : showsFeedState
           ? t(FEED_STATE_LABEL_KEYS[feedState])
-          : t('OFF');
+          : t('Off');
     // The chip may abbreviate where a language's word is wider than the
     // status column; the meta line and the accessible name keep the full word.
     button.textContent =
       showsFeedState && feedState === 'unavailable'
-        ? t('UNAVAILABLE', { context: 'status chip' })
+        ? t('Unavailable', { context: 'status chip' })
         : stateText;
     const keyGuidance = unavailable
       ? String(

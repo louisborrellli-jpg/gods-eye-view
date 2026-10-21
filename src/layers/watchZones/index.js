@@ -198,13 +198,13 @@ export function createWatchZonesLayer({
           ? {
               selected: true,
               interactive: false,
-              title: t('ZONE {name}', { name: zone.name }),
+              title: t('Zone {name}', { name: zone.name }),
               details: [zoneSummary(zone)],
               priority: Number.MAX_SAFE_INTEGER - 1,
             }
           : {
               variant: 'label',
-              title: t('ZONE {name}', { name: zone.name }),
+              title: t('Zone {name}', { name: zone.name }),
               priority: 5000,
               collisionGroup: 'ambient-label',
               paintLane: 'ambient-label',
@@ -243,7 +243,7 @@ export function createWatchZonesLayer({
           position,
           selected: true,
           interactive: false,
-          title: t('FLASH · ZONE {name}', { name: entry.alert.zoneName }),
+          title: t('Flash · Zone {name}', { name: entry.alert.zoneName }),
           details: [describeAlert(entry.alert), ago(entry.loggedAt)],
           accent,
           priority: Number.MAX_SAFE_INTEGER,
@@ -358,7 +358,7 @@ export function createWatchZonesLayer({
 
   function announce(entries) {
     const top = [...entries].sort((a, b) => b.severity - a.severity)[0];
-    const text = t('FLASH · ZONE {name} — {what}', {
+    const text = t('Flash · Zone {name} — {what}', {
       name: top.alert.zoneName,
       what: describeAlert(top.alert),
     });
@@ -651,7 +651,7 @@ export function createWatchZonesLayer({
             ...zones.map((item) => ({
               id: `zone:${item.id}`,
               lead: '◎',
-              text: t('ZONE {name}', { name: item.name }),
+              text: t('Zone {name}', { name: item.name }),
               active: item.id === _selectedZoneId,
               params: { select: item.id },
             })),

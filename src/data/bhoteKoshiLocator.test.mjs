@@ -214,8 +214,8 @@ test('Bhote Koshi regional locator sequences Nepal, border, then the incident', 
   assert.equal(nepal.anchorDot, true);
   assert.equal(incident.variant, 'card');
   assert.equal(incident.paintLane, 'thumbnail');
-  assert.equal(incident.title, 'BHOTE KOSHI FLOOD INCIDENT');
-  assert.deepEqual(incident.details, ['NEPAL · 26 AUG 2026']);
+  assert.equal(incident.title, 'Bhote Koshi flood incident');
+  assert.deepEqual(incident.details, ['Nepal · 26 Aug 2026']);
   assert.equal(incident.anchorDot, true);
   assert.equal(incident.leaderStyle, 'elbow');
   assert.equal('image' in incident, false);
@@ -612,11 +612,11 @@ test('Bhote Koshi trigger-record presentation reveals sourced incident details',
     source.entities.values.map(({ id }) => id),
     ['bhote-koshi-flood-path', 'bhote-koshi-trigger-record-halo'],
   );
-  assert.equal(record.title, 'USGS INITIAL REPORT');
+  assert.equal(record.title, 'USGS initial report');
   assert.deepEqual(record.details, [
-    '26 AUG 2026 · 08:37 NPT',
+    '26 Aug 2026 · 08:37 NPT',
     '28.2710° N · 85.5150° E',
-    'INITIAL M4.4 · RECLASSIFIED M5.2 LANDSLIDE',
+    'Initial M4.4 · Reclassified M5.2 landslide',
     'USGS EVENT us7000tbwb · OPEN SOURCE',
   ]);
   assert.equal(record.interactive, true);

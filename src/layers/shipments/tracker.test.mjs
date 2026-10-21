@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createShipmentStore } from './store.js';
 import { TRACK_INTERVAL_MS, createShipmentTracker } from './tracker.js';
+import { TRACKING_VERSION } from './tracking.js';
 
 function setup(answer) {
   let clock = Date.UTC(2026, 9, 21);
@@ -63,4 +64,30 @@ test('a missing key stops the round and failures leave a note', async () => {
     text: 'Automatic tracking unavailable',
     reason: 'limit reached',
   });
+});
+
+test('a box read by an older parser is fetched again once, even when finished', async () => {
+  const { store, tracker, calls } = setup(() => ({
+    configured: true,
+    tracking: {
+      source: 'FindTEU',
+      completed: true,
+      dates: { loaded: '2026-10-01' },
+      fetchedAt: Date.UTC(2026, 9, 21),
+      version: TRACKING_VERSION,
+    },
+  }));
+  const saved = store.save({ container: 'MSCU1234566' });
+  // Tracked a minute ago by a parser that did not read the loading date.
+  store.setAuto(saved.id, {
+    source: 'FindTEU',
+    completed: true,
+    dates: { portEta: '2026-10-20' },
+    fetchedAt: Date.UTC(2026, 9, 21),
+  });
+  await tracker.refresh();
+  assert.equal(calls.length, 1);
+  assert.equal(store.get(saved.id).auto.dates.loaded, '2026-10-01');
+  await tracker.refresh();
+  assert.equal(calls.length, 1, 'up to date and finished: left alone');
 });

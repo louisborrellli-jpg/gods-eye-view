@@ -33,23 +33,23 @@ export function renderRadioState(state) {
   this._syncContextRadioLauncherState();
   this._radioLayerState?.classList.toggle('active', enabled);
   const lifecycleLabel =
-    lifecycleState === 'enabling' ? t('ENABLING') : t('DISABLING');
+    lifecycleState === 'enabling' ? t('Enabling') : t('Disabling');
   if (this._radioLayerState) {
     this._radioLayerState.textContent = transitioning
       ? lifecycleLabel
       : uncertain
-        ? t('UNCERTAIN')
+        ? t('Uncertain')
         : state.loading
-          ? t('SYNC')
+          ? t('Sync')
           : enabled
             ? `${state.filteredCount}/${state.stationCount}`
-            : t('OFF');
+            : t('Off');
   }
   const enableLabel = uncertain
-    ? t('RECONCILE')
+    ? t('Reconcile')
     : enabled
-      ? t('DISABLE')
-      : t('ENABLE');
+      ? t('Disable')
+      : t('Enable');
   const enableAria = uncertain
     ? t('Reconcile Radio — lifecycle uncertain')
     : enabled
@@ -143,8 +143,8 @@ export function renderRadioState(state) {
     );
     this._radioTunerBandLabel.textContent =
       state.filter === 'all'
-        ? t('DIRECTORY BAND')
-        : t('{category} BAND', {
+        ? t('Directory band')
+        : t('{category} band', {
             category: String(
               activeCategory?.label || state.filter,
             ).toUpperCase(),
@@ -167,7 +167,7 @@ export function renderRadioState(state) {
 
   if (this._radioStationName)
     this._radioStationName.textContent =
-      selected?.name || t('NO STATION SELECTED');
+      selected?.name || t('No station selected');
   if (this._radioStationMeta) {
     const place = selected
       ? [selected.state, selected.countryCode].filter(Boolean).join(' · ')
@@ -187,7 +187,7 @@ export function renderRadioState(state) {
   if (this._radioStationTags) {
     const tags = Array.isArray(selected?.tags) ? selected.tags.slice(0, 8) : [];
     this._radioStationTags.textContent = tags.length
-      ? t('TAGS · {tags}', { tags: tags.join(' · ') })
+      ? t('Tags · {tags}', { tags: tags.join(' · ') })
       : '';
   }
   if (this._radioStationHomepage) {
@@ -216,10 +216,10 @@ export function renderRadioState(state) {
       : t('Play');
   // The transport button is narrow: it gets its own short uppercase labels.
   const playbackButtonLabel = activePlayback
-    ? t('PAUSE')
+    ? t('Pause')
     : state.audioState === 'paused'
-      ? t('RESUME')
-      : t('PLAY');
+      ? t('Resume')
+      : t('Play');
   const playTargetWord = selected ? t('selected') : t('nearest');
   const playAria = t('{action} {target} radio station', {
     action: playbackAction,
@@ -278,14 +278,14 @@ export function renderRadioState(state) {
   }
   if (this._contextRadioMiniStation) {
     this._contextRadioMiniStation.textContent = uncertain
-      ? t('RADIO STATE UNCERTAIN')
+      ? t('Radio state uncertain')
       : selected?.name ||
-        (state.loading ? t('SYNCING DIRECTORY') : t('RADIO READY'));
+        (state.loading ? t('Syncing directory') : t('Radio ready'));
   }
   if (this._cockpitRadioStation) {
     this._cockpitRadioStation.textContent = uncertain
-      ? t('UNCERTAIN')
-      : selected?.name || (state.loading ? t('SYNCING') : t('READY'));
+      ? t('Uncertain')
+      : selected?.name || (state.loading ? t('Syncing') : t('Ready'));
   }
   if (this._radioPlaybackState) {
     const stationName = selected?.name || t('station');

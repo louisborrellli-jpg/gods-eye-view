@@ -380,8 +380,8 @@ export function createTracking({ state: layerState, services, parts, source }) {
       const extra = companions.length - 1;
       details.push(
         extra > 0
-          ? t('DOCKED · {name} · +{extra}', { name: companions[0], extra })
-          : t('DOCKED · {name}', { name: companions[0] }),
+          ? t('Docked · {name} · +{extra}', { name: companions[0], extra })
+          : t('Docked · {name}', { name: companions[0] }),
       );
     }
     const current = layerState._trackedEntity.gevLabelModel;

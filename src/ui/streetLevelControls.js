@@ -351,7 +351,7 @@ export class StreetLevelControls {
       setProp(
         button.querySelector('.sl-btn-text'),
         'textContent',
-        on ? t('SHRINK') : t('EXPAND'),
+        on ? t('Shrink') : t('Expand'),
       );
       setAttr(button, 'aria-pressed', String(on));
       setAttr(button, 'aria-label', on ? t('Shrink') : t('Expand'));

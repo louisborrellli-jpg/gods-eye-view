@@ -50,7 +50,7 @@ function run(locale) {
 
 test('es: tracked ISS card is localized', () => {
   const details = run('es');
-  assert.equal(details[0], 'ESTACIÓN · ISS');
+  assert.equal(details[0], 'Estación · ISS');
   assert.doesNotMatch(
     details[2],
     /^DOCKED/,
@@ -60,7 +60,7 @@ test('es: tracked ISS card is localized', () => {
 
 test('ru: tracked ISS card is localized', () => {
   const details = run('ru');
-  assert.equal(details[0], 'СТАНЦИЯ · ISS');
+  assert.equal(details[0], 'Станция · ISS');
   assert.match(details[1], /км/, 'ru glossary: km → км');
   assert.doesNotMatch(
     details[2],

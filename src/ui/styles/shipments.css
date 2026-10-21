@@ -95,7 +95,7 @@
   margin: 0;
   padding: 8px 20px 0;
   color: var(--ship-green);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .shipments-board-body {
@@ -111,7 +111,7 @@
   margin: 0;
   padding: 12px 20px;
   color: var(--sb-faint);
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.5;
   background: var(--sb-subtle);
   border-top: 1px solid var(--sb-border);
@@ -132,7 +132,7 @@
   padding: 6px 14px;
   color: var(--sb-text);
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   letter-spacing: normal;
   text-transform: none;
@@ -191,7 +191,7 @@
   max-width: 34rem;
   margin: 8px auto 0;
   color: var(--sb-muted);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.55;
 }
 
@@ -244,7 +244,7 @@
 .shipment-card-carrier,
 .shipment-stage {
   padding: 2px 8px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   border-radius: 999px;
 }
@@ -272,7 +272,7 @@
 .shipment-card-notes {
   margin: 6px 0 0;
   color: var(--sb-muted);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.45;
 }
 
@@ -293,7 +293,7 @@
 .shipment-card-tracked {
   margin: 8px 0 0;
   color: var(--sb-faint);
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .shipment-clocks {
@@ -316,7 +316,7 @@
 
 .shipment-clock-label {
   color: var(--sb-muted);
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .shipment-clock-day {
@@ -351,7 +351,7 @@
 .shipment-alert {
   position: relative;
   padding-left: 16px;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.6;
 }
 
@@ -382,7 +382,7 @@
   margin: 0 0 16px;
   padding: 10px 14px;
   color: #93370d;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
   background: var(--ship-orange-soft);
   border: 1px solid #fedf89;
@@ -406,7 +406,7 @@
 .shipments-settings > summary,
 .shipments-more > summary {
   color: var(--sb-text);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
 }
@@ -426,7 +426,7 @@
 .shipments-form-section {
   margin: 18px 0 4px;
   color: var(--sb-text);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
 }
 
@@ -445,7 +445,7 @@
 
 .shipments-field-label {
   color: var(--sb-text);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
 }
 
@@ -483,14 +483,14 @@
 
 .shipments-mono {
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .shipments-hint {
   margin: 0;
   color: var(--sb-muted);
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.45;
 }
 
@@ -512,7 +512,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 14px;
   cursor: pointer;
 }
 
@@ -526,7 +526,7 @@
   min-height: 18px;
   margin: 14px 0 0;
   color: var(--ship-red);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 @media (max-width: 560px) {

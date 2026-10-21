@@ -66,14 +66,14 @@ export function createQueries({
             age:
               components.model.formatAge(now - layerState._lastUpdate) || '<1h',
           })
-        : t('STALE');
+        : t('Stale');
       let loadingLabel = '';
       if (layerState._loading) {
         loadingLabel = layerState._fires.length
           ? t('refreshing...')
           : t('loading...');
       } else if (layerState._keyRequired) {
-        loadingLabel = t('KEY REQUIRED');
+        loadingLabel = t('Key required');
       } else if (layerState._stale) {
         loadingLabel = staleText;
       } else if (layerState._error) {
@@ -95,7 +95,7 @@ export function createQueries({
         // the operator can take.
         keyRequired: layerState._keyRequired,
         error: layerState._keyRequired
-          ? t('KEY REQUIRED')
+          ? t('Key required')
           : layerState._stale
             ? staleText
             : layerState._error,

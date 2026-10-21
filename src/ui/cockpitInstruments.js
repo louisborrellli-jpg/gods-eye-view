@@ -32,14 +32,14 @@ const emergencyLabel = ({ name }) => t(name).toUpperCase();
 /** The emergency line in the active language (see cockpitMath.js). */
 const LOCALIZED_EMERGENCY = Object.freeze({
   squawk: (parts) =>
-    t('SQUAWK {code} · {status}', {
+    t('Squawk {code} · {status}', {
       code: parts.squawk,
       status: emergencyLabel(parts),
     }),
   adsb: (parts) =>
     parts.priority
-      ? t('ADS-B PRIORITY · {status}', { status: emergencyLabel(parts) })
-      : t('ADS-B EMERGENCY · {status}', { status: emergencyLabel(parts) }),
+      ? t('ADS-B priority · {status}', { status: emergencyLabel(parts) })
+      : t('ADS-B emergency · {status}', { status: emergencyLabel(parts) }),
 });
 
 export function updateHud(
@@ -51,7 +51,7 @@ export function updateHud(
   const heading = normalizeHeading(this.heading ?? info.track ?? 0);
   if (this.callsign) {
     this.callsign.textContent =
-      info.callsign || info.registration || info.icao24 || t('AIRCRAFT');
+      info.callsign || info.registration || info.icao24 || t('Aircraft');
   }
   const speedKt = Number.isFinite(info.velocityMps)
     ? info.velocityMps * 1.94384
@@ -147,14 +147,14 @@ export function updateHud(
   }
   if (this.aircraftMeta) {
     const feedState = this.surfaceAcquiring
-      ? t('ACQUIRING SURFACE')
+      ? t('Acquiring surface')
       : this.surfaceFallback
-        ? t('SURFACE FALLBACK')
+        ? t('Surface fallback')
         : info.stale
-          ? t('STALE FEED')
-          : t('LIVE TRACK');
+          ? t('Stale feed')
+          : t('Live track');
     const aircraftClass =
-      info.layerId === 'military' ? t('MILITARY') : t('COMMERCIAL');
+      info.layerId === 'military' ? t('Military') : t('Commercial');
     const emergency = formatCockpitEmergency(
       info.emergency,
       LOCALIZED_EMERGENCY,
@@ -165,7 +165,7 @@ export function updateHud(
           emergency,
           feedState,
         })
-      : t('{aircraftClass} · {feedState} · COURSE ALIGNED', {
+      : t('{aircraftClass} · {feedState} · Course aligned', {
           aircraftClass,
           feedState,
         });
@@ -197,13 +197,13 @@ export function updateRoute(info) {
   const validDestination =
     Number.isFinite(destination?.lat) && Number.isFinite(destination?.lon);
   const routeLabel = (airport) =>
-    [airport?.code, airport?.name].filter(Boolean).join(' · ') || t('UNKNOWN');
+    [airport?.code, airport?.name].filter(Boolean).join(' · ') || t('Unknown');
   if (this.routeFrom) this.routeFrom.textContent = routeLabel(origin);
   if (this.routeTo) this.routeTo.textContent = routeLabel(destination);
   if (this.routeStatus) {
     this.routeStatus.textContent = validDestination
-      ? t('ARROW · ESTIMATED DIRECTION')
-      : t('ROUTE DATA UNAVAILABLE');
+      ? t('Arrow · Estimated direction')
+      : t('Route data unavailable');
   }
   if (this.route) this.route.hidden = !origin && !destination;
   if (
@@ -253,7 +253,7 @@ export function syncWeatherToggle(enabled) {
   this.weatherToggle.setAttribute('aria-label', weatherLabel);
   this.weatherToggle.title = weatherLabel;
   if (this.weatherState) {
-    this.weatherState.textContent = active ? t('ON') : t('OFF');
+    this.weatherState.textContent = active ? t('On') : t('Off');
   }
 }
 
@@ -261,13 +261,13 @@ export function setVisionMode(mode, { revealParameters = false } = {}) {
   const next = normalizeCockpitVisionMode(mode);
   this.visionMode = next;
   const labels = {
-    optical: t('NORMAL'),
-    crt: t('RETRO'),
+    optical: t('Normal'),
+    crt: t('Retro'),
     nvg: t('NVG'),
     thermal: t('FLIR'),
-    anime: t('ANIME'),
-    noir: t('NOIR'),
-    snow: t('SNOW'),
+    anime: t('Anime'),
+    noir: t('Noir'),
+    snow: t('Snow'),
   };
   const names = {
     optical: t('Normal'),

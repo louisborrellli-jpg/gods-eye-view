@@ -211,7 +211,7 @@ export function buildIncidentCard(row, nowMs, { link = null } = {}) {
   if (ages.length) details.push(ages.join(' · '));
   if (link) details.push(t('InciWeb ↗ · click card to open'));
 
-  const title = t('FIRE · {name}', {
+  const title = t('Fire · {name}', {
     name: row.name || t('Unnamed incident'),
   });
   return {

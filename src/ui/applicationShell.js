@@ -821,11 +821,11 @@ export class StyleManager extends ShellFacade {
   _applyRuntimeStaticHeaderText() {
     this._setHeaderText(
       document.querySelector('#control-panel .panel-title'),
-      t('STYLES'),
+      t('Map look'),
     );
     this._setHeaderText(
       document.querySelector('#location-bar .location-toolbar-label'),
-      t('LOCATION'),
+      t('Places'),
     );
     // One span holds both mode descriptions around a <br>; keep the <br>.
     const standbyDescription = document.querySelector(
@@ -834,18 +834,18 @@ export class StyleManager extends ShellFacade {
     if (standbyDescription) {
       standbyDescription.replaceChildren(
         document.createTextNode(
-          t('CONTACTS — nearest planes · vessels · sites'),
+          t('Contacts — nearest planes · vessels · sites'),
         ),
         document.createElement('br'),
         document.createTextNode(
-          t('SPACE MISSIONS — launches & orbital assets'),
+          t('Space missions — launches & orbital assets'),
         ),
       );
     }
     // Leading space after the live dot, as showBriefPage writes it.
     const briefKicker = document.querySelector('#cockpit-brief-kicker');
     if (briefKicker) {
-      this._setHeaderText(briefKicker, ` ${t('LIVE SIGNALS')}`);
+      this._setHeaderText(briefKicker, ` ${t('Live signals')}`);
     }
   }
 

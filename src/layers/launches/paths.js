@@ -522,7 +522,7 @@ export function createPaths({ state: layerState, services, parts, source }) {
     return {
       lat: Cesium.Math.toDegrees(lat),
       lon: Cesium.Math.toDegrees(Cesium.Math.negativePiToPi(lon)),
-      accuracy: t('EST. DOWNRANGE'),
+      accuracy: t('Est. Downrange'),
     };
   }
 

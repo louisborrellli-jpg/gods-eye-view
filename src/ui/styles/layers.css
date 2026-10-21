@@ -125,10 +125,10 @@
   padding-top: 12px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--text-secondary);
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 600;
-  letter-spacing: 1.4px;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .data-layer-group-heading:hover,
@@ -423,19 +423,19 @@
 }
 #space-mission-panel-host .space-mission-roster-header strong {
   color: #8fcfff;
-  font-size: 9px;
-  letter-spacing: 0.16em;
+  font-size: 12px;
+  letter-spacing: 0;
 }
 #space-mission-panel-host .space-mission-roster-header span {
   color: rgba(190, 230, 230, 0.46);
-  font-size: 7px;
-  letter-spacing: 0.1em;
+  font-size: 12px;
+  letter-spacing: 0;
 }
 #space-mission-panel-host .space-mission-roster-header output {
   flex: 0 0 auto;
   color: #22e6e6;
-  font-size: 9px;
-  letter-spacing: 0.08em;
+  font-size: 12px;
+  letter-spacing: 0;
 }
 #space-mission-panel-host .space-mission-roster-list {
   display: grid;
@@ -524,13 +524,13 @@
 }
 #space-mission-panel-host .space-mission-roster-copy strong {
   color: #d8ffff;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.07em;
+  letter-spacing: 0;
 }
 #space-mission-panel-host .space-mission-roster-copy small {
   color: rgba(190, 230, 230, 0.48);
-  font-size: 7px;
+  font-size: 12px;
   letter-spacing: 0.035em;
 }
 #space-mission-panel-host .space-mission-roster-chevron {
@@ -544,7 +544,7 @@
   font:
     8px/1.5 'JetBrains Mono',
     monospace;
-  letter-spacing: 0.09em;
+  letter-spacing: 0;
   text-align: center;
 }
 #space-mission-panel-host .space-mission-roster-focus-continuation {
@@ -554,7 +554,7 @@
   font:
     7px/1.4 'JetBrains Mono',
     monospace;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
   text-align: center;
 }
 #space-mission-panel .space-mission-view-header {
@@ -567,7 +567,7 @@
   font:
     8px 'JetBrains Mono',
     monospace;
-  letter-spacing: 0.18em;
+  letter-spacing: 0;
 }
 #space-mission-panel .space-mission-view-header button {
   width: 24px;
@@ -590,7 +590,7 @@
   font:
     11px 'JetBrains Mono',
     monospace;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
 }
 #space-mission-panel .space-mission-detail strong {
   font-size: 14px;
@@ -613,7 +613,7 @@
   font:
     10px 'JetBrains Mono',
     monospace;
-  letter-spacing: 0.17em;
+  letter-spacing: 0;
 }
 #space-mission-panel .mission-table-scroll {
   overflow-x: auto;
@@ -653,7 +653,7 @@
   display: block;
   margin-top: 3px;
   color: rgba(190, 230, 230, 0.56);
-  font-size: 8px;
+  font-size: 12px;
   line-height: 1.35;
 }
 #space-mission-panel .mission-table-empty {
@@ -680,7 +680,7 @@
   font:
     8px 'JetBrains Mono',
     monospace;
-  letter-spacing: 0.16em;
+  letter-spacing: 0;
 }
 #space-mission-panel .mission-replay-speed-header output {
   min-width: 42px;
@@ -696,7 +696,7 @@
   font:
     7px 'JetBrains Mono',
     monospace;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
 }
 
 #space-mission-panel .mission-action-row {
@@ -720,7 +720,7 @@
   font:
     9px 'JetBrains Mono',
     monospace;
-  letter-spacing: 0.16em;
+  letter-spacing: 0;
   cursor: pointer;
   transition:
     border-color 0.15s ease,
@@ -823,7 +823,7 @@
   font:
     11px 'JetBrains Mono',
     monospace;
-  letter-spacing: 0.12em;
+  letter-spacing: 0;
   cursor: pointer;
   transition:
     background 0.15s ease,
@@ -850,7 +850,7 @@
   font:
     11px 'JetBrains Mono',
     monospace;
-  letter-spacing: 0.1em;
+  letter-spacing: 0;
 }
 #space-mission-panel button {
   cursor: pointer;
@@ -966,7 +966,7 @@
   font:
     9px/1.38 'JetBrains Mono',
     monospace;
-  letter-spacing: 0.075em;
+  letter-spacing: 0;
   text-shadow:
     0 1px 2px #001018,
     0 0 6px #001018;
@@ -980,7 +980,7 @@
 
 .mission-replay-overlay-callout strong {
   color: #22e6e6;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 500;
 }
 
@@ -1116,7 +1116,7 @@
   align-items: center;
   color: #65f7ff;
   font: 7px/1.2 var(--font-mono);
-  letter-spacing: 0.12em;
+  letter-spacing: 0;
 }
 .context-radio-mini-heading button {
   display: grid;
@@ -1149,7 +1149,7 @@
 .context-radio-mini-heading strong {
   overflow: hidden;
   color: #e8feff;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 500;
   text-align: right;
   text-overflow: ellipsis;
@@ -1188,7 +1188,7 @@
   align-items: center;
   color: var(--text-dim);
   font: 7px/1 var(--font-mono);
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
 }
 .context-radio-mini-volume input {
   width: 100%;
@@ -1277,7 +1277,7 @@
   color: #8fcfff;
   background: rgba(42, 113, 171, 0.09);
   font: 8px/1.15 var(--font-mono);
-  letter-spacing: 0.09em;
+  letter-spacing: 0;
   cursor: pointer;
   transition:
     border-color 0.15s ease,
@@ -1327,12 +1327,12 @@
   color: rgba(190, 230, 230, 0.5);
   text-align: center;
   font: 8px/1.45 var(--font-mono);
-  letter-spacing: 0.1em;
+  letter-spacing: 0;
 }
 .context-mode-standby strong {
   color: #8fcfff;
-  font-size: 9px;
-  letter-spacing: 0.16em;
+  font-size: 12px;
+  letter-spacing: 0;
 }
 .context-mode-view {
   min-height: 0;
@@ -1352,7 +1352,7 @@
   color: #8fcfff;
   background: rgba(42, 113, 171, 0.12);
   font: 7px/1.1 var(--font-mono);
-  letter-spacing: 0.1em;
+  letter-spacing: 0;
   cursor: pointer;
 }
 .panel-layer-toggle:hover,
@@ -1375,7 +1375,7 @@
   width: 100%;
   min-height: 30px;
   padding: 6px 8px;
-  font-size: 8px;
+  font-size: 12px;
 }
 #global-context-panel #cockpit-entry {
   position: static;
@@ -1385,7 +1385,7 @@
   padding: 5px 8px;
   border-radius: 5px;
   justify-content: center;
-  font-size: 8px;
+  font-size: 12px;
   box-shadow: none;
 }
 #global-context-panel #cockpit-entry .material-symbols-outlined {
@@ -1440,8 +1440,8 @@ body.recording-mode #right-context-rail > [data-panel-id] {
 
 .quick-view-btn {
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.04em;
+  font-size: 13px;
+  letter-spacing: 0;
   padding: 5px 9px;
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.16);

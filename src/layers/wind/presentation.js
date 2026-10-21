@@ -104,7 +104,7 @@ export function windReadingResult(reading) {
       : displayCoordinates(reading.coordinates);
   return {
     id: 'reading',
-    label: t('WIND AT {coordinates}', { coordinates }),
+    label: t('Wind at {coordinates}', { coordinates }),
     lines: [
       {
         id: 'wind',

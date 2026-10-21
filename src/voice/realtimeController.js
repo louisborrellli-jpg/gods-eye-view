@@ -429,9 +429,9 @@ export class GevRealtimeController extends RealtimeFacade {
         : detail;
     const primaryDetail =
       status === 'error'
-        ? t('VOICE UNAVAILABLE')
+        ? t('Voice unavailable')
         : resolvedDetail ||
-          (status === 'idle' ? t('VOICE STANDBY') : t('VOICE ACTIVE'));
+          (status === 'idle' ? t('Voice standby') : t('Voice active'));
     this.ui.detail.textContent = primaryDetail;
     this.ui.detail.title = primaryDetail;
     if (this.ui.errorDetail) {

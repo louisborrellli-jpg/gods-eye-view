@@ -18,9 +18,9 @@ const WITHIN_KM_RE = /^WITHIN (\d+) KM$/;
 
 function localizeCoverageLabel(label) {
   if (typeof label !== 'string' || !label) return label;
-  if (label === 'CURRENT VIEWPORT ONLY') return t('CURRENT VIEWPORT ONLY');
+  if (label === 'CURRENT VIEWPORT ONLY') return t('Current viewport only');
   const within = WITHIN_KM_RE.exec(label);
-  if (within) return t('WITHIN {km} KM', { km: within[1] });
+  if (within) return t('Within {km} km', { km: within[1] });
   return label;
 }
 
@@ -157,7 +157,7 @@ export function createSubject({ state: layerState, services, parts, source }) {
           ),
           coverage:
             localizeCoverageLabel(installationsState.stats.coverageLabel) ||
-            t('CURRENT VIEWPORT ONLY'),
+            t('Current viewport only'),
           summary: parts.queries.summarizeInstallationViewport(
             installations,
             installationsState,

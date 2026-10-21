@@ -60,14 +60,14 @@ test('partial feed controls distinguish incomplete records from stale data and o
   };
   const panel = LayerPanel.prototype;
   panel._syncToggleButton(button, layer);
-  assert.equal(button.textContent, 'PARTIAL');
+  assert.equal(button.textContent, 'Partial');
   assert.equal(button.dataset.feedState, 'partial');
   assert.equal(classes.get('feed-partial'), true);
   assert.equal(classes.get('feed-stale'), false);
-  assert.match(attrs.get('aria-label'), /PARTIAL/);
+  assert.match(attrs.get('aria-label'), /Partial/);
   assert.match(
     panel._buildMetaText(layer),
-    /^PARTIAL · AISStream · 2 of 3 records accepted · /,
+    /^Partial · AISStream · 2 of 3 records accepted · /,
   );
   assert.match(
     panel._buildMetaText({
@@ -88,11 +88,11 @@ test('partial feed controls distinguish incomplete records from stale data and o
   assert.equal(layerFeedState({ ...layer.stats, loading: true }), 'loading');
   layer.stats = { ...layer.stats, partial: false };
   panel._syncToggleButton(button, layer);
-  assert.equal(button.textContent, 'ON');
+  assert.equal(button.textContent, 'On');
   assert.equal(classes.get('feed-partial'), false);
   layer.enabled = false;
   panel._syncToggleButton(button, layer);
-  assert.equal(button.textContent, 'OFF');
+  assert.equal(button.textContent, 'Off');
 });
 
 test('readout rows contain only toggles and metadata; ordinary rows retain controls', async () => {
@@ -252,7 +252,7 @@ test('an omitted source is visibly unavailable and cannot be toggled on', async 
     },
   };
   LayerPanel.prototype._syncToggleButton(button, layer);
-  assert.equal(button.textContent, 'UNAVAILABLE');
+  assert.equal(button.textContent, 'Unavailable');
   assert.equal(attrs.get('aria-disabled'), 'true');
   assert.match(button.title, /not configured/);
   LayerPanel.prototype._syncToggleButton(button, { ...layer, enabled: true });
@@ -292,8 +292,8 @@ test('row text keeps a hyphenated code whole and never starts a line with the se
     assert.deepEqual(kept(name), ['ADS-B']);
 
     const meta = element();
-    setRowText(meta, 'UNAVAILABLE · NASA FIRMS · LIVE · KEY REQUIRED');
-    assert.equal(text(meta), 'UNAVAILABLE · NASA FIRMS · LIVE · KEY REQUIRED');
+    setRowText(meta, 'Unavailable · NASA FIRMS · Live · Key required');
+    assert.equal(text(meta), 'Unavailable · NASA FIRMS · Live · Key required');
     assert.deepEqual(kept(meta), [' ·', ' ·', ' ·']);
     assert.ok(
       meta.children.every((child) => !child.textContent.startsWith('·')),
@@ -325,11 +325,11 @@ test('the unavailable chip may abbreviate, but its accessible name keeps the ful
     id: 'local-firms',
     name: 'FIRMS Active Fires',
     enabled: false,
-    stats: { sourceUnavailable: true, error: 'KEY REQUIRED' },
+    stats: { sourceUnavailable: true, error: 'Key required' },
   });
-  assert.equal(button.textContent, 'UNAVAILABLE');
+  assert.equal(button.textContent, 'Unavailable');
   assert.equal(button.dataset.feedState, 'unavailable');
-  assert.match(attrs.get('aria-label'), /^Active Fires: UNAVAILABLE\./);
+  assert.match(attrs.get('aria-label'), /^Active Fires: Unavailable\./);
 });
 
 test('the Weather readout receives enabled air-quality alongside weather layers', async () => {

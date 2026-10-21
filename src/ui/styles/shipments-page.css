@@ -64,8 +64,9 @@ body.sp-body {
 .sp-app {
   max-width: 1180px;
   margin: 0 auto;
-  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
-    max(32px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  padding: max(16px, env(safe-area-inset-top))
+    max(16px, env(safe-area-inset-right)) max(32px, env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-left));
 }
 
 .sp-icon {
@@ -1141,4 +1142,29 @@ body.sp-body {
   .hm-search-go span {
     display: none;
   }
+}
+
+/* Section tabs at the top of the Home and Shipments pages. */
+.app-tabs-inline {
+  display: inline-flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  padding: 4px;
+  border-radius: 12px;
+  background: var(--sp-fill, rgba(120, 120, 128, 0.12));
+}
+
+.app-tabs-inline .app-tab {
+  padding: 8px 16px;
+  border-radius: 9px;
+  color: var(--sp-secondary, #6e6e73);
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.app-tabs-inline .app-tab.is-current {
+  background: var(--sp-card, #fff);
+  color: var(--sp-text);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }

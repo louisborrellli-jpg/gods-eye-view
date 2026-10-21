@@ -58,15 +58,21 @@ test('Spanish ALPR retry-pending chip is translated', () => {
   assert.doesNotMatch(detail, /retry pending/);
 });
 
-test('English presentation passes through unchanged', () => {
+test('English presentation reads in sentence case, detail unchanged', () => {
   setLocale('en');
-  for (const label of [
-    'OVERPASS TEMPORARILY UNAVAILABLE',
-    'OVERPASS RATE-LIMITED',
-    'OVERPASS TIMED OUT',
-    'OVERPASS COULD NOT COMPLETE THE QUERY',
-    'MAP TILES TEMPORARILY UNAVAILABLE',
-    'MAPPED NAMES TEMPORARILY UNAVAILABLE',
+  for (const [label, shown] of [
+    ['OVERPASS TEMPORARILY UNAVAILABLE', 'Overpass temporarily unavailable'],
+    ['OVERPASS RATE-LIMITED', 'Overpass rate-limited'],
+    ['OVERPASS TIMED OUT', 'Overpass timed out'],
+    [
+      'OVERPASS COULD NOT COMPLETE THE QUERY',
+      'Overpass could not complete the query',
+    ],
+    ['MAP TILES TEMPORARILY UNAVAILABLE', 'Map tiles temporarily unavailable'],
+    [
+      'MAPPED NAMES TEMPORARILY UNAVAILABLE',
+      'Mapped names temporarily unavailable',
+    ],
   ]) {
     assert.deepEqual(
       localizeLoadingPresentation({
@@ -74,7 +80,7 @@ test('English presentation passes through unchanged', () => {
         label,
         detail: 'retrying in 12s',
       }),
-      { state: 'retry', label, detail: 'retrying in 12s' },
+      { state: 'retry', label: shown, detail: 'retrying in 12s' },
     );
   }
 });

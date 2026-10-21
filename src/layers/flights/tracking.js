@@ -765,7 +765,7 @@ export function createTracking({
       : '';
     const stale =
       flightState.records.missingPolls.get(icao24) || flightState.feed._backoff
-        ? t('STALE')
+        ? t('Stale')
         : '';
     const lines = [[cs, fl, spd, stale].filter(Boolean).join(' · ')];
     // Converted contacts report their class as TR-3B and nothing else — the

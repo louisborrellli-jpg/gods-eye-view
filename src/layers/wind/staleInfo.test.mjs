@@ -30,14 +30,14 @@ test('stale wind forecast is marked in the UI language', async () => {
   layer.enable();
   await layer.update();
   try {
-    assert.match(layer.getRowControls().info, / · STALE(\n|$)/);
+    assert.match(layer.getRowControls().info, / · Stale(\n|$)/);
     for (const [locale, word] of [
-      ['es', 'DESACTUALIZADO'],
-      ['ru', 'УСТАРЕЛ'],
+      ['es', 'Desactualizado'],
+      ['ru', 'Устарел'],
     ]) {
       setLocale(locale);
       const info = layer.getRowControls().info;
-      assert.doesNotMatch(info, /STALE/);
+      assert.doesNotMatch(info, /Stale/);
       assert.match(info, new RegExp(word));
     }
   } finally {

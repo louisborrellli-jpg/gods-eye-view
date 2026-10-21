@@ -24,11 +24,11 @@ export function createCards({
     el.textContent = [
       t('AIS: {name}', { name: trimHudValue(record.name, 32) }),
       t('{type}  SPD: {speed}  HDG: {heading}', {
-        type: trimHudValue(record.type || t('VESSEL'), 24),
+        type: trimHudValue(record.type || t('Vessel'), 24),
         speed: formatSpeed(record.speed),
         heading: formatHeading(record.heading ?? record.course),
       }),
-      `MMSI: ${record.mmsi || '--'}  ${formatPositionTime(record)}${stale ? `  · ${t('STALE')}` : ''}`,
+      `MMSI: ${record.mmsi || '--'}  ${formatPositionTime(record)}${stale ? `  · ${t('Stale')}` : ''}`,
     ].join('\n');
   }
 
@@ -91,7 +91,7 @@ export function createCards({
     const direction = record.heading ?? record.course;
     const details = [
       [
-        vesselTypeShort(record) || t('VESSEL'),
+        vesselTypeShort(record) || t('Vessel'),
         formatSpeed(record.speed),
         Number.isFinite(direction) ? `${Math.round(direction)}°` : '--°',
       ].join(' · '),
@@ -100,7 +100,7 @@ export function createCards({
     if (destination) details.push(`→ ${trimHudValue(destination, 24)}`);
     const stale = (record.missedRefreshes || 0) > 0;
     details.push(
-      `MMSI ${record.mmsi || '--'} · ${formatPositionTime(record)}${stale ? ` · ${t('STALE')}` : ''}`,
+      `MMSI ${record.mmsi || '--'} · ${formatPositionTime(record)}${stale ? ` · ${t('Stale')}` : ''}`,
     );
     return {
       id: vesselOverlayEntryId(record),
@@ -165,11 +165,11 @@ export function createCards({
   function displayVesselName(record) {
     const name = String(record.name || '').trim();
     if (name && name !== 'VESSEL' && name !== record.mmsi) return name;
-    return record.mmsi ? `MMSI ${record.mmsi}` : t('VESSEL');
+    return record.mmsi ? `MMSI ${record.mmsi}` : t('Vessel');
   }
 
   function formatSpeed(speed) {
-    return t('{speed}KT', {
+    return t('{speed}kt', {
       speed:
         speed === null
           ? '--'
@@ -182,16 +182,16 @@ export function createCards({
   }
 
   function formatHeading(heading) {
-    return t('{heading}DEG', {
+    return t('{heading}deg', {
       heading: Number.isFinite(heading) ? Math.round(heading) : '--',
     });
   }
 
   function formatPositionTime(record) {
-    if (!record.lastPositionUtc) return t('POS: LIVE');
+    if (!record.lastPositionUtc) return t('Pos: Live');
     const date = new Date(record.lastPositionUtc);
-    if (Number.isNaN(date.getTime())) return t('POS: LIVE');
-    return t('POS: {time}Z', { time: date.toISOString().slice(11, 19) });
+    if (Number.isNaN(date.getTime())) return t('Pos: Live');
+    return t('Pos: {time}Z', { time: date.toISOString().slice(11, 19) });
   }
   return {
     updateSelectedVesselHud,

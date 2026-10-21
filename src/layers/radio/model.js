@@ -8,21 +8,21 @@ import { t } from '../../i18n/index.js';
 function radioClusterLabel(categoryId) {
   switch (categoryId) {
     case 'news':
-      return t('NEWS', { context: 'radio' });
+      return t('News', { context: 'radio' });
     case 'talk':
-      return t('TALK', { context: 'radio' });
+      return t('Talk', { context: 'radio' });
     case 'weather':
-      return t('WEATHER', { context: 'radio' });
+      return t('Weather', { context: 'radio' });
     case 'public-safety':
-      return t('SAFETY', { context: 'radio' });
+      return t('Safety', { context: 'radio' });
     case 'aviation-marine':
-      return t('AIR / SEA', { context: 'radio' });
+      return t('Air / sea', { context: 'radio' });
     case 'traffic-transit':
-      return t('TRANSIT', { context: 'radio' });
+      return t('Transit', { context: 'radio' });
     case 'music':
-      return t('MUSIC', { context: 'radio' });
+      return t('Music', { context: 'radio' });
     default:
-      return t('OTHER', { context: 'radio' });
+      return t('Other', { context: 'radio' });
   }
 }
 

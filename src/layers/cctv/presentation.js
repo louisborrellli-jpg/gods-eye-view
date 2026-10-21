@@ -26,7 +26,7 @@ export function createPresentation({
     if (!active) {
       return layerState._records.length
         ? t(
-            '{count} CAMERAS STANDING BY · NO CAMERA SELECTED · CLICK A CAMERA TO ACTIVATE',
+            '{count} cameras standing by · No camera selected · Click a camera to activate',
             {
               count: layerState._records.length,
             },
@@ -55,7 +55,7 @@ export function createPresentation({
       // Identified hardware labels its FOV as datasheet-sourced (catalog.js)
       // only while no manual calibration offset has moved it.
       isDatasheetFov(active.camera)
-        ? t('FOV {value}° (DATASHEET)', {
+        ? t('FOV {value}° (datasheet)', {
             value: Math.round(active.camera.fovDeg),
           })
         : t('FOV {value}°', {
@@ -64,28 +64,28 @@ export function createPresentation({
       // A PTZ/varifocal datasheet range is what the lens can do, not its
       // current zoom, so it is shown beside the estimate, never as it.
       specFovCapabilityToken(active.camera, (span) =>
-        t('SPEC FOV {span}° (CAPABILITY)', { span }),
+        t('Spec FOV {span}° (capability)', { span }),
       ),
       t('COVERAGE {value}km²', { value: area.toFixed(2) }),
       overlapCount > 0
         ? t('OVERLAP {count} cams', { count: overlapCount })
-        : t('ISOLATED VIEW'),
-      layerState._showProjection ? t('PROJ MONITOR') : t('PROJ OFF'),
-      layerState._coverageMode === 'viewshed' ? t('VIEWSHED') : null,
+        : t('Isolated view'),
+      layerState._showProjection ? t('Proj monitor') : t('Proj off'),
+      layerState._coverageMode === 'viewshed' ? t('Viewshed') : null,
       t('CAL {value}', {
         value: calBadge.replace('-', ' ').toUpperCase(),
       }),
       health?.sourceKind
-        ? t('SRC {value}', {
+        ? t('Src {value}', {
             value: String(health.sourceKind).toUpperCase(),
           })
-        : t('SRC {value}', {
+        : t('Src {value}', {
             value: String(active.camera.feedType || 'image').toUpperCase(),
           }),
-      t('{value} CONTEXT', { value: viewBand.toUpperCase() }),
+      t('{value} context', { value: viewBand.toUpperCase() }),
       // Identified hardware: append the model's datasheet specs + attribution.
       active.camera.spec
-        ? t('{spec} · SPECS: CCTV-DATABASE.COM', {
+        ? t('{spec} · Specs: Cctv-database.com', {
             spec: specSummary(active.camera.spec).toUpperCase(),
           })
         : null,

@@ -672,7 +672,7 @@ export class VisualSettings {
     const settings = applyCyberSonarSettings(readCyberSonarSettings());
     this._cyberSonarBtn.classList.toggle('active', enabled);
     this._cyberSonarBtn.setAttribute('aria-pressed', String(enabled));
-    this._cyberSonarBtn.textContent = enabled ? t('ON') : t('OFF');
+    this._cyberSonarBtn.textContent = enabled ? t('On') : t('Off');
     for (const [input, output, value, suffix] of [
       [this._cyberSonarRings, this._cyberSonarRingsValue, settings.rings, ''],
       [this._cyberSonarRange, this._cyberSonarRangeValue, settings.range, '%'],
@@ -1656,16 +1656,16 @@ export class VisualSettings {
     );
     btn.classList.remove('active', 'god', 'panoptic');
     if (modeLabel === 'SPARSE') {
-      btn.querySelector('.pp-label').textContent = t('SPARSE');
+      btn.querySelector('.pp-label').textContent = t('Sparse');
       btn.classList.add('active');
     } else if (modeLabel === 'BALANCED') {
-      btn.querySelector('.pp-label').textContent = t('BALANCED');
+      btn.querySelector('.pp-label').textContent = t('Balanced');
       btn.classList.add('active');
     } else if (modeLabel === 'DENSE') {
-      btn.querySelector('.pp-label').textContent = t('DENSE');
+      btn.querySelector('.pp-label').textContent = t('Dense');
       btn.classList.add('active', 'panoptic');
     } else {
-      btn.querySelector('.pp-label').textContent = t('DETECTION');
+      btn.querySelector('.pp-label').textContent = t('Detection');
     }
 
     if (this._detectionSliderRow) {

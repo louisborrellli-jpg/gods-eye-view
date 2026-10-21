@@ -17,30 +17,30 @@ import { translateFeedError } from './statusText.js';
 // labels stay English. Translate the known ones; pass anything else (a live
 // provider error) through.
 const STATUS_LABEL_KEYS = Object.freeze({
-  'LOADING LIVE DATA': msg('LOADING LIVE DATA'),
-  'LOAD COMPLETE': msg('LOAD COMPLETE'),
-  'LOAD CANCELLED': msg('LOAD CANCELLED'),
-  'LOAD FAILED': msg('LOAD FAILED'),
-  'LIVE DATA OFF': msg('LIVE DATA OFF'),
-  'MAPPED SITES LOADED': msg('MAPPED SITES LOADED'),
-  'RETRYING MAPPED SITES': msg('RETRYING MAPPED SITES'),
-  'FETCHING MAPPED SITES': msg('FETCHING MAPPED SITES'),
-  'RETRYING ALPR CAMERAS': msg('RETRYING ALPR CAMERAS'),
-  'FETCHING ALPR CAMERAS': msg('FETCHING ALPR CAMERAS'),
-  'OVERPASS TEMPORARILY UNAVAILABLE': msg('OVERPASS TEMPORARILY UNAVAILABLE'),
+  'LOADING LIVE DATA': msg('Loading live data'),
+  'LOAD COMPLETE': msg('Load complete'),
+  'LOAD CANCELLED': msg('Load cancelled'),
+  'LOAD FAILED': msg('Load failed'),
+  'LIVE DATA OFF': msg('Live data off'),
+  'MAPPED SITES LOADED': msg('Mapped sites loaded'),
+  'RETRYING MAPPED SITES': msg('Retrying mapped sites'),
+  'FETCHING MAPPED SITES': msg('Fetching mapped sites'),
+  'RETRYING ALPR CAMERAS': msg('Retrying alpr cameras'),
+  'FETCHING ALPR CAMERAS': msg('Fetching alpr cameras'),
+  'OVERPASS TEMPORARILY UNAVAILABLE': msg('Overpass temporarily unavailable'),
   // The other mapped-site failure reasons (src/data/installationFeedback.js),
   // upper-cased by presentGlobalLoadingStatus.
-  'OVERPASS RATE-LIMITED': msg('OVERPASS RATE-LIMITED'),
-  'OVERPASS TIMED OUT': msg('OVERPASS TIMED OUT'),
+  'OVERPASS RATE-LIMITED': msg('Overpass rate-limited'),
+  'OVERPASS TIMED OUT': msg('Overpass timed out'),
   'OVERPASS COULD NOT COMPLETE THE QUERY': msg(
-    'OVERPASS COULD NOT COMPLETE THE QUERY',
+    'Overpass could not complete the query',
   ),
-  'MAP TILES TEMPORARILY UNAVAILABLE': msg('MAP TILES TEMPORARILY UNAVAILABLE'),
+  'MAP TILES TEMPORARILY UNAVAILABLE': msg('Map tiles temporarily unavailable'),
   'MAPPED NAMES TEMPORARILY UNAVAILABLE': msg(
-    'MAPPED NAMES TEMPORARILY UNAVAILABLE',
+    'Mapped names temporarily unavailable',
   ),
-  'TURNING OFF LIVE DATA': msg('TURNING OFF LIVE DATA'),
-  'REFRESHING LIVE DATA': msg('REFRESHING LIVE DATA'),
+  'TURNING OFF LIVE DATA': msg('Turning off live data'),
+  'REFRESHING LIVE DATA': msg('Refreshing live data'),
   'syncing road network': msg('syncing road network'),
 });
 

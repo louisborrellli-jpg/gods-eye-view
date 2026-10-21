@@ -380,7 +380,7 @@ test('a 360° click reaches the share link through the data manager', () =>
     coordinator.destroy();
   }));
 
-test('releasing the SINCE slider records the window in the share link', () =>
+test('releasing the Since slider records the window in the share link', () =>
   withDom(async (dom) => {
     const { coordinator, controls, share } = await productionPanel(dom);
     const since = dom.root.querySelector('#sl-since');
@@ -524,7 +524,7 @@ test('lighting a dark chip switches the provider on as a user params request, th
     controls.destroy();
   }));
 
-test('under KEY REQUIRED the provider chip stays live and explains the key instead of toggling', () =>
+test('under Key required the provider chip stays live and explains the key instead of toggling', () =>
   withDom(async (dom) => {
     const { calls, chip, controls } = stubPanel(
       dom,
@@ -544,7 +544,7 @@ test('under KEY REQUIRED the provider chip stays live and explains the key inste
     controls.destroy();
   }));
 
-test('under KEY REQUIRED the filters are gated and the error line says how to add the key', () =>
+test('under Key required the filters are gated and the error line says how to add the key', () =>
   withDom(async (dom) => {
     const { controls } = stubPanel(dom, uiState({ keyRequired: true }));
     assert.equal(dom.root.querySelector('#sl-controls').disabled, true);
@@ -588,7 +588,7 @@ test('closing the image from its × button leaves focus on the panel, not <body>
     controls.destroy();
   }));
 
-/* ── EXPAND is the browser's fullscreen ────────────────────────────────── */
+/* ── Expand is the browser's fullscreen ────────────────────────────────── */
 
 const expandLabel = (dom) => {
   const button = dom.root.querySelector('#sl-viewer-expand');
@@ -598,7 +598,7 @@ const expandLabel = (dom) => {
   ];
 };
 
-test('EXPAND puts the viewer full screen in place, and the button shrinks it again', () =>
+test('Expand puts the viewer full screen in place, and the button shrinks it again', () =>
   withDom(async (dom) => {
     const { layer, controls } = stubPanel(dom, uiState({ open: true }));
     await settle();
@@ -609,13 +609,13 @@ test('EXPAND puts the viewer full screen in place, and the button shrinks it aga
     await settle();
     assert.equal(dom.document.fullscreenElement, dom.wrap);
     assert.equal(dom.root.contains(dom.wrap), true, 'never leaves the panel');
-    assert.deepEqual(expandLabel(dom), ['SHRINK', 'true']);
+    assert.deepEqual(expandLabel(dom), ['Shrink', 'true']);
     assert.equal(layer.calls.resize, resizes + 1, 'the viewer refits');
     expand.click();
     await settle();
     await settle();
     assert.equal(dom.document.fullscreenElement, null);
-    assert.deepEqual(expandLabel(dom), ['EXPAND', 'false']);
+    assert.deepEqual(expandLabel(dom), ['Expand', 'false']);
     controls.destroy();
   }));
 
@@ -634,7 +634,7 @@ test('Esc in full screen shrinks the photo; the panel never sees it', () =>
     await settle();
     assert.equal(dom.document.fullscreenElement, null);
     assert.equal(panelEsc, 0, 'the panel stays open');
-    assert.deepEqual(expandLabel(dom), ['EXPAND', 'false']);
+    assert.deepEqual(expandLabel(dom), ['Expand', 'false']);
     // Not expanded, Esc is the panel's again.
     expand.dispatchEvent({ type: 'keydown', key: 'Escape', bubbles: true });
     assert.equal(panelEsc, 1);
@@ -650,11 +650,11 @@ test('an image closed while full screen leaves full screen', () =>
     await settle();
     assert.equal(dom.document.fullscreenElement, null);
     assert.equal(dom.wrap.hidden, true);
-    assert.deepEqual(expandLabel(dom), ['EXPAND', 'false']);
+    assert.deepEqual(expandLabel(dom), ['Expand', 'false']);
     controls.destroy();
   }));
 
-test('without the Fullscreen or Popover API there is no EXPAND button', () =>
+test('without the Fullscreen or Popover API there is no Expand button', () =>
   withDom(
     async (dom) => {
       const { controls } = stubPanel(dom, uiState({ open: true }));
@@ -664,7 +664,7 @@ test('without the Fullscreen or Popover API there is no EXPAND button', () =>
     { fullscreen: false },
   ));
 
-test('on iPhone (no element fullscreen) EXPAND opens the viewer as a popover over the page', () =>
+test('on iPhone (no element fullscreen) Expand opens the viewer as a popover over the page', () =>
   withDom(
     async (dom) => {
       const { controls } = stubPanel(dom, uiState({ open: true }));
@@ -675,7 +675,7 @@ test('on iPhone (no element fullscreen) EXPAND opens the viewer as a popover ove
       await settle();
       assert.equal(dom.wrap.popoverOpen, true);
       assert.equal(dom.root.contains(dom.wrap), true, 'never leaves the panel');
-      assert.deepEqual(expandLabel(dom), ['SHRINK', 'true']);
+      assert.deepEqual(expandLabel(dom), ['Shrink', 'true']);
       // Esc shrinks the photo; the panel's own Esc (collapse) never sees it.
       let panelEsc = 0;
       dom.root.addEventListener('keydown', () => panelEsc++);
@@ -684,7 +684,7 @@ test('on iPhone (no element fullscreen) EXPAND opens the viewer as a popover ove
       await settle();
       assert.equal(dom.wrap.popoverOpen, false);
       assert.equal(panelEsc, 0, 'the panel stays open');
-      assert.deepEqual(expandLabel(dom), ['EXPAND', 'false']);
+      assert.deepEqual(expandLabel(dom), ['Expand', 'false']);
       expand.click();
       await settle();
       await settle();
@@ -698,7 +698,7 @@ test('on iPhone (no element fullscreen) EXPAND opens the viewer as a popover ove
         null,
         'a closed popover would be hidden inside the panel',
       );
-      assert.deepEqual(expandLabel(dom), ['EXPAND', 'false']);
+      assert.deepEqual(expandLabel(dom), ['Expand', 'false']);
       controls.destroy();
     },
     { fullscreen: false, popover: true },
@@ -791,7 +791,7 @@ test('only an explicit switch-on opens the panel, unstored; a restore never does
     assert.equal(subscribed(), false, 'destroy unsubscribes');
   }));
 
-test('FIT / FILL show the selected render mode (P3)', () =>
+test('Fit / Fill show the selected render mode (P3)', () =>
   withDom(async (dom) => {
     const { layer, controls } = stubPanel(dom, uiState({ open: true }));
     layer.publish(uiState({ open: true, renderMode: 'fill' }));
@@ -871,7 +871,7 @@ test('arrow keys move the selection within a radiogroup, which has one tab stop 
     controls.destroy();
   }));
 
-test('under KEY REQUIRED the provider chip stays live and explains the key instead of toggling (P3)', () =>
+test('under Key required the provider chip stays live and explains the key instead of toggling (P3)', () =>
   withDom(async (dom) => {
     const { calls, chip, controls } = stubPanel(
       dom,
@@ -909,7 +909,7 @@ test('OPEN STREET VIEW opens the nearest panorama at the view centre without mov
     layer.openNearest = (point, options) => asked.push([point, options]);
     const button = dom.root.querySelector('#sl-nearest-btn');
     assert.equal(button.hidden, false);
-    assert.equal(button.textContent, 'OPEN STREET VIEW');
+    assert.equal(button.textContent, 'Open STREET VIEW');
     button.click();
     assert.deepEqual(asked, [
       [
@@ -975,7 +975,7 @@ test('a swap names every registered provider, also those hidden on this map', ()
     ]);
   }));
 
-test('a note under SINCE says what date it compares, only while one is given', () =>
+test('a note under Since says what date it compares, only while one is given', () =>
   withDom(async (dom) => {
     const state = uiState();
     const { layer } = stubPanel(dom, state);

@@ -37,9 +37,9 @@ const idle = Object.freeze({
 test('an idle card invites a connection and hides receiver stats', () => {
   const view = localSdrCardView(idle);
   assert.equal(view.statusText, 'Connect an RTL-SDR to begin.');
-  assert.equal(view.connectLabel, 'CONNECT');
+  assert.equal(view.connectLabel, 'Connect');
   assert.equal(view.connectDisabled, false);
-  assert.equal(view.connectionLabel, 'IDLE');
+  assert.equal(view.connectionLabel, 'Idle');
   assert.equal(view.gainValue, 'auto');
   assert.equal(view.statsHidden, true);
   assert.equal(view.tuneDisabled, true);
@@ -80,8 +80,8 @@ test('streaming ADS-B shows message rate, heard, positioned and IQ level', () =>
     iq: '-21.4 dBFS',
   });
   assert.equal(view.gainValue, '20.7');
-  assert.equal(view.connectionLabel, '4 HEARD');
-  assert.equal(view.connectLabel, 'DISCONNECT');
+  assert.equal(view.connectionLabel, '4 heard');
+  assert.equal(view.connectLabel, 'Disconnect');
   assert.equal(view.frequencyDisabled, true);
   assert.equal(view.volumeDisabled, true);
   assert.equal(

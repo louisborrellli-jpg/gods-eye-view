@@ -201,7 +201,7 @@ export function createReplay({ state: layerState, services, parts, source }) {
     if (speedControl) speedControl.hidden = !replayAvailable;
     button.hidden = active || !replayAvailable;
     button.disabled = !replayAvailable;
-    button.textContent = t('REPLAY ASCENT');
+    button.textContent = t('Replay ascent');
     button.classList.remove('active');
     button.setAttribute('aria-pressed', String(active));
     button.title = t('Replay the estimated ascent with a following camera');

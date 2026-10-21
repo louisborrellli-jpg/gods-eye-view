@@ -48,6 +48,12 @@ export const CARRIER_SCAC = Object.freeze({
 });
 
 /** The milestone dates automatic tracking can fill. */
+/**
+ * Raise when parsing learns a new field (2: the loading date), so containers
+ * tracked by an older version are fetched again once, by themselves.
+ */
+export const TRACKING_VERSION = 2;
+
 export const AUTO_DATE_FIELDS = Object.freeze([
   'loaded',
   'departed',
@@ -113,7 +119,8 @@ const RAIL = /rail|train/i;
  * @param {{now?: number}} [options]
  * @returns {null|{source:string, carrier:string, scac:string,
  *   completed:boolean, pol:object, pod:object, destination:object,
- *   vessel:object|null, dates:object, events:Array<object>, fetchedAt:number}}
+ *   vessel:object|null, dates:object, events:Array<object>, fetchedAt:number,
+ *   version:number}}
  */
 export function parseFindTeu(data, { now = Date.now() } = {}) {
   if (!data || typeof data !== 'object' || data.error) return null;
@@ -149,8 +156,17 @@ export function parseFindTeu(data, { now = Date.now() } = {}) {
   const loadings = events.filter(
     (event) => atPol(event) && /loaded on|^load/i.test(event.action),
   );
+  // No loading event at the named port (it can be a feeder port): the first
+  // full-box loading anywhere.
+  const anyLoading = events.filter(
+    (event) =>
+      /loaded on|^load/i.test(event.action) && !/empty/i.test(event.action),
+  );
+  const firstLoading = loadings.length ? loadings : anyLoading;
   dates.loaded =
-    loadings.find((event) => event.actual)?.day || loadings[0]?.day || '';
+    firstLoading.find((event) => event.actual)?.day ||
+    firstLoading[0]?.day ||
+    '';
 
   // When the ship left the loading port: actual, else planned.
   const departures = events.filter(
@@ -249,5 +265,6 @@ export function parseFindTeu(data, { now = Date.now() } = {}) {
       vessel: v?.name ?? '',
     })),
     fetchedAt: now,
+    version: TRACKING_VERSION,
   };
 }

@@ -36,7 +36,7 @@ test('satellite analyst record: full record maps every contract field', () => {
     lon: -97.4,
     altitudeM: 410_000,
     speedMps: 7660,
-    satelliteClass: 'STATION · ISS',
+    satelliteClass: 'Station · ISS',
     group: 'stations',
   });
 });
@@ -49,10 +49,10 @@ test('satellite analyst record: nameless row falls back to SAT-norad id', () => 
 
 test('satellite analyst record: ISS class wins even when ingested as visual', () => {
   const r = mapAnalystRecord({ ...FULL_RAW, group: 'visual' });
-  assert.equal(r.satelliteClass, 'STATION · ISS');
+  assert.equal(r.satelliteClass, 'Station · ISS');
 });
 
-test('satellite analyst record: GPS group maps to NAV · GPS', () => {
+test('satellite analyst record: GPS group maps to Nav · GPS', () => {
   const r = mapAnalystRecord({
     noradId: 24876,
     name: 'GPS BIIR-2  (PRN 13)',
@@ -62,7 +62,7 @@ test('satellite analyst record: GPS group maps to NAV · GPS', () => {
     altitudeM: 20_200_000,
     speedMps: 3870,
   });
-  assert.equal(r.satelliteClass, 'NAV · GPS');
+  assert.equal(r.satelliteClass, 'Nav · GPS');
   assert.equal(r.group, 'gps-ops');
 });
 
@@ -140,7 +140,7 @@ test('satellite getAnalystRecords: core rows beat dense extras under the cap', (
     const all = satellitesLayer.getAnalystRecords(10);
     assert.equal(all.length, 3);
     assert.equal(all[2].noradId, '99999');
-    assert.equal(all[2].satelliteClass, 'COMMS · STARLINK');
+    assert.equal(all[2].satelliteClass, 'Comms · STARLINK');
     for (const row of all) {
       assert.ok(
         Number.isFinite(row.lat) && Number.isFinite(row.lon),

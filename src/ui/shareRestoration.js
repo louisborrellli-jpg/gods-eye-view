@@ -236,9 +236,9 @@ export class ShareRestoration {
     if (result.classification === 'pending') {
       this._shareTrackingNoticeGeneration += 1;
       this._shareTrackingAcquiringKey = trackingKey;
-      this.showStatus(t('ACQUIRING'), {
+      this.showStatus(t('Acquiring'), {
         state: 'acquiring',
-        detail: t('SHARED {subject}', {
+        detail: t('Shared {subject}', {
           subject: String(
             result.label ? t(result.label) : t('subject'),
           ).toUpperCase(),

@@ -7,21 +7,21 @@ import { msg, t } from '../i18n/index.js';
  */
 
 const SOURCE_KIND_LABELS = Object.freeze({
-  snapshot: msg('SNAPSHOT'),
-  live: msg('LIVE'),
-  fallback: msg('FALLBACK'),
-  upstream: msg('UPSTREAM'),
-  synthetic: msg('SYNTHETIC'),
-  configured: msg('CONFIGURED'),
-  seed: msg('SEED'),
-  image: msg('IMAGE'),
-  unknown: msg('UNKNOWN'),
+  snapshot: msg('Snapshot'),
+  live: msg('Live'),
+  fallback: msg('Fallback'),
+  upstream: msg('Upstream'),
+  synthetic: msg('Synthetic'),
+  configured: msg('Configured'),
+  seed: msg('Seed'),
+  image: msg('Image'),
+  unknown: msg('Unknown'),
 });
 
 const SOURCE_STATUS_LABELS = Object.freeze({
-  degraded: msg('DEGRADED'),
-  error: msg('ERROR'),
-  unknown: msg('UNKNOWN'),
+  degraded: msg('Degraded'),
+  error: msg('Error'),
+  unknown: msg('Unknown'),
 });
 
 const SOURCE_MESSAGES = Object.freeze({
@@ -164,19 +164,19 @@ export function _settleCctvFrame(token, src, ok) {
 export function _syncCctvSourceBadge(activeCamera, enabled) {
   if (!this._cctvSourceBadge) return;
   if (!enabled || !activeCamera) {
-    this._cctvSourceBadge.textContent = t('SOURCE · UNKNOWN');
+    this._cctvSourceBadge.textContent = t('Source · Unknown');
     this._cctvSourceBadge.dataset.frameState = 'idle';
     return;
   }
   const hasDisplayedFrame =
     this._cctvFrameWrap?.classList.contains('has-frame');
   if (this._cctvFrame?.dataset.loading === 'true' && !hasDisplayedFrame) {
-    this._cctvSourceBadge.textContent = t('FRAME · LOADING');
+    this._cctvSourceBadge.textContent = t('Frame · Loading');
     this._cctvSourceBadge.dataset.frameState = 'loading';
     return;
   }
   if (this._cctvFrame?.dataset.error === 'true' && !hasDisplayedFrame) {
-    this._cctvSourceBadge.textContent = t('FRAME · UNAVAILABLE');
+    this._cctvSourceBadge.textContent = t('Frame · Unavailable');
     this._cctvSourceBadge.dataset.frameState = 'error';
     return;
   }

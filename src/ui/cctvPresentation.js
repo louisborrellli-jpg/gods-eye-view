@@ -5,11 +5,11 @@ import { createCctvVideoSurface } from './cctvVideo.js';
 export function _calBadgeLabel(badge) {
   switch (badge) {
     case 'calibrated':
-      return t('CALIBRATED');
+      return t('Calibrated');
     case 'curated':
-      return t('CURATED');
+      return t('Curated');
     case 'raw-prior':
-      return t('RAW PRIOR');
+      return t('Raw prior');
     default:
       return '--';
   }
@@ -54,7 +54,7 @@ export function _renderCctvState(state) {
 
   if (this._cctvEnableBtn) {
     this._cctvEnableBtn.classList.toggle('active', enabled);
-    this._cctvEnableBtn.textContent = enabled ? t('CCTV ON') : t('CCTV OFF');
+    this._cctvEnableBtn.textContent = enabled ? t('CCTV on') : t('CCTV off');
   }
 
   if (this._cctvSelect) {
@@ -102,10 +102,10 @@ export function _renderCctvState(state) {
     this._cctvCoverageBtn.classList.toggle('active', mode !== 'off');
     this._cctvCoverageBtn.textContent =
       mode === 'viewshed'
-        ? t('VIEWSHED ON')
+        ? t('Viewshed on')
         : mode === 'on'
-          ? t('COVERAGE ON')
-          : t('COVERAGE OFF');
+          ? t('Coverage on')
+          : t('Coverage off');
     this._cctvCoverageBtn.disabled = !enabled;
   }
 
@@ -113,8 +113,8 @@ export function _renderCctvState(state) {
     const autoHop = !!state?.autoHop;
     this._cctvAutoHopBtn.classList.toggle('active', autoHop);
     this._cctvAutoHopBtn.textContent = autoHop
-      ? t('AUTO HOP ON')
-      : t('AUTO HOP OFF');
+      ? t('Auto hop on')
+      : t('Auto hop off');
     this._cctvAutoHopBtn.disabled = !enabled;
   }
 
@@ -122,8 +122,8 @@ export function _renderCctvState(state) {
     const showProjection = state?.showProjection !== false;
     this._cctvProjectionBtn.classList.toggle('active', showProjection);
     this._cctvProjectionBtn.textContent = showProjection
-      ? t('PROJECTION ON')
-      : t('PROJECTION OFF');
+      ? t('Projection on')
+      : t('Projection off');
     this._cctvProjectionBtn.disabled = !enabled;
   }
 
@@ -138,7 +138,7 @@ export function _renderCctvState(state) {
     const badge = activeCamera?.calBadge || null;
     const dirty = !!activeCamera?.calDirty;
     this._cctvQualityChip.textContent = dirty
-      ? t('CAL · EDITED (UNSAVED)')
+      ? t('CAL · Edited (unsaved)')
       : t('CAL · {badge}', {
           badge: this._calBadgeLabel(badge),
         });
@@ -163,7 +163,7 @@ export function _renderCctvState(state) {
         ? this._calBadgeLabel(activeCamera.calBadge)
         : '';
       const projLabel =
-        state?.showProjection !== false ? t('MONITOR') : t('OFF');
+        state?.showProjection !== false ? t('Monitor') : t('Off');
       this._cctvMeta.textContent = t(
         '{city} · HDG {heading} · FOV {fov} · RANGE {range}m · {projection}{calBadge} · {provider}{status}',
         {

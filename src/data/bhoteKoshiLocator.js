@@ -75,18 +75,18 @@ const INCIDENT = Object.freeze({
   lat: 28.3632333,
   lon: 85.4423639,
   heightM: 5200,
-  title: msg('BHOTE KOSHI FLOOD INCIDENT'),
-  subtitle: msg('NEPAL · 26 AUG 2026'),
+  title: msg('Bhote Koshi flood incident'),
+  subtitle: msg('Nepal · 26 Aug 2026'),
 });
 const TRIGGER_RECORD = Object.freeze({
   lat: 28.271,
   lon: 85.515,
   heightM: 4200,
-  title: msg('USGS INITIAL REPORT'),
+  title: msg('USGS initial report'),
   details: Object.freeze([
-    msg('26 AUG 2026 · 08:37 NPT'),
+    msg('26 Aug 2026 · 08:37 NPT'),
     msg('28.2710° N · 85.5150° E'),
-    msg('INITIAL M4.4 · RECLASSIFIED M5.2 LANDSLIDE'),
+    msg('Initial M4.4 · Reclassified M5.2 landslide'),
     msg('USGS EVENT us7000tbwb · OPEN SOURCE'),
   ]),
 });
@@ -1166,7 +1166,7 @@ export function createBhoteKoshiLocatorLayer({
           },
           {
             id: 'bhote-koshi-city-context',
-            label: t('CITIES'),
+            label: t('Cities'),
             active: _presentation === BHOTE_KOSHI_CITY_CONTEXT_PRESENTATION,
             title: t(
               'Keep the regional incident context and introduce nearby city labels',
@@ -1175,7 +1175,7 @@ export function createBhoteKoshiLocatorLayer({
           },
           {
             id: 'bhote-koshi-incident-places',
-            label: t('PLACES'),
+            label: t('Places'),
             active: _presentation === BHOTE_KOSHI_INCIDENT_PLACES_PRESENTATION,
             title: t(
               'Introduce the reconstruction scene key places from trigger to downstream',
@@ -1184,7 +1184,7 @@ export function createBhoteKoshiLocatorLayer({
           },
           {
             id: 'bhote-koshi-flood-path',
-            label: t('PATH'),
+            label: t('Path'),
             active: _presentation === BHOTE_KOSHI_FLOOD_PATH_PRESENTATION,
             title: t(
               'Animate the sourced cyan river-centerline route to Trishuli Bazaar',
@@ -1193,7 +1193,7 @@ export function createBhoteKoshiLocatorLayer({
           },
           {
             id: 'bhote-koshi-path-overview',
-            label: t('OVERVIEW'),
+            label: t('Overview'),
             active: _presentation === BHOTE_KOSHI_PATH_OVERVIEW_PRESENTATION,
             title: t(
               'Keep the completed flood path and location labels visible',
@@ -1202,7 +1202,7 @@ export function createBhoteKoshiLocatorLayer({
           },
           {
             id: 'bhote-koshi-trigger-record',
-            label: t('RECORD'),
+            label: t('Record'),
             active: _presentation === BHOTE_KOSHI_TRIGGER_RECORD_PRESENTATION,
             title: t(
               'Reveal the trigger record while making a slow camera approach',

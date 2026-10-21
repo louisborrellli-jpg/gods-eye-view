@@ -72,11 +72,11 @@ export const SATELLITE_CLASS_ORDER = Object.freeze([
 // What the card and legend show for each class.
 const CLASS_DISPLAY_KEYS = Object.freeze({
   station: Object.freeze({
-    label: msg('STATION'),
+    label: msg('Station'),
     blurb: msg('Crewed stations and their visiting vehicles'),
   }),
   nav: Object.freeze({
-    label: msg('NAV'),
+    label: msg('Nav'),
     blurb: msg('GNSS navigation — GPS, GLONASS, Galileo'),
   }),
   geo: Object.freeze({
@@ -86,11 +86,11 @@ const CLASS_DISPLAY_KEYS = Object.freeze({
     ),
   }),
   visual: Object.freeze({
-    label: msg('VISUAL'),
+    label: msg('Visual'),
     blurb: msg('Brightest naked-eye objects — CelesTrak visual group'),
   }),
   comms: Object.freeze({
-    label: msg('COMMS'),
+    label: msg('Comms'),
     blurb: msg('Broadband constellation shell — shown only in DENSE mode'),
   }),
 });

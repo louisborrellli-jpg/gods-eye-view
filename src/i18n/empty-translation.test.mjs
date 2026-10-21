@@ -9,8 +9,8 @@ import {
 import { getCatalog, setLocale, t, tn, translateKnown } from './index.js';
 
 const messages = extractMessages();
-const EMPTY = 'DISCONNECT';
-const BLANK = 'CONTACT LOST · LAST KNOWN READOUT · NOT AN ALL-CLEAR';
+const EMPTY = 'Disconnect';
+const BLANK = 'Contact lost · Last known readout · Not an all-clear';
 
 for (const locale of ['es', 'ru']) {
   test(`${locale}: checkCatalog rejects an empty or blank translation`, () => {
@@ -43,18 +43,18 @@ test('t() and translateKnown() fall back to English for an empty entry', () => {
 
 test('tn() skips an empty plural form', () => {
   const es = getCatalog('es');
-  const KEY = '{count} INPUTS UNKNOWN';
+  const KEY = '{count} inputs unknown';
   const saved = es[KEY];
   setLocale('es');
   try {
     es[KEY] = { ...saved, one: ' ' };
     assert.equal(
-      tn(1, '{count} INPUT UNKNOWN', KEY),
+      tn(1, '{count} input unknown', KEY),
       saved.other.replace('{count}', '1'),
     );
     es[KEY] = { one: '', many: '', other: '' };
-    assert.equal(tn(1, '{count} INPUT UNKNOWN', KEY), '1 INPUT UNKNOWN');
-    assert.equal(tn(3, '{count} INPUT UNKNOWN', KEY), '3 INPUTS UNKNOWN');
+    assert.equal(tn(1, '{count} input unknown', KEY), '1 input unknown');
+    assert.equal(tn(3, '{count} input unknown', KEY), '3 inputs unknown');
   } finally {
     es[KEY] = saved;
     setLocale('en');

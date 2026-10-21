@@ -14,7 +14,7 @@
   background: rgba(2, 12, 18, 0.9);
   color: #dceeff;
   font: 600 10px/1 var(--font-mono);
-  letter-spacing: 0.14em;
+  letter-spacing: 0;
   box-shadow: 0 0 18px rgba(0, 220, 255, 0.14);
   cursor: pointer;
 }
@@ -92,8 +92,8 @@
   left: 50%;
   top: 0;
   color: rgba(244, 251, 255, 0.46);
-  font-size: 8px;
-  letter-spacing: 0.1em;
+  font-size: 12px;
+  letter-spacing: 0;
   transform: translateX(calc(-50% + (var(--slot) * 74px)))
     translateY(calc(var(--depth) * 9px)) rotateZ(calc(var(--slot) * 4deg))
     rotateY(calc(var(--slot) * -5deg));
@@ -108,7 +108,7 @@
 }
 .cockpit-roll-arc span.active {
   color: #fff;
-  font-size: 10px;
+  font-size: 13px;
 }
 .cockpit-pitch-rail {
   position: absolute;
@@ -118,8 +118,8 @@
   grid-template-rows: repeat(5, 1fr);
   align-items: center;
   color: rgba(244, 251, 255, 0.38);
-  font-size: 8px;
-  letter-spacing: 0.08em;
+  font-size: 12px;
+  letter-spacing: 0;
   transform-style: preserve-3d;
 }
 .cockpit-pitch-rail-left {
@@ -185,8 +185,8 @@ body.cockpit-mode:has(#left-panel-stack > .panel-collapsible:not(.collapsed))
   transform-origin: left;
 }
 .cockpit-horizon-guide small {
-  font-size: 7px;
-  letter-spacing: 0.16em;
+  font-size: 12px;
+  letter-spacing: 0;
 }
 .cockpit-route-direction {
   --route-angle: 0deg;
@@ -235,9 +235,9 @@ body.cockpit-mode:has(#left-panel-stack > .panel-collapsible:not(.collapsed))
   border: 1px solid color-mix(in srgb, var(--cockpit-accent) 20%, transparent);
   border-radius: 3px;
   background: rgba(0, 7, 12, 0.24);
-  font-size: 7px;
+  font-size: 12px;
   text-align: center;
-  letter-spacing: 0.14em;
+  letter-spacing: 0;
   white-space: nowrap;
 }
 .cockpit-altitude-rim {
@@ -258,9 +258,9 @@ body.cockpit-mode:has(#left-panel-stack > .panel-collapsible:not(.collapsed))
   top: 20%;
   right: calc(12px + (0.2 * (var(--cockpit-keyhole-radius) - 20px)));
   color: color-mix(in srgb, var(--cockpit-accent) 82%, white);
-  font-size: 7px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.18em;
+  letter-spacing: 0;
   white-space: nowrap;
 }
 .cockpit-altitude-rim-rail {
@@ -357,9 +357,9 @@ body.cockpit-mode:has(#left-panel-stack > .panel-collapsible:not(.collapsed))
   padding: 1px 3px;
   border-radius: 2px;
   background: rgba(0, 7, 12, 0.28);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
   text-align: right;
 }
 .cockpit-altitude-rim-scale > span.major {
@@ -381,9 +381,9 @@ body.cockpit-mode:has(#left-panel-stack > .panel-collapsible:not(.collapsed))
 }
 .cockpit-altitude-rim-pointer strong {
   min-width: 48px;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0;
   text-align: right;
 }
 .cockpit-altitude-rim-pointer .material-symbols-outlined {
@@ -455,8 +455,8 @@ body.cockpit-mode:has(#left-panel-stack > .panel-collapsible:not(.collapsed))
   position: absolute;
   bottom: 3px;
   color: color-mix(in srgb, var(--cockpit-accent) 54%, transparent);
-  font-size: 7px;
-  letter-spacing: 0.22em;
+  font-size: 12px;
+  letter-spacing: 0;
 }
 .cockpit-visor-status-left {
   left: clamp(110px, 15vw, 220px);
@@ -485,18 +485,18 @@ body.cockpit-mode:has(#left-panel-stack > .panel-collapsible:not(.collapsed))
 .cockpit-kicker,
 .cockpit-readout-label {
   color: var(--cockpit-accent);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.22em;
+  letter-spacing: 0;
 }
 #cockpit-callsign {
   font-size: 18px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0;
 }
 .cockpit-aircraft-meta {
   color: rgba(244, 251, 255, 0.48);
-  font-size: 7px;
-  letter-spacing: 0.16em;
+  font-size: 12px;
+  letter-spacing: 0;
 }
 .cockpit-aircraft-meta.emergency {
   color: var(--cockpit-emergency);
@@ -509,9 +509,9 @@ body.cockpit-mode:has(#left-panel-stack > .panel-collapsible:not(.collapsed))
   border-radius: 20px;
   background: rgba(0, 7, 12, 0.62);
   color: var(--cockpit-accent);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0;
 }
 .cockpit-live-dot {
   display: inline-block;
@@ -628,9 +628,9 @@ html:not([lang='en']) .cockpit-roll-token.is-separator {
 .cockpit-readout-unit {
   margin-top: 2px;
   color: rgba(244, 251, 255, 0.7);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.2em;
+  letter-spacing: 0;
 }
 .cockpit-reticle {
   position: absolute;
@@ -667,7 +667,7 @@ html:not([lang='en']) .cockpit-roll-token.is-separator {
 }
 .cockpit-heading-value small {
   color: var(--cockpit-accent);
-  font-size: 12px;
+  font-size: 14px;
 }
 .cockpit-heading-caret {
   display: block;
@@ -696,8 +696,8 @@ html:not([lang='en']) .cockpit-roll-token.is-separator {
   top: 8px;
   left: 50%;
   color: rgba(244, 251, 255, 0.52);
-  font-size: 12px;
-  letter-spacing: 0.12em;
+  font-size: 14px;
+  letter-spacing: 0;
   transform: translateX(calc(-50% + (var(--slot) * 86px)))
     translateY(calc(var(--depth) * 8px)) rotateZ(calc(var(--slot) * 3.6deg))
     rotateY(calc(var(--slot) * -9deg));
@@ -725,8 +725,8 @@ html:not([lang='en']) .cockpit-roll-token.is-separator {
   align-items: flex-end;
   gap: 4px;
   color: rgba(244, 251, 255, 0.72);
-  font-size: 10px;
-  letter-spacing: 0.1em;
+  font-size: 13px;
+  letter-spacing: 0;
 }
 .cockpit-vision-controls {
   display: grid;
@@ -754,7 +754,7 @@ html:not([lang='en']) .cockpit-roll-token.is-separator {
   background: rgba(0, 7, 12, 0.38);
   color: rgba(244, 251, 255, 0.64);
   font: 700 7px/1 var(--font-mono);
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
   cursor: pointer;
 }
 .cockpit-vision-controls button:hover,
@@ -768,7 +768,7 @@ html:not([lang='en']) .cockpit-roll-token.is-separator {
 }
 .cockpit-vision-controls small {
   font: 700 6px/1 var(--font-mono);
-  letter-spacing: 0.1em;
+  letter-spacing: 0;
 }
 .cockpit-vision-current {
   flex-direction: column;
@@ -779,7 +779,7 @@ html:not([lang='en']) .cockpit-roll-token.is-separator {
 .cockpit-vision-current strong {
   color: #fff;
   font: 700 9px/1 var(--font-mono);
-  letter-spacing: 0.12em;
+  letter-spacing: 0;
 }
 .cockpit-vision-controls .cockpit-vision-current {
   border-color: var(--cockpit-accent);
@@ -800,7 +800,7 @@ html:not([lang='en']) .cockpit-roll-token.is-separator {
     color-mix(in srgb, var(--cockpit-accent) 22%, transparent);
   color: rgba(224, 247, 255, 0.9);
   font: 7px/1.25 var(--font-mono);
-  letter-spacing: 0.09em;
+  letter-spacing: 0;
 }
 .cockpit-route-card[hidden] {
   display: none;
@@ -815,9 +815,9 @@ html:not([lang='en']) .cockpit-roll-token.is-separator {
 .cockpit-route-kicker {
   flex: 0 0 auto;
   color: var(--cockpit-accent);
-  font-size: 7px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0;
 }
 .cockpit-route-heading small {
   overflow: hidden;
@@ -826,8 +826,8 @@ html:not([lang='en']) .cockpit-roll-token.is-separator {
     var(--cockpit-accent) 68%,
     rgba(244, 251, 255, 0.46)
   );
-  font-size: 5px;
-  letter-spacing: 0.08em;
+  font-size: 12px;
+  letter-spacing: 0;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -848,15 +848,15 @@ html:not([lang='en']) .cockpit-roll-token.is-separator {
 }
 .cockpit-route-airport > span {
   color: color-mix(in srgb, var(--cockpit-accent) 76%, white);
-  font-size: 6px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0;
 }
 .cockpit-route-airport strong {
   overflow: hidden;
   color: #fff;
-  font-size: 8px;
-  letter-spacing: 0.06em;
+  font-size: 12px;
+  letter-spacing: 0;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -885,7 +885,7 @@ html:not([lang='en']) .cockpit-roll-token.is-separator {
   background: rgba(2, 12, 20, 0.82);
   color: #bceeff;
   font: 700 8px/1 var(--font-mono);
-  letter-spacing: 0.12em;
+  letter-spacing: 0;
   cursor: pointer;
   box-shadow: 0 0 18px rgba(0, 0, 0, 0.24);
 }
@@ -983,22 +983,22 @@ body.cockpit-mode #view-switcher button {
 }
 .cockpit-context-kicker {
   color: var(--cockpit-accent);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.2em;
+  letter-spacing: 0;
 }
 #cockpit-context-subject {
   color: #fff;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0;
 }
 .cockpit-context-qualifier {
   grid-column: 1 / -1;
   justify-self: start;
   color: rgba(116, 219, 255, 0.82);
-  font-size: 7px;
-  letter-spacing: 0.16em;
+  font-size: 12px;
+  letter-spacing: 0;
   white-space: nowrap;
 }
 .cockpit-context-weather {
@@ -1018,7 +1018,7 @@ body.cockpit-mode #view-switcher button {
   );
   color: color-mix(in srgb, var(--cockpit-accent) 82%, white);
   font: 700 6px/1 var(--font-mono);
-  letter-spacing: 0.1em;
+  letter-spacing: 0;
   cursor: pointer;
 }
 .cockpit-context-weather strong {
@@ -1087,9 +1087,9 @@ body.cockpit-mode #view-switcher button {
 }
 .cockpit-context-cohorts span {
   color: var(--cockpit-accent);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0;
 }
 .cockpit-context-cohorts strong {
   justify-self: end;
@@ -1101,8 +1101,8 @@ body.cockpit-mode #view-switcher button {
   grid-column: 1 / -1;
   overflow: hidden;
   color: rgba(244, 251, 255, 0.4);
-  font-size: 6px;
-  letter-spacing: 0.05em;
+  font-size: 12px;
+  letter-spacing: 0;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1139,23 +1139,23 @@ body.cockpit-mode #view-switcher button {
 }
 .cockpit-context-nearest small {
   color: rgba(244, 251, 255, 0.42);
-  font-size: 6px;
-  letter-spacing: 0.12em;
+  font-size: 12px;
+  letter-spacing: 0;
 }
 #cockpit-context-nearest-label {
   overflow: hidden;
   color: #fff;
-  font-size: 9px;
-  letter-spacing: 0.1em;
+  font-size: 12px;
+  letter-spacing: 0;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 #cockpit-context-bearing,
 #cockpit-context-distance {
   color: var(--cockpit-accent);
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
   white-space: nowrap;
 }
 #cockpit-context-bearing {
@@ -1178,8 +1178,8 @@ body.cockpit-mode #view-switcher button {
   padding: 6px 8px 0;
   border-top: 1px solid rgba(244, 251, 255, 0.08);
   color: rgba(244, 251, 255, 0.4);
-  font-size: 6px;
-  letter-spacing: 0.11em;
+  font-size: 12px;
+  letter-spacing: 0;
 }
 .cockpit-context-window[data-state='uncertain'] #cockpit-context-uncertainty {
   color: #74dbff;
@@ -1226,8 +1226,8 @@ body.cockpit-mode #view-switcher button {
   display: none;
 }
 .cockpit-context-window[data-collapsed='true'] #cockpit-context-subject {
-  font-size: 8px;
-  letter-spacing: 0.08em;
+  font-size: 12px;
+  letter-spacing: 0;
 }
 #cockpit-hud.signals-active .cockpit-pitch-rail-right {
   opacity: 0.16;
@@ -1342,7 +1342,7 @@ body.cockpit-mode #view-switcher button {
   -webkit-backdrop-filter: blur(24px) saturate(1.4);
   color: var(--text-dim);
   font: 8px/1.1 var(--font-mono);
-  letter-spacing: 1.4px;
+  letter-spacing: 0;
   text-align: left;
 }
 [data-cockpit-launcher='display'] {
@@ -1399,7 +1399,7 @@ body.cockpit-mode #view-switcher button {
   background: rgba(255, 255, 255, 0.03);
   color: var(--text-secondary);
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1;
   cursor: pointer;
 }
@@ -1461,7 +1461,7 @@ body.cockpit-mode #view-switcher button {
   overflow: hidden;
   color: #fff;
   font: 500 8px/1.2 var(--font-mono);
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1493,7 +1493,7 @@ body.cockpit-mode #view-switcher button {
   gap: 8px;
   color: rgba(244, 251, 255, 0.58);
   font: 7px/1 var(--font-mono);
-  letter-spacing: 0.1em;
+  letter-spacing: 0;
 }
 .cockpit-radio-volume input {
   width: 100%;
@@ -1521,14 +1521,14 @@ html:not([lang='en']) .cockpit-signal-kicker {
 }
 .cockpit-signal-header strong {
   color: #fff;
-  font-size: 8px;
-  letter-spacing: 0.1em;
+  font-size: 12px;
+  letter-spacing: 0;
 }
 .cockpit-signal-kicker {
   color: var(--cockpit-accent);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.18em;
+  letter-spacing: 0;
 }
 .cockpit-signal-kicker i {
   display: inline-block;
@@ -1575,7 +1575,7 @@ html:not([lang='en']) .cockpit-brief-actions > * {
   width: 50px;
   color: rgba(244, 251, 255, 0.42);
   font: 700 6px/1 var(--font-mono);
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
 }
 html:not([lang='en']) #cockpit-brief-auto {
   width: auto;
@@ -1601,8 +1601,8 @@ html:not([lang='en']) #cockpit-brief-auto {
 #cockpit-brief-position {
   min-width: 25px;
   color: rgba(244, 251, 255, 0.48);
-  font-size: 6px;
-  letter-spacing: 0.08em;
+  font-size: 12px;
+  letter-spacing: 0;
   text-align: center;
 }
 .cockpit-brief-stage {
@@ -1659,8 +1659,8 @@ html:not([lang='en']) #cockpit-brief-auto {
 }
 .cockpit-signal-list time {
   color: rgba(244, 251, 255, 0.38);
-  font-size: 6px;
-  letter-spacing: 0.06em;
+  font-size: 12px;
+  letter-spacing: 0;
 }
 .cockpit-signal-list li > div {
   display: grid;
@@ -1669,8 +1669,8 @@ html:not([lang='en']) #cockpit-brief-auto {
 }
 .cockpit-signal-list strong {
   color: color-mix(in srgb, var(--cockpit-accent) 78%, white);
-  font-size: 10px;
-  letter-spacing: 0.11em;
+  font-size: 13px;
+  letter-spacing: 0;
 }
 .cockpit-signal-target {
   display: grid;
@@ -1683,9 +1683,9 @@ html:not([lang='en']) #cockpit-brief-auto {
   background: transparent;
   color: color-mix(in srgb, var(--cockpit-accent) 78%, white);
   font: inherit;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.11em;
+  letter-spacing: 0;
   text-align: left;
   cursor: pointer;
 }
@@ -1712,7 +1712,7 @@ html:not([lang='en']) #cockpit-brief-auto {
 .cockpit-signal-target-chevron {
   overflow: visible !important;
   color: currentColor !important;
-  font-size: 12px !important;
+  font-size: 14px !important;
   line-height: 1;
   transition: transform 160ms ease;
 }
@@ -1738,8 +1738,8 @@ html:not([lang='en']) #cockpit-brief-auto {
 .cockpit-signal-list span {
   overflow: hidden;
   color: rgba(244, 251, 255, 0.66);
-  font-size: 8px;
-  letter-spacing: 0.06em;
+  font-size: 12px;
+  letter-spacing: 0;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1774,10 +1774,10 @@ html:not([lang='en']) #cockpit-brief-auto {
   display: -webkit-box;
   overflow: hidden;
   color: rgba(244, 251, 255, 0.88);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 600;
   line-height: 1.35;
-  letter-spacing: 0.045em;
+  letter-spacing: 0;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
@@ -1787,9 +1787,9 @@ html:not([lang='en']) #cockpit-brief-auto {
     var(--cockpit-accent) 65%,
     rgba(244, 251, 255, 0.42)
   );
-  font-size: 6px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: none;
 }
 .cockpit-brief-status {
   display: grid;
@@ -1798,8 +1798,8 @@ html:not([lang='en']) #cockpit-brief-auto {
   padding: 18px 10px;
   border: 0;
   color: rgba(244, 251, 255, 0.45);
-  font-size: 7px;
-  letter-spacing: 0.13em;
+  font-size: 12px;
+  letter-spacing: 0;
   text-align: center;
 }
 .cockpit-brief-status[data-state='unavailable'] {
@@ -1814,15 +1814,15 @@ html:not([lang='en']) #cockpit-brief-auto {
 .cockpit-local-place strong {
   overflow: hidden;
   color: #fff;
-  font-size: 9px;
-  letter-spacing: 0.1em;
+  font-size: 12px;
+  letter-spacing: 0;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .cockpit-local-place small {
   color: rgba(244, 251, 255, 0.44);
-  font-size: 6px;
-  letter-spacing: 0.09em;
+  font-size: 12px;
+  letter-spacing: 0;
 }
 .cockpit-local-grid {
   display: grid;
@@ -1841,21 +1841,21 @@ html:not([lang='en']) #cockpit-brief-auto {
 }
 .cockpit-local-grid span {
   color: var(--cockpit-accent);
-  font-size: 7px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.13em;
+  letter-spacing: 0;
 }
 .cockpit-local-grid strong {
   overflow: hidden;
   color: #fff;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
-  letter-spacing: 0.06em;
+  letter-spacing: 0;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 #cockpit-local-condition {
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.15;
   letter-spacing: 0.03em;
   text-overflow: clip;
@@ -1863,8 +1863,8 @@ html:not([lang='en']) #cockpit-brief-auto {
 }
 .cockpit-local-grid small {
   color: rgba(244, 251, 255, 0.35);
-  font-size: 6px;
-  letter-spacing: 0.07em;
+  font-size: 12px;
+  letter-spacing: 0;
 }
 
 .cockpit-weather-credit {
@@ -1872,8 +1872,8 @@ html:not([lang='en']) #cockpit-brief-auto {
   margin-top: 7px;
   color: rgba(182, 226, 241, 0.72);
   font: 600 7px/1.2 var(--font-mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
 }
 .cockpit-signal-footer {
   display: flex;
@@ -1883,8 +1883,8 @@ html:not([lang='en']) #cockpit-brief-auto {
   padding: 5px 8px 0;
   border-top: 1px solid rgba(244, 251, 255, 0.08);
   color: rgba(244, 251, 255, 0.34);
-  font-size: 6px;
-  letter-spacing: 0.1em;
+  font-size: 12px;
+  letter-spacing: 0;
 }
 .cockpit-signal-footer > span {
   overflow: hidden;
@@ -1914,7 +1914,7 @@ html:not([lang='en']) .cockpit-brief-tabs button {
   background: transparent;
   color: rgba(244, 251, 255, 0.34);
   font: inherit;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
   cursor: pointer;
 }
 .cockpit-brief-tabs button[aria-current='true'] {
@@ -1968,8 +1968,8 @@ html:not([lang='en']) .cockpit-brief-tabs button {
   left: clamp(24px, 4vw, 58px);
   bottom: clamp(22px, 4vh, 42px);
   color: rgba(244, 251, 255, 0.55);
-  font-size: 9px;
-  letter-spacing: 0.14em;
+  font-size: 12px;
+  letter-spacing: 0;
 }
 .cockpit-help span {
   color: var(--cockpit-accent);
@@ -2046,7 +2046,7 @@ body.cockpit-mode #intel-hud .hud-summary-wrap {
   max-width: min(34vw, 380px);
 }
 body.cockpit-mode #intel-hud .hud-summary {
-  font-size: 9px;
+  font-size: 12px;
 }
 body.cockpit-mode #intel-hud .hud-left-edge {
   left: 22px;
@@ -2069,7 +2069,7 @@ body.cockpit-mode #intel-hud .hud-right-edge {
   }
   body.cockpit-mode #view-switcher button {
     padding-inline: 9px;
-    font-size: 7px;
+    font-size: 12px;
   }
   #cockpit-entry {
     left: auto;
@@ -2128,11 +2128,11 @@ body.cockpit-mode #intel-hud .hud-right-edge {
     font-size: clamp(24px, 8vw, 34px);
   }
   .cockpit-readout-label {
-    font-size: 7px;
-    letter-spacing: 0.12em;
+    font-size: 12px;
+    letter-spacing: 0;
   }
   .cockpit-readout-unit {
-    font-size: 8px;
+    font-size: 12px;
   }
   .cockpit-speed {
     transform: perspective(600px) rotateY(7deg);
@@ -2200,7 +2200,7 @@ body.cockpit-mode #intel-hud .hud-right-edge {
     display: none;
   }
   .cockpit-context-footer {
-    font-size: 5px;
+    font-size: 12px;
   }
   .cockpit-compass-tape span {
     transform: translateX(calc(-50% + (var(--slot) * 52px)))

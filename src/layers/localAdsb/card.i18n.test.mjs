@@ -21,10 +21,10 @@ const record = {
 test('en: the local ADS-B card keeps its English wording', () => {
   setLocale('en');
   assert.deepEqual(localAdsbCardModel(record, 5000).details, [
-    'ICAO ABC123 · NO CALLSIGN',
-    'ALT 12,500 FT · GS 240 KT · TRK 90°',
-    'V/S -1,200 FPM',
-    'POSITION 4 S AGO · 48 MSGS',
+    'ICAO ABC123 · No callsign',
+    'ALT 12,500 ft · GS 240 kt · TRK 90°',
+    'V/S -1,200 fpm',
+    'Position 4 s ago · 48 msgs',
     'Heard by your receiver · 1090 MHz · browser SDR + decoder feed',
   ]);
   assert.equal(
@@ -42,11 +42,11 @@ for (const locale of ['es', 'ru']) {
         localAdsbSourceText(record),
       ].join(' | ');
       for (const english of [
-        'NO CALLSIGN',
+        'No callsign',
         'GS ',
-        'POSITION',
-        'AGO',
-        'MSGS',
+        'Position',
+        ' ago',
+        'msgs',
         'Heard by',
         'browser SDR',
         'decoder feed',

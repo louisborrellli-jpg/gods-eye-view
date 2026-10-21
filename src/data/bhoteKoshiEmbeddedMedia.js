@@ -48,10 +48,10 @@ const EVENT_PACK_TEXT = new Set([
   msg('Bhote Koshi valley footage'),
   msg('Flood footage'),
   msg('Compilation and casualty claims'),
-  msg('SOURCE GEOCONFIRMED · WORLD-PINNED'),
-  msg('SOURCE CREDITED · LOCATION UNRESOLVED'),
-  msg('REFERENCE ONLY · CLAIMS UNVERIFIED'),
-  msg('SOURCE GEOCONFIRMED'),
+  msg('Source geoconfirmed · World-pinned'),
+  msg('Source credited · Location unresolved'),
+  msg('Reference only · Claims unverified'),
+  msg('Source geoconfirmed'),
   // Reconstruction caveat.
   msg(
     '2021 historical reference versus 2026 post-event imagery; changes are cumulative and include the July 2025 Rasuwagadhi flood. Schematic downstream progression, not modeled arrival time; not an official hazard model.',
@@ -502,15 +502,15 @@ function loadXWidgets(documentRef, globalRef = globalThis) {
 
 // Outcomes a trimmed YouTube clip reports to the card status.
 const YOUTUBE_PHASE_LABELS = Object.freeze({
-  unavailable: msg('UNAVAILABLE'),
-  timeout: msg('TIMEOUT'),
-  blocked: msg('BLOCKED'),
+  unavailable: msg('Unavailable'),
+  timeout: msg('Timeout'),
+  blocked: msg('Blocked'),
 });
 
 function providerLabel(provider) {
   return (
     { youtube: 'YOUTUBE', facebook: 'FACEBOOK', x: 'X' }[provider] ||
-    t('SOURCE')
+    t('Source')
   );
 }
 
@@ -930,7 +930,7 @@ export function createBhoteKoshiEmbeddedMedia({
   }
 
   async function mountX(current, token) {
-    current.status.textContent = t('LOADING X POST…');
+    current.status.textContent = t('Loading x post…');
     try {
       const api = await xLoader(documentRef, globalRef);
       if (token !== generation || record !== current) return;
@@ -950,12 +950,12 @@ export function createBhoteKoshiEmbeddedMedia({
         throw new Error(
           msg('The X post is unavailable or cannot be embedded.'),
         );
-      current.status.textContent = t('X POST · PROVIDER CONTROLS');
+      current.status.textContent = t('X post · Provider controls');
       position();
     } catch (error) {
       if (token !== generation || record !== current) return;
       current.card.classList.add('is-unavailable');
-      current.status.textContent = t('{reason} OPEN ORIGINAL.', {
+      current.status.textContent = t('{reason} open original.', {
         reason: t(String(error?.message || msg('X embed unavailable'))),
       });
       position();
@@ -970,14 +970,14 @@ export function createBhoteKoshiEmbeddedMedia({
     session.shouldPlay = autoplay === true;
     session.onReady = () => {
       if (token !== generation || record !== current) return;
-      current.status.textContent = t('FACEBOOK · PROVIDER CONTROLS');
+      current.status.textContent = t('Facebook · Provider controls');
       current.card.classList.remove('is-unavailable');
       position();
     };
     session.onError = (error) => {
       if (token !== generation || record !== current) return;
       current.card.classList.add('is-unavailable');
-      current.status.textContent = t('{reason} OPEN ORIGINAL.', {
+      current.status.textContent = t('{reason} open original.', {
         reason: t(String(error?.message || msg('Facebook embed unavailable'))),
       });
       position();
@@ -985,7 +985,7 @@ export function createBhoteKoshiEmbeddedMedia({
     session.onPlaybackBlocked = () => {
       if (token !== generation || record !== current) return;
       current.status.textContent = t(
-        'AUTOPLAY BLOCKED · USE PROVIDER CONTROLS',
+        'Autoplay blocked · Use provider controls',
       );
     };
     if (session.ready) session.onReady();
@@ -1062,14 +1062,14 @@ export function createBhoteKoshiEmbeddedMedia({
     ).toUpperCase();
     const status = documentRef.createElement('small');
     status.setAttribute('role', 'status');
-    status.textContent = t('{provider} · EMBEDDED SOURCE', {
+    status.textContent = t('{provider} · Embedded source', {
       provider: providerLabel(source.provider),
     });
     const link = documentRef.createElement('a');
     link.href = source.url;
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
-    link.textContent = t('OPEN ORIGINAL ↗');
+    link.textContent = t('Open original ↗');
     footer.append(title, status, link);
     const body = documentRef.createElement('div');
     body.className = 'bhote-embedded-callout-body';
@@ -1131,7 +1131,7 @@ export function createBhoteKoshiEmbeddedMedia({
               record.youtubeSession.getState().phase,
             )
           ) {
-            status.textContent = t('{provider} · PROVIDER CONTROLS', {
+            status.textContent = t('{provider} · Provider controls', {
               provider: providerLabel(source.provider),
             });
           }
@@ -1151,7 +1151,7 @@ export function createBhoteKoshiEmbeddedMedia({
           isCurrent: () => token === generation && record === current,
           onStatus: (phase) => {
             if (phase !== 'completed')
-              status.textContent = t('YOUTUBE {state} · OPEN ORIGINAL', {
+              status.textContent = t('YouTube {state} · Open original', {
                 state: YOUTUBE_PHASE_LABELS[phase]
                   ? t(YOUTUBE_PHASE_LABELS[phase])
                   : phase.toUpperCase(),

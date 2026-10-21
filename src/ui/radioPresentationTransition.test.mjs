@@ -57,7 +57,10 @@ for (const lifecycleState of ['enabling', 'disabling']) {
         );
       }
       assert.equal(enable.attrs.get('aria-busy'), 'true');
-      assert.equal(enable.textContent, lifecycleState.toUpperCase());
+      assert.equal(
+        enable.textContent,
+        lifecycleState[0].toUpperCase() + lifecycleState.slice(1),
+      );
     } finally {
       globalThis.document = prior;
     }

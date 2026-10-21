@@ -511,10 +511,10 @@ export function createControls({ state: layerState, services, parts, source }) {
           {
             id: 'catalog',
             label: loading
-              ? t('DENSE ···')
+              ? t('Dense ···')
               : failed
-                ? t('DENSE ✕')
-                : t('DENSE'),
+                ? t('Dense ✕')
+                : t('Dense'),
             active,
             busy: loading,
             disabled: loading,

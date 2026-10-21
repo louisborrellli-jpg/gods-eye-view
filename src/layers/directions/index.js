@@ -2,7 +2,7 @@
  * @module layers/directions
  * @description Keyless A→B directions on the globe: drive, walk or cycle.
  *
- * The row's chips arm a click ("SET A", then click the globe; "SET B", click
+ * The row's chips arm a click ("Set A", then click the globe; "Set B", click
  * again). With both ends placed the layer asks the existing `/api/route`
  * proxy (OSRM on the FOSSGIS servers, © OpenStreetMap contributors) for the
  * street-following route with turn-by-turn steps, drapes it on the terrain
@@ -31,9 +31,9 @@ export const DIRECTIONS_STEP_OVERLAY_SOURCE_OPTIONS = Object.freeze({
 
 /** Travel modes, keyed by the `/api/route` profile name. */
 export const DIRECTIONS_MODES = Object.freeze({
-  car: Object.freeze({ chip: msg('DRIVE'), word: msg('Drive'), icon: '🚗' }),
-  foot: Object.freeze({ chip: msg('WALK'), word: msg('Walk'), icon: '🚶' }),
-  bike: Object.freeze({ chip: msg('BIKE'), word: msg('Bike'), icon: '🚲' }),
+  car: Object.freeze({ chip: msg('Drive'), word: msg('Drive'), icon: '🚗' }),
+  foot: Object.freeze({ chip: msg('Walk'), word: msg('Walk'), icon: '🚶' }),
+  bike: Object.freeze({ chip: msg('Bike'), word: msg('Bike'), icon: '🚲' }),
 });
 export const DEFAULT_DIRECTIONS_MODE = 'car';
 
@@ -411,7 +411,7 @@ export function directionsRowControls(state) {
   }));
   chips.push({
     id: 'set-a',
-    label: armed === 'a' ? t('CLICK MAP') : a ? 'A ✓' : t('SET A'),
+    label: armed === 'a' ? t('Click map') : a ? 'A ✓' : t('Set A'),
     active: armed === 'a',
     state: armed === 'a' ? 'active' : 'idle',
     title:
@@ -422,7 +422,7 @@ export function directionsRowControls(state) {
   });
   chips.push({
     id: 'set-b',
-    label: armed === 'b' ? t('CLICK MAP') : b ? 'B ✓' : t('SET B'),
+    label: armed === 'b' ? t('Click map') : b ? 'B ✓' : t('Set B'),
     active: armed === 'b',
     state: armed === 'b' ? 'active' : 'idle',
     title:
@@ -442,7 +442,7 @@ export function directionsRowControls(state) {
   const flying = Number.isInteger(flightStep);
   chips.push({
     id: 'fly',
-    label: routing ? t('FLY ···') : flying ? t('FLYING') : t('FLY'),
+    label: routing ? t('Fly ···') : flying ? t('Flying') : t('Fly'),
     disabled: !route || routing,
     busy: routing || flying,
     active: flying,
@@ -454,7 +454,7 @@ export function directionsRowControls(state) {
   });
   chips.push({
     id: 'clear',
-    label: t('CLEAR', { context: 'action' }),
+    label: t('Clear', { context: 'action' }),
     disabled: !a && !b && !route,
     state: 'idle',
     title: t('Remove the route and both markers'),
@@ -643,7 +643,7 @@ export function directionsStats(state) {
     return {
       count: route?.steps.length || 0,
       lastUpdate,
-      error: t('Another map tool is using clicks — close it, then SET A again'),
+      error: t('Another map tool is using clicks — close it, then Set A again'),
       status: 'empty',
       source,
     };
@@ -696,9 +696,9 @@ export function directionsStats(state) {
     coverage = t('Click the globe to place {endpoint}', {
       endpoint: armed.toUpperCase(),
     });
-  else if (a && !b) coverage = t('SET B, then click the globe');
-  else if (!a && b) coverage = t('SET A, then click the globe');
-  else coverage = t('SET A, then click the globe');
+  else if (a && !b) coverage = t('Set B, then click the globe');
+  else if (!a && b) coverage = t('Set A, then click the globe');
+  else coverage = t('Set A, then click the globe');
   return {
     count: 0,
     lastUpdate,

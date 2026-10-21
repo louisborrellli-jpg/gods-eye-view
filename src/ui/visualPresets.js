@@ -154,11 +154,11 @@ export const SHARPEN_SHADER = /* glsl */ `
  * English source text: render through t().
  */
 export const STYLE_STATUS_LABELS = {
-  normal: msg('NORMAL'),
-  retro: msg('RETRO'),
+  normal: msg('Normal'),
+  retro: msg('Retro'),
   surveillance: msg('NVG'),
   thermal: msg('FLIR'),
-  anime: msg('ANIME'),
-  noir: msg('NOIR'),
-  snow: msg('SNOW'),
+  anime: msg('Anime'),
+  noir: msg('Noir'),
+  snow: msg('Snow'),
 };

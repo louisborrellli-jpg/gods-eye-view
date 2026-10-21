@@ -34,6 +34,7 @@ import {
   relativeDays,
 } from '../layers/shipments/text.js';
 import { createShipmentsBackend } from '../layers/shipments/backend.js';
+import { createAppTabs } from './appTabs.js';
 import { SHIPMENTS_FOCUS_KEY } from '../layers/shipments/store.js';
 import { createShipmentTrackingSource } from '../layers/shipments/source.js';
 import { TRACKING_KEY_NOTE } from '../layers/shipments/tracker.js';
@@ -234,6 +235,7 @@ export function createShipmentsDashboard({
     // A refresh re-renders the page; keep the search box where it was.
     const searching = doc.activeElement?.classList?.contains('sp-search');
     root.replaceChildren();
+    root.append(createAppTabs(doc, 'shipments'));
 
     const header = el('header', 'sp-header');
     const titles = el(

@@ -25,7 +25,6 @@
 @import './src/ui/styles/provider-settings.css';
 @import './src/ui/styles/shipments.css';
 @import './src/ui/styles/locale-picker.css';
-
 @import './src/ui/styles/weather.css';
 @import './src/ui/styles/panel-surfaces.css';
 
@@ -34,4 +33,6 @@
    cyber theme keeps the last word. The two sheets touch disjoint properties. */
 @import './src/ui/styles/mobile-foundation.css';
 
+/* Plain look: the everyday interface's final word; opt-in Cyber loads last. */
+@import './src/ui/styles/plain.css';
 @import './src/ui/styles/cyber.css';

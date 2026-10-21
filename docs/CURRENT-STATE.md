@@ -1082,6 +1082,34 @@ event at the port of loading, else the planned one) has its own column on the
 Shipments page, heads the detail timeline and shows under home-page search
 results.
 
+### Plain look, section tabs and one search
+
+The everyday interface is plain rather than "instrument": one sans family
+(`--font-mono` now names it too, with even-width digits; `--font-code` keeps a
+true monospace), no text under 12px, no tracking or forced capitals, and UI
+messages in sentence case (acronyms such as CCTV, ADS-B and ETA kept).
+`src/ui/styles/plain.css` loads after every component sheet and before the
+opt-in Cyber theme; it hides the glows, the slogan and the active-style
+readout. The main panels are named Map layers, Display, Cameras, Street view,
+Nearby (radio, contacts, space missions), Places and Map look, and the globe
+buttons carry text labels.
+
+Every page shows the same three tabs, Home · Shipments · Map
+(`src/ui/appTabs.js` on the Home and Shipments pages, `#app-tabs` in
+`scene-chrome.html` on the map). The map's search box (`src/ui/globalSearch.js`,
+logic in `globalSearchModel.js`) looks through containers, every layer's own
+list (zones, flights, vessels, cameras…), the layer names (choosing one turns
+it on or off) and finally offers a place search through the Places box. "/" or
+Ctrl/⌘+K focuses it, and `/?search=` opens the map with it filled in, which
+the home page uses for anything that is not a container.
+
+Containers on one ship share one position on the globe (`shipLeader` in
+`src/layers/shipments/geo.js`): the box whose ship was heard most recently,
+else the one that boarded last, whose leg is the one the ship is sailing.
+Tracking answers carry a parser version (`TRACKING_VERSION`); a box read by an
+older parser is fetched again once, so new fields such as the loading date
+fill in without a manual refresh.
+
 ## Vessel components and sources
 
 `src/data/aisLiveVessels.js` assembles `createVesselLayer` from the

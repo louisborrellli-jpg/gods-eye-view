@@ -93,9 +93,9 @@ test('applyDocumentLanguage sets lang and dir', () => {
 });
 
 test('t() returns English text in English and translates in Russian', () => {
-  assert.equal(t('ALL KEYS IN'), 'ALL KEYS IN');
+  assert.equal(t('All keys in'), 'All keys in');
   setLocale('ru');
-  assert.notEqual(t('ALL KEYS IN'), 'ALL KEYS IN');
+  assert.notEqual(t('All keys in'), 'All keys in');
 });
 
 test('t() interpolates named values and keeps unknown names literal', () => {
@@ -118,22 +118,22 @@ test('tn() picks English and Russian plural forms', () => {
   const label = (count) =>
     tn(
       count,
-      'ADD KEYS · {count} KEY MISSING',
-      'ADD KEYS · {count} KEYS MISSING',
+      'Add keys · {count} key missing',
+      'Add keys · {count} keys missing',
     );
-  assert.equal(label(1), 'ADD KEYS · 1 KEY MISSING');
-  assert.equal(label(3), 'ADD KEYS · 3 KEYS MISSING');
+  assert.equal(label(1), 'Add keys · 1 key missing');
+  assert.equal(label(3), 'Add keys · 3 keys missing');
   setLocale('ru');
-  assert.match(label(1), / 1 КЛЮЧ(?![А-ЯЁ])/);
-  assert.match(label(3), / 3 КЛЮЧА(?![А-ЯЁ])/);
-  assert.match(label(5), / 5 КЛЮЧЕЙ(?![А-ЯЁ])/);
-  assert.match(label(21), / 21 КЛЮЧ(?![А-ЯЁ])/);
+  assert.match(label(1), / 1 ключ(?![а-яё])/);
+  assert.match(label(3), / 3 ключа(?![а-яё])/);
+  assert.match(label(5), / 5 ключей(?![а-яё])/);
+  assert.match(label(21), / 21 ключ(?![а-яё])/);
 });
 
 test('t() context separates identical English with different meanings', () => {
-  assert.equal(t('CLEAR', { context: 'action' }), 'CLEAR');
+  assert.equal(t('Clear', { context: 'action' }), 'Clear');
   setLocale('ru');
-  assert.notEqual(t('CLEAR', { context: 'action' }), t('CLEAR'));
+  assert.notEqual(t('Clear', { context: 'action' }), t('Clear'));
 });
 
 test('msg() returns its text unchanged', () => {
@@ -166,8 +166,8 @@ function fakeElement({ text = '', attributes = {} } = {}) {
 }
 
 test('applyDocumentTranslations translates opted-in text and attributes in place', () => {
-  const label = fakeElement({ text: '\n  ALL KEYS\n  IN  ' });
-  const pin = fakeElement({ attributes: { title: 'ALL KEYS IN' } });
+  const label = fakeElement({ text: '\n  All keys\n  in  ' });
+  const pin = fakeElement({ attributes: { title: 'All keys in' } });
   const unknown = fakeElement({ text: 'No such message' });
   const doc = {
     querySelectorAll(selector) {
@@ -183,8 +183,8 @@ test('applyDocumentTranslations translates opted-in text and attributes in place
   );
   setLocale('ru');
   assert.equal(applyDocumentTranslations(doc), 2);
-  assert.equal(label.textContent, t('ALL KEYS IN'));
-  assert.equal(pin.attrs.get('title'), t('ALL KEYS IN'));
+  assert.equal(label.textContent, t('All keys in'));
+  assert.equal(pin.attrs.get('title'), t('All keys in'));
   assert.equal(unknown.textContent, 'No such message');
 });
 

@@ -388,28 +388,28 @@ export function adjacentEvidenceIndex(progress, timeline, direction) {
 
 // Evidence phases from the event pack, shown as the beat meta prefix.
 const EVIDENCE_PHASE_LABELS = Object.freeze({
-  initiation: msg('INITIATION'),
-  damming: msg('DAMMING'),
-  'secondary failure': msg('SECONDARY FAILURE'),
-  'border arrival': msg('BORDER ARRIVAL'),
-  propagation: msg('PROPAGATION'),
-  'downstream passage': msg('DOWNSTREAM PASSAGE'),
-  consequence: msg('CONSEQUENCE'),
-  'downstream consequence': msg('DOWNSTREAM CONSEQUENCE'),
+  initiation: msg('Initiation'),
+  damming: msg('Damming'),
+  'secondary failure': msg('Secondary failure'),
+  'border arrival': msg('Border arrival'),
+  propagation: msg('Propagation'),
+  'downstream passage': msg('Downstream passage'),
+  consequence: msg('Consequence'),
+  'downstream consequence': msg('Downstream consequence'),
 });
 
 /** Display label for an evidence phase; unknown phases show as authored. */
 function evidencePhaseLabel(phase) {
   const label = EVIDENCE_PHASE_LABELS[String(phase || '').toLowerCase()];
   if (label) return t(label);
-  return phase ? String(phase).toUpperCase() : t('EVIDENCE');
+  return phase ? String(phase).toUpperCase() : t('Evidence');
 }
 
 // Imagery endpoint names from the event pack ("2021 HISTORICAL REFERENCE ·
 // 16 OCT 2021"); unknown names and unparseable dates show as authored.
 const IMAGERY_LABEL_NAMES = Object.freeze([
-  [/^(\d{4}) HISTORICAL REFERENCE$/, msg('{year} HISTORICAL REFERENCE')],
-  [/^(\d{4}) POST-EVENT$/, msg('{year} POST-EVENT')],
+  [/^(\d{4}) HISTORICAL REFERENCE$/, msg('{year} historical reference')],
+  [/^(\d{4}) POST-EVENT$/, msg('{year} post-event')],
 ]);
 
 /** Day, short month and year in the active language: 16 OCT 2021, 16 ОКТ. 2021. */
@@ -466,8 +466,8 @@ export function evidenceCorroborationLabel(observation) {
   return count > 1
     ? tn(
         count,
-        '{count} GEOLOCATED SOURCE-MAP PLACEMENT',
-        '{count} GEOLOCATED SOURCE-MAP PLACEMENTS',
+        '{count} geolocated source-map placement',
+        '{count} geolocated source-map placements',
       )
     : '';
 }
@@ -720,7 +720,7 @@ function drawEvidenceFallback(ctx, observation, width, height) {
   }
   ctx.fillStyle = WORLD_OVERLAY_STYLE.accent;
   ctx.font = scaledOverlayFont(WORLD_OVERLAY_STYLE.fontLabel, 1.4);
-  ctx.fillText(t('NO PREVIEW'), 20, 30);
+  ctx.fillText(t('No preview'), 20, 30);
 }
 
 function ellipsizeEvidenceText(value, limit) {
@@ -806,7 +806,7 @@ export function updateEvidenceFrame(
   const publisher = (
     observation.media?.publisher
       ? evidencePublisherText(observation.media.publisher)
-      : t('SOURCE LINK')
+      : t('Source link')
   ).toUpperCase();
   ctx.fillText(
     fitEvidenceSourceLine(
@@ -977,18 +977,18 @@ function createPanel(event, handlers) {
   panel.innerHTML = `
     <div class="bhote-event-header">
       <div>
-        <div class="bhote-event-kicker">${escapeMarkup(t('EVENT RECONSTRUCTION · 26 AUG 2026'))}</div>
-        <div class="bhote-event-title">${escapeMarkup(t('BHOTE KOSHI OUTBURST FLOOD'))}</div>
+        <div class="bhote-event-kicker">${escapeMarkup(t('Event reconstruction · 26 Aug 2026'))}</div>
+        <div class="bhote-event-title">${escapeMarkup(t('Bhote Koshi outburst flood'))}</div>
       </div>
       <button class="bhote-event-icon-btn" type="button" data-action="close" title="${escapeMarkup(t('Close event layer'))}" aria-label="${escapeMarkup(t('Close event layer'))}">×</button>
     </div>
     <div class="bhote-event-status-row">
-      <span class="bhote-event-status observed">${escapeMarkup(t('OBSERVED IMAGERY'))}</span>
-      <span class="bhote-event-status reconstructed">${escapeMarkup(t('SCHEMATIC CORRIDOR'))}</span>
+      <span class="bhote-event-status observed">${escapeMarkup(t('Observed imagery'))}</span>
+      <span class="bhote-event-status reconstructed">${escapeMarkup(t('Schematic corridor'))}</span>
     </div>
     <section class="bhote-event-section" data-role="imagery-comparison">
       <div class="bhote-event-section-head">
-        <span>${escapeMarkup(t('2021 HISTORICAL REFERENCE / 2026 POST-EVENT'))}</span>
+        <span>${escapeMarkup(t('2021 Historical reference / 2026 post-event'))}</span>
         <span data-role="split-readout">50 / 50</span>
       </div>
       <input class="bhote-event-range" data-role="split" type="range" min="0" max="100" value="50" aria-label="${escapeMarkup(t('Historical reference and post-event image split'))}" />
@@ -999,7 +999,7 @@ function createPanel(event, handlers) {
     </section>
     <section class="bhote-event-section">
       <div class="bhote-event-section-head">
-        <span data-role="timeline-label">${escapeMarkup(t('RECONSTRUCTION CLOCK'))}</span>
+        <span data-role="timeline-label">${escapeMarkup(t('Reconstruction clock'))}</span>
         <span data-role="time"></span>
       </div>
       <input class="bhote-event-range flood" data-role="progress" type="range" min="0" max="1000" value="0" aria-label="${escapeMarkup(t('Schematic downstream progression'))}" />
@@ -1007,27 +1007,27 @@ function createPanel(event, handlers) {
         <button type="button" data-action="previous-beat" title="${escapeMarkup(t('Previous story beat'))}" aria-label="${escapeMarkup(t('Previous story beat'))}">‹</button>
         <div class="bhote-event-story-current">
           <span data-role="beat-index">01 / 06</span>
-          <strong data-role="beat-title" aria-live="polite">${escapeMarkup(t('CAUSE'))}</strong>
-          <small data-role="beat-meta">${escapeMarkup(t('CAPTURE TIME UNVERIFIED'))}</small>
+          <strong data-role="beat-title" aria-live="polite">${escapeMarkup(t('Cause'))}</strong>
+          <small data-role="beat-meta">${escapeMarkup(t('Capture time unverified'))}</small>
         </div>
         <button type="button" data-action="next-beat" title="${escapeMarkup(t('Next story beat'))}" aria-label="${escapeMarkup(t('Next story beat'))}">›</button>
       </div>
       <div class="bhote-event-actions">
-        <button type="button" data-action="play">${escapeMarkup(t('▶ PLAY'))}</button>
-        <button type="button" data-action="play-scene" hidden title="${escapeMarkup(t('Play the next shot and continue through this scene'))}">${escapeMarkup(t('▶ PLAY SCENE'))}</button>
-        <button type="button" data-action="cinematic" aria-pressed="false">${escapeMarkup(t('◉ CINEMATIC'))}</button>
-        <button type="button" data-action="story-replay">${escapeMarkup(t('↺ FULL STORY'))}</button>
-        <button type="button" data-action="open-source">${escapeMarkup(t('↗ OPEN ORIGINAL'))}</button>
-        <button type="button" data-action="corridor">${escapeMarkup(t('⌖ LOWER GORGE'))}</button>
+        <button type="button" data-action="play">${escapeMarkup(t('▶ Play'))}</button>
+        <button type="button" data-action="play-scene" hidden title="${escapeMarkup(t('Play the next shot and continue through this scene'))}">${escapeMarkup(t('▶ Play scene'))}</button>
+        <button type="button" data-action="cinematic" aria-pressed="false">${escapeMarkup(t('◉ Cinematic'))}</button>
+        <button type="button" data-action="story-replay">${escapeMarkup(t('↺ Full story'))}</button>
+        <button type="button" data-action="open-source">${escapeMarkup(t('↗ Open original'))}</button>
+        <button type="button" data-action="corridor">${escapeMarkup(t('⌖ Lower gorge'))}</button>
       </div>
     </section>
     <details class="bhote-event-evidence">
-      <summary>${escapeMarkup(t('FIELD REPORTS · {count}', { count: event.fieldReports.length }))}</summary>
+      <summary>${escapeMarkup(t('Field reports · {count}', { count: event.fieldReports.length }))}</summary>
       <div class="bhote-event-report-list"></div>
     </details>
     <div class="bhote-event-credit">
-      <span>${escapeMarkup(t('GEOLOCATIONS · {credit}', { credit: 'GEO GEORGE SHADRACH' }))}</span>
-      <button type="button" data-action="geolocation-map">${escapeMarkup(t('↗ OPEN PUBLIC MAP'))}</button>
+      <span>${escapeMarkup(t('Geolocations · {credit}', { credit: 'GEO GEORGE SHADRACH' }))}</span>
+      <button type="button" data-action="geolocation-map">${escapeMarkup(t('↗ Open public map'))}</button>
     </div>
     <p class="bhote-event-caveat"><span data-role="caveat"></span><span data-role="imagery-cloud-note"> ${escapeMarkup(t('Clouds are preserved from the source imagery.'))}</span></p>
   `;
@@ -2758,7 +2758,7 @@ export function createBhoteKoshiEventLayer({
     setElementProperty(
       button,
       'textContent',
-      _cinematicActive ? t('■ RELEASE CAMERA') : t('◉ CINEMATIC'),
+      _cinematicActive ? t('■ Release camera') : t('◉ Cinematic'),
     );
     setElementAttribute(button, 'aria-pressed', String(_cinematicActive));
   }
@@ -3130,7 +3130,7 @@ export function createBhoteKoshiEventLayer({
     setElementProperty(
       _panelRefs.timelineLabel,
       'textContent',
-      sceneDirected ? t('NEPAL SCENE CLOCK') : t('RECONSTRUCTION CLOCK'),
+      sceneDirected ? t('Nepal scene clock') : t('Reconstruction clock'),
     );
     const sceneDuration = Number(_sceneContext?.sceneDurationSec) || 0;
     setElementProperty(
@@ -3143,22 +3143,22 @@ export function createBhoteKoshiEventLayer({
     );
     const playLabel = sceneDirected
       ? _sceneActionPending && _sceneActionPending.type !== 'scene'
-        ? t('… PLAYING SHOT')
-        : t('▶ PLAY SHOT')
+        ? t('… Playing shot')
+        : t('▶ Play shot')
       : _playing
-        ? t('Ⅱ PAUSE')
+        ? t('Ⅱ Pause')
         : _progress >= 1
           ? _cinematicReplayArmed
-            ? t('↺ REPLAY CINEMATIC')
-            : t('↺ REPLAY')
-          : t('▶ PLAY');
+            ? t('↺ Replay cinematic')
+            : t('↺ Replay')
+          : t('▶ Play');
     setElementProperty(_panelRefs.playButton, 'textContent', playLabel);
     setElementProperty(
       _panelRefs.playSceneButton,
       'textContent',
       _sceneActionPending?.type === 'scene'
-        ? t('… PLAYING SCENE')
-        : t('▶ PLAY SCENE'),
+        ? t('… Playing scene')
+        : t('▶ Play scene'),
     );
     setElementProperty(
       _panelRefs.playSceneButton,
@@ -3184,7 +3184,7 @@ export function createBhoteKoshiEventLayer({
     setElementProperty(
       _panelRefs.storyReplayButton,
       'textContent',
-      t('↺ FULL STORY'),
+      t('↺ Full story'),
     );
     if (!sceneDirected) {
       setElementProperty(_panelRefs.storyReplayButton, 'disabled', false);
@@ -3217,10 +3217,10 @@ export function createBhoteKoshiEventLayer({
       sceneDirected
         ? _sceneContext?.shotDisplayTitle ||
             _sceneContext?.shotTitle ||
-            t('SCENE SHOT')
+            t('Scene shot')
         : observation?.shortTitle || observation?.title
           ? bhoteEventText(observation.shortTitle || observation.title)
-          : t('EVIDENCE'),
+          : t('Evidence'),
     );
     const sourceCount = Math.max(
       0,
@@ -3228,12 +3228,12 @@ export function createBhoteKoshiEventLayer({
     );
     const beatMeta = [
       evidencePhaseLabel(observation?.phase),
-      t('TIME UNVERIFIED'),
+      t('Time unverified'),
       sourceCount > 1
-        ? tn(sourceCount, '{count} SOURCE', '{count} SOURCES')
+        ? tn(sourceCount, '{count} source', '{count} sources')
         : '',
       observation?.imageryCoverage === 'outside'
-        ? t('OUTSIDE IMAGERY SWIPE')
+        ? t('Outside imagery swipe')
         : '',
     ]
       .filter(Boolean)
@@ -3242,11 +3242,11 @@ export function createBhoteKoshiEventLayer({
       _panelRefs.beatMeta,
       'textContent',
       sceneDirected
-        ? t('{scene} / AUTHORED SHOT', {
+        ? t('{scene} / authored shot', {
             scene: String(
               _sceneContext?.sceneDisplayTitle ||
                 _sceneContext?.sceneTitle ||
-                t('NEPAL FLOOD INCIDENT'),
+                t('Nepal flood incident'),
             ).toUpperCase(),
           })
         : beatMeta,
@@ -3341,7 +3341,7 @@ export function createBhoteKoshiEventLayer({
     if (_panelRefs?.caveat) {
       _panelRefs.caveat.textContent = imageryAvailable
         ? bhoteEventText(_event?.reconstruction?.caveat || '')
-        : t('SCHEMATIC CORRIDOR, NOT MODELED ARRIVAL TIME.');
+        : t('Schematic corridor, not modeled arrival time.');
     }
     if (_panelRefs?.imageryCloudNote)
       _panelRefs.imageryCloudNote.hidden = !imageryAvailable;

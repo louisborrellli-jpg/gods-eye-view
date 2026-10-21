@@ -283,7 +283,7 @@
 
 .bhote-embedded-callout footer strong {
   overflow: hidden;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.25;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -292,7 +292,7 @@
 .bhote-embedded-callout footer small {
   grid-column: 1;
   color: rgba(151, 211, 224, 0.7);
-  font-size: 8px;
+  font-size: 12px;
   line-height: 1.35;
 }
 
@@ -301,7 +301,7 @@
   grid-row: 1 / span 2;
   align-self: center;
   color: #6be8ff;
-  font-size: 8px;
+  font-size: 12px;
   text-decoration: none;
 }
 
@@ -349,9 +349,9 @@ html:not([lang='en']) .bhote-embedded-callout footer a {
 .bhote-event-status,
 .bhote-event-evidence summary,
 .bhote-event-report small {
-  font-size: 9px;
+  font-size: 12px;
   line-height: 1.35;
-  text-transform: uppercase;
+  text-transform: none;
   color: var(--accent);
   opacity: 0.72;
 }
@@ -433,7 +433,7 @@ html:not([lang='en']) .bhote-event-section-head span:last-child {
 }
 
 .bhote-event-dates {
-  font-size: 8px;
+  font-size: 12px;
   color: rgba(174, 208, 216, 0.62);
 }
 
@@ -481,14 +481,14 @@ html:not([lang='en']) .bhote-event-date {
 .bhote-event-story-current span,
 .bhote-event-story-current small {
   color: rgba(116, 216, 235, 0.7);
-  font-size: 8px;
+  font-size: 12px;
   line-height: 1.25;
 }
 
 .bhote-event-story-current strong {
   overflow: hidden;
   color: var(--text-primary);
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.25;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -543,7 +543,7 @@ html:not([lang='en']) .bhote-event-story-current small {
   color: var(--text-primary);
   background: rgba(7, 25, 35, 0.9);
   font: inherit;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 0;
   cursor: pointer;
 }
@@ -553,7 +553,7 @@ html:not([lang='en']) .bhote-event-story-current small {
   min-height: 30px;
   padding: 0 5px;
   overflow: hidden;
-  font-size: 8px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -628,7 +628,7 @@ html:not([lang='en']) .bhote-event-actions button {
   padding: 8px 0 0;
   border-top: 1px solid rgba(95, 213, 236, 0.16);
   color: rgba(116, 216, 235, 0.62);
-  font-size: 8px;
+  font-size: 12px;
   line-height: 1.35;
 }
 
@@ -646,7 +646,7 @@ html:not([lang='en']) .bhote-event-actions button {
 
 .bhote-event-caveat {
   margin: 11px 16px 14px;
-  font-size: 8px;
+  font-size: 12px;
   line-height: 1.5;
   color: rgba(179, 204, 210, 0.62);
 }

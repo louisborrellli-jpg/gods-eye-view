@@ -5,7 +5,7 @@ export { NEAREST_RADIUS_M } from '../../policy.js';
 
 export const GOOGLE_PROVIDER_ID = 'google';
 export const GOOGLE_NAME = msg('Google Street View');
-export const GOOGLE_LABEL = msg('GOOGLE STREET VIEW');
+export const GOOGLE_LABEL = msg('Google street view');
 /** The browser Maps key; Street View also needs the Maps JavaScript API on it. */
 export const GOOGLE_KEY_ID = 'google-maps';
 

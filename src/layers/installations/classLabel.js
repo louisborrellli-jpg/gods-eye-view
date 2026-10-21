@@ -25,23 +25,23 @@ export function installationClassLabel(klass) {
   const key = String(klass || 'installation');
   switch (key) {
     case 'airfield':
-      return t('AIRFIELD', { context: 'installation class' });
+      return t('Airfield', { context: 'installation class' });
     case 'naval_base':
-      return t('NAVAL BASE', { context: 'installation class' });
+      return t('Naval base', { context: 'installation class' });
     case 'range':
-      return t('RANGE', { context: 'installation class' });
+      return t('Range', { context: 'installation class' });
     case 'military_land':
-      return t('MILITARY LAND', { context: 'installation class' });
+      return t('Military land', { context: 'installation class' });
     case 'base':
-      return t('BASE', { context: 'installation class' });
+      return t('Base', { context: 'installation class' });
     case 'barracks':
-      return t('BARRACKS', { context: 'installation class' });
+      return t('Barracks', { context: 'installation class' });
     case 'training_area':
-      return t('TRAINING AREA', { context: 'installation class' });
+      return t('Training area', { context: 'installation class' });
     case 'places_candidate':
-      return t('PLACES CANDIDATE', { context: 'installation class' });
+      return t('Places candidate', { context: 'installation class' });
     case 'installation':
-      return t('INSTALLATION', { context: 'installation class' });
+      return t('Installation', { context: 'installation class' });
     default:
       return key.replaceAll('_', ' ').toUpperCase();
   }

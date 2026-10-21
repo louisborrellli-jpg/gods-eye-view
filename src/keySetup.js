@@ -32,10 +32,10 @@ export function keySetupChipLabel(status) {
   return missing > 0
     ? tn(
         missing,
-        'ADD KEYS · {count} KEY MISSING',
-        'ADD KEYS · {count} KEYS MISSING',
+        'Add keys · {count} key missing',
+        'Add keys · {count} keys missing',
       )
-    : t('ALL KEYS IN');
+    : t('All keys in');
 }
 
 /**
@@ -223,10 +223,10 @@ function updateCloudVoiceAuthControl(auth, busy = false) {
   const toggle = auth.querySelector('[data-cloud-voice-auth-toggle]');
   state.textContent =
     mode === 'oauth'
-      ? t('VOICE AUTH · CHATGPT OAUTH')
-      : t('VOICE AUTH · API KEY');
+      ? t('Voice auth · Chatgpt oauth')
+      : t('Voice auth · API key');
   toggle.textContent =
-    mode === 'oauth' ? t('USE API KEY') : t('USE CHATGPT OAUTH');
+    mode === 'oauth' ? t('Use API key') : t('Use chatgpt oauth');
   toggle.title =
     mode === 'oauth'
       ? t('Use OPENAI_API_KEY for the next cloud voice session')
@@ -288,7 +288,7 @@ function buildRow(documentRef, key) {
   get.href = key.getUrl;
   get.target = '_blank';
   get.rel = 'noopener noreferrer';
-  get.textContent = key.set ? t('MANAGE ↗') : t('GET KEY ↗');
+  get.textContent = key.set ? t('Manage ↗') : t('Get key ↗');
   head.append(get);
 
   const unlocks = documentRef.createElement('p');
@@ -318,7 +318,7 @@ function buildRow(documentRef, key) {
       remove.type = 'button';
       remove.className = 'key-setup-remove';
       remove.dataset.keySetupRemove = JSON.stringify(key.envVars);
-      remove.textContent = t('REMOVE');
+      remove.textContent = t('Remove');
       remove.title = t("Remove {title} from this app's saved keys", {
         title: key.title,
       });
@@ -676,7 +676,7 @@ export async function initKeySetup({
           if (!available) {
             say(
               t('ChatGPT sign-in timed out. Click {button} to try again.', {
-                button: t('USE CHATGPT OAUTH'),
+                button: t('Use chatgpt oauth'),
               }),
             );
             return;

@@ -220,6 +220,8 @@ export function normalizeAuto(value) {
     destination: normalizePlace(value.destination),
     dates,
     fetchedAt: finite(value.fetchedAt) ?? 0,
+    // Which parser read it; 0 for records saved before versions existed.
+    version: finite(value.version) ?? 0,
   };
 }
 

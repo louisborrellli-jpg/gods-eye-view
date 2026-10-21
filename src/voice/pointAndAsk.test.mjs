@@ -267,7 +267,7 @@ test('card: the chip says what "this" or "here" resolved to and resets per turn'
   assert.equal(view.visible, true);
   assert.deepEqual(view.pointer, {
     visible: true,
-    kind: 'THIS',
+    kind: 'This',
     text: 'UPS793',
   });
   assert.equal(
@@ -281,7 +281,7 @@ test('card: the chip says what "this" or "here" resolved to and resets per turn'
   });
   assert.deepEqual(voiceCardView(state).pointer, {
     visible: true,
-    kind: 'HERE',
+    kind: 'Here',
     text: '30.27, -97.74',
   });
   assert.equal(
@@ -351,9 +351,10 @@ test('deixis prompt lint: one short rule, and every sentinel it names exists in 
   assert.ok(size <= 52000, `prompt size ${size}`);
 });
 
-
 test('after-tool speech allows returned items to answer requested lists and rankings', () => {
-  const rule = realtimeInstructions().split('\n').find(line => line.startsWith('AFTER TOOLS:'));
+  const rule = realtimeInstructions()
+    .split('\n')
+    .find((line) => line.startsWith('AFTER TOOLS:'));
   assert.match(rule, /requested analyst list or ranking/);
   assert.match(rule, /returned items.*returned values/);
   assert.match(rule, /keep their order/);

@@ -7,15 +7,15 @@ const DAY_MS = 86_400_000;
 
 /** SINCE slider stops, in relative days so a share link keeps its meaning. */
 export const SINCE_STOPS = Object.freeze([
-  Object.freeze({ days: 0, label: msg('ANY DATE') }),
-  Object.freeze({ days: 3652, label: msg('LAST 10 YEARS') }),
-  Object.freeze({ days: 1826, label: msg('LAST 5 YEARS') }),
-  Object.freeze({ days: 1095, label: msg('LAST 3 YEARS') }),
-  Object.freeze({ days: 730, label: msg('LAST 2 YEARS') }),
-  Object.freeze({ days: 365, label: msg('LAST YEAR') }),
-  Object.freeze({ days: 182, label: msg('LAST 6 MONTHS') }),
-  Object.freeze({ days: 91, label: msg('LAST 3 MONTHS') }),
-  Object.freeze({ days: 30, label: msg('LAST MONTH') }),
+  Object.freeze({ days: 0, label: msg('Any date') }),
+  Object.freeze({ days: 3652, label: msg('Last 10 years') }),
+  Object.freeze({ days: 1826, label: msg('Last 5 years') }),
+  Object.freeze({ days: 1095, label: msg('Last 3 years') }),
+  Object.freeze({ days: 730, label: msg('Last 2 years') }),
+  Object.freeze({ days: 365, label: msg('Last year') }),
+  Object.freeze({ days: 182, label: msg('Last 6 months') }),
+  Object.freeze({ days: 91, label: msg('Last 3 months') }),
+  Object.freeze({ days: 30, label: msg('Last month') }),
 ]);
 
 /** The exact stop for a day count, else the nearest one. */
@@ -35,16 +35,16 @@ export function sinceStopIndex(days) {
 function presentSince(days, now) {
   const value = Number(days) || 0;
   const index = sinceStopIndex(value);
-  if (value <= 0) return { index, days: 0, label: t('ANY DATE') };
+  if (value <= 0) return { index, days: 0, label: t('Any date') };
   const stop = SINCE_STOPS[index];
   const window =
     stop.days === value
       ? t(stop.label)
-      : tn(value, 'LAST {count} DAY', 'LAST {count} DAYS');
+      : tn(value, 'Last {count} day', 'Last {count} days');
   return {
     index,
     days: value,
-    label: t('{window} · SINCE {date}', {
+    label: t('{window} · Since {date}', {
       window,
       date: formatDate(now - value * DAY_MS),
     }),
@@ -82,19 +82,19 @@ function presentStatus(state) {
     ? t('Turn Street Level off')
     : t('Turn Street Level on');
   if (state.keyRejected)
-    return { text: t('KEY REJECTED'), tone: 'warn', pressed, title };
+    return { text: t('Key rejected'), tone: 'warn', pressed, title };
   if (state.keyRequired)
     return {
-      text: t('KEY REQUIRED'),
+      text: t('Key required'),
       tone: 'warn',
       pressed,
       title: keyGuidance(state) || title,
     };
   if (state.coverage.loading)
-    return { text: t('LOADING'), tone: 'busy', pressed, title };
+    return { text: t('Loading'), tone: 'busy', pressed, title };
   return pressed
-    ? { text: t('ON'), tone: 'on', pressed, title }
-    : { text: t('OFF'), tone: '', pressed, title };
+    ? { text: t('On'), tone: 'on', pressed, title }
+    : { text: t('Off'), tone: '', pressed, title };
 }
 
 // Provider refusals with a number stay English data (kartaview and panoramax
@@ -214,7 +214,7 @@ function presentNearest(state) {
   const ready = state.groundClickReady === true;
   return {
     visible: true,
-    label: t('OPEN {labels}', { labels }),
+    label: t('Open {labels}', { labels }),
     title: ready
       ? t('Open {names} at the centre of the view', { names })
       : t('Zoom in to a street to open {names} here', { names }),

@@ -374,7 +374,7 @@ export function createAlprCamerasLayer({ source, services } = {}) {
         chips: [
           {
             id: 'find-camera',
-            label: t('SHOW NEAREST'),
+            label: t('Show nearest'),
             title: state.viewer?.trackedEntity
               ? t(
                   'Stop following the current object before navigating to a camera',
