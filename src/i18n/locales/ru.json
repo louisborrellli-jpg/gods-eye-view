@@ -3083,5 +3083,24 @@
     "many": "{count} пунктов",
     "other": "{count} пункта"
   },
-  "Border Crossings": "Пограничные пункты"
+  "Border Crossings": "Пограничные пункты",
+  "Fly to Detroit to load city data": "Перелетите к Детройту, чтобы загрузить данные города",
+  "Zoom in to load Detroit city data": "Приблизьте, чтобы загрузить данные Детройта",
+  "A Detroit feed failed": "Источник Детройта не ответил",
+  "{count} shown · updated {age}": "{count} показано · обновлено {age}",
+  "Fly to Detroit and zoom in": "Перелетите к Детройту и приблизьте",
+  "{count} features": {
+    "one": "{count} объект",
+    "few": "{count} объекта",
+    "many": "{count} объектов",
+    "other": "{count} объекта"
+  },
+  "Detroit Open Data": "Открытые данные Детройта",
+  "Civic": "Городское",
+  "Incidents": "Происшествия",
+  "Roadwork": "Дорожные работы",
+  "Traffic signals": "Светофоры",
+  "Crime (30d)": "Преступления (30 дн.)",
+  "Fire runs (7d)": "Выезды пожарных (7 дн.)",
+  "Construction": "Строительство"
 }

@@ -3012,5 +3012,23 @@
     "many": "{count} de cruces",
     "other": "{count} cruces"
   },
-  "Border Crossings": "Cruces fronterizos"
+  "Border Crossings": "Cruces fronterizos",
+  "Fly to Detroit to load city data": "Vuele a Detroit para cargar datos de la ciudad",
+  "Zoom in to load Detroit city data": "Acérquese para cargar los datos de Detroit",
+  "A Detroit feed failed": "Falló una fuente de Detroit",
+  "{count} shown · updated {age}": "{count} visibles · actualizado {age}",
+  "Fly to Detroit and zoom in": "Vuele a Detroit y acérquese",
+  "{count} features": {
+    "one": "{count} elemento",
+    "many": "{count} de elementos",
+    "other": "{count} elementos"
+  },
+  "Detroit Open Data": "Datos abiertos de Detroit",
+  "Civic": "Cívico",
+  "Incidents": "Incidentes",
+  "Roadwork": "Obras",
+  "Traffic signals": "Semáforos",
+  "Crime (30d)": "Delitos (30 d)",
+  "Fire runs (7d)": "Salidas de bomberos (7 d)",
+  "Construction": "Obras viales"
 }
