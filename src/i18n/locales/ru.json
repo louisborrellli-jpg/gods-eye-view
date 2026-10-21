@@ -3101,5 +3101,10 @@
   "Roadwork": "Дорожные работы",
   "Traffic signals": "Светофоры",
   "Crime (30d)": "Преступления (30 дн.)",
-  "Construction": "Строительство"
+  "Construction": "Строительство",
+  "Weather alert source unavailable": "Источник метеопредупреждений недоступен",
+  "Extreme": "Экстремальная",
+  "Severe": "Сильная",
+  "Minor": "Незначительная",
+  "Weather Alerts": "Метеопредупреждения"
 }

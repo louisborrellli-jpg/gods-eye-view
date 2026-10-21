@@ -1069,6 +1069,15 @@
     ],
     "external": ["cesium"]
   },
+  "weather-alerts": {
+    "exports": ["./layers/weather-alerts"],
+    "modules": [
+      "src/layers/weatherAlerts/index.js",
+      "src/layers/weatherAlerts/source.js",
+      "src/layers/weatherAlerts/records.js"
+    ],
+    "external": ["cesium"]
+  },
   "recent-imagery": {
     "exports": ["./layers/recent-imagery"],
     "modules": [
@@ -2524,7 +2533,11 @@
       "src/layers/aurora/model.js",
       "src/layers/aurora/source.js",
       "src/layers/aurora/records.js",
-      "src/app/layers/aurora.js"
+      "src/app/layers/aurora.js",
+      "src/app/layers/weatherAlerts.js",
+      "src/layers/weatherAlerts/index.js",
+      "src/layers/weatherAlerts/source.js",
+      "src/layers/weatherAlerts/records.js"
     ],
     "external": [
       "hls.js",
@@ -3108,7 +3121,11 @@
       "src/layers/aurora/model.js",
       "src/layers/aurora/source.js",
       "src/layers/aurora/records.js",
-      "src/app/layers/aurora.js"
+      "src/app/layers/aurora.js",
+      "src/app/layers/weatherAlerts.js",
+      "src/layers/weatherAlerts/index.js",
+      "src/layers/weatherAlerts/source.js",
+      "src/layers/weatherAlerts/records.js"
     ],
     "external": [
       "hls.js",
@@ -3540,7 +3557,9 @@
       "src/layers/airQuality/model.js",
       "src/layers/airQuality/source.js",
       "src/layers/aurora/source.js",
-      "src/layers/aurora/records.js"
+      "src/layers/aurora/records.js",
+      "src/layers/weatherAlerts/source.js",
+      "src/layers/weatherAlerts/records.js"
     ],
     "external": []
   },

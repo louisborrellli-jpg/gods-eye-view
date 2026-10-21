@@ -16,6 +16,7 @@ export const LAYER_NAME_KEYS = Object.freeze({
   flights: msg('Live Flights'),
   military: msg('Military Flights'),
   earthquakes: msg('Earthquakes (24h)'),
+  'weather-alerts': msg('Weather Alerts'),
   aurora: msg('Aurora (nowcast)'),
   satellites: msg('Satellites'),
   'rocket-launches': msg('Space Missions (30d)'),

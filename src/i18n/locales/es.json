@@ -3029,5 +3029,10 @@
   "Roadwork": "Obras",
   "Traffic signals": "Semáforos",
   "Crime (30d)": "Delitos (30 d)",
-  "Construction": "Obras viales"
+  "Construction": "Obras viales",
+  "Weather alert source unavailable": "Fuente de alertas meteorológicas no disponible",
+  "Extreme": "Extrema",
+  "Severe": "Grave",
+  "Minor": "Menor",
+  "Weather Alerts": "Alertas meteorológicas"
 }
