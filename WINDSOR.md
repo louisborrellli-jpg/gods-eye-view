@@ -85,6 +85,35 @@ cameras in the Windsor–Detroit area alone.
 
 Then `npm run dev` and open http://localhost:4173.
 
+### On the TV, with your phone as the remote
+
+A Roku can't run the globe itself (no real browser), so run it on the laptop
+and mirror the screen: **Windows** Win+K → pick the Roku → Duplicate;
+**Mac** Control Centre → Screen Mirroring (AirPlay) → the Roku.
+
+Then turn on the phone remote in `.env`:
+
+```sh
+GEV_REMOTE=1
+# GEV_REMOTE_PORT=4180   # change if 4180 is taken
+```
+
+Restart `npm run dev`. The terminal and the TV both show the address and a
+4-digit PIN. On your phone (same Wi-Fi), open that address, e.g.
+`http://192.168.1.23:4180`, enter the PIN, then Share → Add to Home Screen.
+
+The remote has a D-pad (hold to keep moving), zoom/turn/tilt, Home, cameras
+(previous/next steps through local cameras nearest downtown first), layer
+toggles, the live border board (tap a crossing to fly there), the visual
+looks, a slow orbit for leaving it running, and **Hide panels** for a clean
+TV picture.
+
+Safety: the globe server still only listens on this computer (it holds your
+API keys). The remote is a separate tiny server that only serves the remote
+page and accepts a fixed list of commands, and only from a phone that
+entered the PIN. Wrong guesses lock out after five tries; a pile of wrong
+guesses changes the PIN. Leave it off (`GEV_REMOTE=0`) on public Wi-Fi.
+
 ### Talk to it from Claude Desktop
 
 ```sh

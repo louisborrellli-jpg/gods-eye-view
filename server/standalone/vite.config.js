@@ -4,6 +4,7 @@ import { resolveAllowedHosts } from '../../build/allowedHosts.js';
 import { createBrowserViteConfig } from '../../build/vite.js';
 import { localProviderPlugins } from '../providers/local.js';
 import { localMcpPlugin } from '../mcp/plugin.js';
+import { phoneRemotePlugin } from '../remote/plugin.js';
 import { apiNotFoundPlugin } from './api-not-found.js';
 import { standaloneVoiceTools } from './voiceTools.js';
 import { unwatchedRuntimeDirsPlugin } from './unwatched-cache.js';
@@ -21,6 +22,7 @@ export default defineConfig(({ command, mode }) => {
     plugins: [
       ...localProviderPlugins({ realtime: { tools }, gemini: { tools } }),
       localMcpPlugin(),
+      phoneRemotePlugin(),
       apiNotFoundPlugin(),
       unwatchedRuntimeDirsPlugin(),
     ],

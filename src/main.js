@@ -6,6 +6,7 @@ import {
   startWindsorMode,
   windsorModeEnabled,
 } from './windsor/windsorMode.js';
+import { startPhoneRemote } from './windsor/phoneRemote.js';
 
 // Windsor mode (on unless VITE_WINDSOR_MODE=0): open on Windsor with the
 // simple panel. Must run before the app reads the start view.
@@ -21,6 +22,10 @@ const application = createStandaloneApplication({
 application
   .start()
   .then(() => {
+    // Phone remote (only when the server runs with GEV_REMOTE=1).
+    startPhoneRemote().catch((error) =>
+      console.warn('[phone remote] unavailable', error),
+    );
     if (windsorMode) return startWindsorMode();
   })
   .catch((error) => {

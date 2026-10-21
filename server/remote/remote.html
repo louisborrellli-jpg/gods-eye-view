@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="God's Eye" />
+    <meta name="theme-color" content="#05090f" />
+    <title>God's Eye Remote</title>
+    <style>
+      :root {
+        --bg: #05090f;
+        --panel: #0b1621;
+        --line: rgba(120, 220, 255, 0.22);
+        --line-hi: rgba(120, 220, 255, 0.7);
+        --text: #d9f7ff;
+        --dim: rgba(217, 247, 255, 0.55);
+        --accent: #7fe3ff;
+        --on: rgba(0, 170, 220, 0.28);
+        --slow: #ffb347;
+        --bad: #ff6b6b;
+        --good: #6bffb0;
+        --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+      }
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+      html,
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+      }
+      body {
+        font: 14px/1.4 var(--mono);
+        padding: calc(env(safe-area-inset-top) + 14px) 16px
+          calc(env(safe-area-inset-bottom) + 24px);
+        max-width: 520px;
+        margin: 0 auto;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+      }
+      button {
+        font: inherit;
+        color: inherit;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px 8px;
+        cursor: pointer;
+        transition:
+          transform 0.06s,
+          background 0.15s,
+          border-color 0.15s;
+      }
+      button:active,
+      button.pressed {
+        transform: scale(0.96);
+        border-color: var(--line-hi);
+      }
+      button[aria-pressed='true'] {
+        background: var(--on);
+        border-color: var(--line-hi);
+        color: #fff;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 12px;
+        letter-spacing: 3px;
+        font-weight: 600;
+        color: var(--accent);
+      }
+      .status {
+        font-size: 11px;
+        color: var(--dim);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--bad);
+      }
+      .dot.on {
+        background: var(--good);
+        box-shadow: 0 0 8px var(--good);
+      }
+      .now {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 10px 12px;
+        margin-bottom: 14px;
+        font-size: 12px;
+        color: var(--dim);
+        min-height: 40px;
+      }
+      .now strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+      h2 {
+        font-size: 10px;
+        letter-spacing: 2.5px;
+        color: var(--accent);
+        font-weight: 600;
+        margin: 18px 0 8px;
+      }
+
+      /* D-pad */
+      .pad {
+        position: relative;
+        width: 236px;
+        height: 236px;
+        margin: 4px auto 10px;
+      }
+      .pad button {
+        position: absolute;
+        width: 76px;
+        height: 76px;
+        font-size: 22px;
+        border-radius: 20px;
+        padding: 0;
+      }
+      .pad .up {
+        left: 80px;
+        top: 0;
+      }
+      .pad .down {
+        left: 80px;
+        bottom: 0;
+      }
+      .pad .left {
+        left: 0;
+        top: 80px;
+      }
+      .pad .right {
+        right: 0;
+        top: 80px;
+      }
+      .pad .home {
+        left: 80px;
+        top: 80px;
+        border-radius: 50%;
+        font-size: 13px;
+        letter-spacing: 1px;
+        background: #102433;
+      }
+      .row {
+        display: grid;
+        gap: 8px;
+      }
+      .row.c2 {
+        grid-template-columns: 1fr 1fr;
+      }
+      .row.c3 {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+      .row + .row {
+        margin-top: 8px;
+      }
+      .big {
+        font-size: 20px;
+        padding: 12px 0;
+      }
+      .lbl {
+        display: block;
+        font-size: 10px;
+        color: var(--dim);
+        letter-spacing: 1px;
+        margin-top: 2px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th {
+        font-weight: 400;
+        font-size: 10px;
+        color: var(--dim);
+        text-align: right;
+        padding: 0 4px 6px;
+      }
+      th:first-child {
+        text-align: left;
+      }
+      td {
+        padding: 13px 4px;
+        border-top: 1px solid var(--line);
+        text-align: right;
+        font-size: 15px;
+      }
+      td:first-child {
+        text-align: left;
+        font-size: 14px;
+      }
+      tr.crossing:active td {
+        color: #fff;
+        background: var(--on);
+      }
+      .slow {
+        color: var(--slow);
+      }
+      .bad {
+        color: var(--bad);
+      }
+      .note {
+        font-size: 10px;
+        color: var(--dim);
+        margin-top: 6px;
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .chips button {
+        padding: 10px 14px;
+        border-radius: 999px;
+        font-size: 12px;
+      }
+
+      /* Pairing */
+      #pair {
+        display: none;
+        text-align: center;
+        padding-top: 8vh;
+      }
+      body.unpaired #pair {
+        display: block;
+      }
+      body.unpaired #main {
+        display: none;
+      }
+      #pair p {
+        color: var(--dim);
+        font-size: 13px;
+        margin: 8px 0 20px;
+      }
+      .pin {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .pin span {
+        width: 52px;
+        height: 64px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        font-size: 28px;
+        color: #fff;
+      }
+      .pin span.filled {
+        border-color: var(--line-hi);
+      }
+      .keys {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        max-width: 300px;
+        margin: 0 auto;
+      }
+      .keys button {
+        font-size: 24px;
+        padding: 16px 0;
+      }
+      #pair-error {
+        color: var(--bad);
+        min-height: 20px;
+        font-size: 12px;
+      }
+      .offline {
+        color: var(--slow);
+      }
+    </style>
+  </head>
+  <body class="unpaired">
+    <section id="pair">
+      <header style="justify-content: center">
+        <h1>GOD'S EYE · REMOTE</h1>
+      </header>
+      <p>Enter the PIN showing on the TV.</p>
+      <div class="pin" id="pin-boxes">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <div id="pair-error"></div>
+      <div class="keys" id="keys"></div>
+    </section>
+
+    <main id="main">
+      <header>
+        <h1>GOD'S EYE · REMOTE</h1>
+        <div class="status">
+          <span class="dot" id="tv-dot"></span><span id="tv-label">TV</span>
+        </div>
+      </header>
+      <div class="now" id="now">Connecting…</div>
+
+      <div class="pad">
+        <button
+          class="up"
+          data-cmd="move"
+          data-arg="forward"
+          data-repeat
+          aria-label="Forward"
+        >
+          ▲
+        </button>
+        <button
+          class="left"
+          data-cmd="move"
+          data-arg="left"
+          data-repeat
+          aria-label="Left"
+        >
+          ◀
+        </button>
+        <button class="home" data-cmd="home" aria-label="Windsor">
+          ⌂<br />HOME
+        </button>
+        <button
+          class="right"
+          data-cmd="move"
+          data-arg="right"
+          data-repeat
+          aria-label="Right"
+        >
+          ▶
+        </button>
+        <button
+          class="down"
+          data-cmd="move"
+          data-arg="back"
+          data-repeat
+          aria-label="Back"
+        >
+          ▼
+        </button>
+      </div>
+
+      <div class="row c3">
+        <button class="big" data-cmd="zoom" data-arg="out" data-repeat>
+          −<span class="lbl">ZOOM</span>
+        </button>
+        <button class="big" data-cmd="turn" data-arg="left" data-repeat>
+          ⟲<span class="lbl">TURN</span>
+        </button>
+        <button class="big" data-cmd="tilt" data-arg="up" data-repeat>
+          ⤒<span class="lbl">TILT UP</span>
+        </button>
+      </div>
+      <div class="row c3">
+        <button class="big" data-cmd="zoom" data-arg="in" data-repeat>
+          +<span class="lbl">ZOOM</span>
+        </button>
+        <button class="big" data-cmd="turn" data-arg="right" data-repeat>
+          ⟳<span class="lbl">TURN</span>
+        </button>
+        <button class="big" data-cmd="tilt" data-arg="down" data-repeat>
+          ⤓<span class="lbl">TILT DOWN</span>
+        </button>
+      </div>
+
+      <h2>CAMERAS</h2>
+      <div class="row c3">
+        <button data-cmd="cam" data-arg="prev">◀ Prev</button>
+        <button data-cmd="cam" data-arg="nearest">◎ Nearest</button>
+        <button data-cmd="cam" data-arg="next">Next ▶</button>
+      </div>
+
+      <h2>LAYERS</h2>
+      <div class="row c3" id="layers">
+        <button data-cmd="layer" data-arg="cctv">◉ Cameras</button>
+        <button data-cmd="layer" data-arg="flights">✈ Flights</button>
+        <button data-cmd="layer" data-arg="weather-radar">☂ Radar</button>
+        <button data-cmd="layer" data-arg="ais-live-vessels">⚓ Ships</button>
+        <button data-cmd="layer" data-arg="traffic">≋ Traffic</button>
+        <button data-cmd="layer" data-arg="weather-lightning">
+          ϟ Lightning
+        </button>
+      </div>
+
+      <h2 style="display: flex; justify-content: space-between">
+        <span>BORDER WAIT · TAP TO FLY</span
+        ><span id="border-at" style="color: var(--dim)"></span>
+      </h2>
+      <table>
+        <thead>
+          <tr>
+            <th>min</th>
+            <th>→ US</th>
+            <th>→ CA</th>
+          </tr>
+        </thead>
+        <tbody id="border"></tbody>
+      </table>
+      <div class="note">Cars, standard lanes. Orange 15+, red 30+.</div>
+
+      <h2>LOOK</h2>
+      <div class="chips" id="styles">
+        <button data-cmd="style" data-arg="normal">Normal</button>
+        <button data-cmd="style" data-arg="surveillance">Night vision</button>
+        <button data-cmd="style" data-arg="thermal">Thermal</button>
+        <button data-cmd="style" data-arg="retro">Retro</button>
+        <button data-cmd="style" data-arg="noir">Noir</button>
+        <button data-cmd="style" data-arg="anime">Anime</button>
+        <button data-cmd="style" data-arg="snow">Snow</button>
+      </div>
+
+      <h2>TV</h2>
+      <div class="row c2">
+        <button id="orbit-btn" data-cmd="orbit">↻ Slow orbit</button>
+        <button id="clean-btn" data-cmd="clean">▣ Hide panels</button>
+      </div>
+    </main>
+    <script src="/remote.js"></script>
+  </body>
+</html>
