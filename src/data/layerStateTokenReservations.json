@@ -29,6 +29,7 @@
   ["traffic", "t"],
   ["transit", "j"],
   ["weather-alerts", "8"],
+  ["great-lakes", "9"],
   ["weather-cyclones", "y"],
   ["weather-lightning", "l"],
   ["weather-radar", "v"],

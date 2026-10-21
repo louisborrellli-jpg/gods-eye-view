@@ -25,6 +25,7 @@ import { createApplicationAwareness } from './layers/militaryAwareness.js';
 import { createApplicationFirms } from './layers/firms.js';
 import { createApplicationEarthquakes } from './layers/earthquakes.js';
 import { createApplicationWeatherAlerts } from './layers/weatherAlerts.js';
+import { createApplicationGreatLakes } from './layers/greatLakes.js';
 import { createApplicationAurora } from './layers/aurora.js';
 import { createApplicationAirQuality } from './layers/airQuality.js';
 import { createApplicationFirePerimeters } from './layers/perimeters.js';
@@ -131,6 +132,9 @@ export function createApplicationCatalog({
         createApplicationEarthquakes({ source: sources.earthquakes }),
         createApplicationWeatherAlerts({
           source: sources['weather-alerts'],
+        }),
+        createApplicationGreatLakes({
+          source: sources['great-lakes'],
         }),
         createApplicationAurora({ source: sources.aurora }),
         createApplicationAirQuality({ source: sources['air-quality'] }),
