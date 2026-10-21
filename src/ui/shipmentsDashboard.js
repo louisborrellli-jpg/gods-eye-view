@@ -25,6 +25,7 @@ import {
   shipmentClocks,
   shipmentStage,
 } from '../layers/shipments/model.js';
+import { searchShipments } from '../layers/shipments/search.js';
 import {
   describePendingRule,
   describePendingShort,
@@ -98,6 +99,11 @@ export function createShipmentsDashboard({
   let store = createShipmentStore({ storage, now });
   let tracker = createShipmentTracker({ store, source: trackingSource, now });
   let filter = 'all';
+  const params = new URLSearchParams(globalThis.location?.search ?? '');
+  let query = String(params.get('q') ?? '').slice(0, 60);
+  if (FILTERS.some(([id]) => id === params.get('filter')))
+    filter = params.get('filter');
+  let listHost = null;
   let lastRefresh = null;
   let status = '';
   let sheet = null;
@@ -228,6 +234,8 @@ export function createShipmentsDashboard({
   function render() {
     const day = today();
     const shipments = store.list();
+    // A refresh re-renders the page; keep the search box where it was.
+    const searching = doc.activeElement?.classList?.contains('sp-search');
     root.replaceChildren();
 
     const header = el('header', 'sp-header');
@@ -293,32 +301,30 @@ export function createShipmentsDashboard({
     }
     root.append(segments);
 
-    const visible = sorted(
-      shipments.filter((item) => matchesFilter(item, day)),
-      day,
-    );
-    if (!shipments.length) root.append(emptyState());
-    else if (!visible.length)
-      root.append(el('p', 'sp-empty-filter', t('Nothing here right now.')));
-    else {
-      const table = el('section', 'sp-table');
-      table.setAttribute('aria-label', t('Your containers'));
-      table.append(
-        el(
-          'div',
-          'sp-table-head',
-          el('span', '', t('Container')),
-          el('span', '', t('Status')),
-          el('span', '', t('Port ETA')),
-          el('span', '', t('Ramp ETA')),
-          el('span', '', t('Last free day')),
-          el('span', '', t('Next step')),
-          el('span', ''),
-        ),
+    if (shipments.length) {
+      const search = el('input', 'sp-search');
+      search.type = 'search';
+      search.value = query;
+      search.placeholder = t(
+        'Search: container number, your reference or ship',
       );
-      for (const shipment of visible) table.append(row(shipment, day));
-      root.append(table);
+      search.setAttribute('aria-label', t('Find a container'));
+      search.autocomplete = 'off';
+      search.spellcheck = false;
+      search.addEventListener('input', () => {
+        query = search.value;
+        renderList();
+      });
+      root.append(el('div', 'sp-search-wrap', search));
+      if (searching) {
+        search.focus();
+        search.setSelectionRange?.(search.value.length, search.value.length);
+      }
     }
+
+    listHost = el('div', 'sp-list-host');
+    root.append(listHost);
+    renderList();
 
     const footer = [];
     if (status) footer.push(status);
@@ -332,8 +338,60 @@ export function createShipmentsDashboard({
     );
     root.append(el('p', 'sp-footer', footer.join(' · ')));
     root.append(
-      el('p', 'sp-footer sp-footer-link', linkTo('/', t('Open the map'))),
+      el(
+        'p',
+        'sp-footer sp-footer-link',
+        linkTo('/home.html', t('Home')),
+        ' · ',
+        linkTo('/', t('Open the map')),
+      ),
     );
+  }
+
+  /** The rows: the current filter, then the search, most urgent first. */
+  function renderList() {
+    if (!listHost) return;
+    const day = today();
+    const shipments = store.list();
+    listHost.replaceChildren();
+    let visible = sorted(
+      shipments.filter((item) => matchesFilter(item, day)),
+      day,
+    );
+    if (query.trim()) visible = searchShipments(visible, query);
+    if (!shipments.length) {
+      listHost.append(emptyState());
+      return;
+    }
+    if (!visible.length) {
+      listHost.append(
+        el(
+          'p',
+          'sp-empty-filter',
+          query.trim()
+            ? t('No container matches “{query}”.', { query: query.trim() })
+            : t('Nothing here right now.'),
+        ),
+      );
+      return;
+    }
+    const table = el('section', 'sp-table');
+    table.setAttribute('aria-label', t('Your containers'));
+    table.append(
+      el(
+        'div',
+        'sp-table-head',
+        el('span', '', t('Container')),
+        el('span', '', t('Status')),
+        el('span', '', t('Port ETA')),
+        el('span', '', t('Ramp ETA')),
+        el('span', '', t('Last free day')),
+        el('span', '', t('Next step')),
+        el('span', ''),
+      ),
+    );
+    for (const shipment of visible) table.append(row(shipment, day));
+    listHost.append(table);
   }
 
   function linkTo(href, label) {
@@ -993,6 +1051,13 @@ export function createShipmentsDashboard({
   }
 
   render();
+  // Links from the home page: ?q= opens a search (and the box itself when
+  // exactly one matches), ?add=1 opens the add sheet.
+  if (params.get('add')) openAdd();
+  else if (query.trim()) {
+    const found = searchShipments(store.list(), query);
+    if (found.length === 1) openDetail(found[0].id);
+  }
   void refresh();
 
   return {

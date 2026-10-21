@@ -3265,5 +3265,48 @@
     "other": "Fuera del tren + {count} días"
   },
   "The ramp’s last free day is counted from the day the box comes off the rail (CN: 1 free day). The empty must be back 4 working days after pickup (MSC). Rail takes about 4 days. Port days count only if you set them. Change a number only if your contract differs.": "El último día libre en la terminal se cuenta desde el día en que el contenedor sale del tren (CN: 1 día libre). El vacío debe devolverse 4 días hábiles después del retiro (MSC). El tren tarda unos 4 días. Los días en puerto solo cuentan si los configuras. Cambia un número solo si tu contrato es distinto.",
-  "Saved in this browser only. Before the box is off the rail, its last free day is estimated from the expected rail arrival.": "Guardado solo en este navegador. Antes de que el contenedor salga del tren, su último día libre se estima a partir de la llegada prevista del tren."
+  "Saved in this browser only. Before the box is off the rail, its last free day is estimated from the expected rail arrival.": "Guardado solo en este navegador. Antes de que el contenedor salga del tren, su último día libre se estima a partir de la llegada prevista del tren.",
+  "ETA": "ETA",
+  "Estimated time of arrival: the day the ship or train is expected.": "Hora estimada de llegada: el día en que se espera el buque o el tren.",
+  "The last day the container can stay before storage charges start. Pick it up by then.": "El último día que el contenedor puede quedarse antes de que empiecen los cargos de almacenaje. Retíralo antes.",
+  "Off the rail": "Fuera del tren",
+  "The container has come off the train at the Toronto rail yard. Free days are counted from here.": "El contenedor ya salió del tren en la terminal ferroviaria de Toronto. Los días libres se cuentan desde aquí.",
+  "The rail yard where the train drops the container (Toronto).": "La terminal ferroviaria donde el tren deja el contenedor (Toronto).",
+  "After unloading, the empty container goes back to the shipping line by this day, or charges start.": "Tras descargarlo, el contenedor vacío vuelve a la naviera antes de este día; si no, empiezan los cargos.",
+  "Estimated: worked out from the latest ETA. It turns into an exact date once the container arrives.": "Estimado: calculado con la última ETA. Se convierte en una fecha exacta cuando llega el contenedor.",
+  "What do you want to do?": "¿Qué quieres hacer?",
+  "Find a container": "Buscar un contenedor",
+  "Container number, your reference or ship name": "Número de contenedor, tu referencia o nombre del buque",
+  "Find": "Buscar",
+  "{count} containers need attention": {
+    "one": "{count} contenedor requiere atención",
+    "many": "{count} contenedores requieren atención",
+    "other": "{count} contenedores requieren atención"
+  },
+  "Nothing needs attention right now": "Nada requiere atención ahora mismo",
+  "and {count} more": {
+    "one": "y {count} más",
+    "many": "y {count} más",
+    "other": "y {count} más"
+  },
+  "Every container is on time with free days left.": "Todos los contenedores van a tiempo y con días libres.",
+  "Add your first container to start tracking.": "Añade tu primer contenedor para empezar el seguimiento.",
+  "See all shipments": "Ver todos los envíos",
+  "{count} containers on the way": {
+    "one": "{count} contenedor en camino",
+    "many": "{count} contenedores en camino",
+    "other": "{count} contenedores en camino"
+  },
+  "Your list of containers": "Tu lista de contenedores",
+  "Show ships on the map": "Ver los buques en el mapa",
+  "Where each container is right now": "Dónde está cada contenedor ahora",
+  "Type the number; everything else fills in by itself": "Escribe el número; el resto se completa solo",
+  "What do these words mean?": "¿Qué significan estas palabras?",
+  "Open the full map (advanced)": "Abrir el mapa completo (avanzado)",
+  "No container matches “{query}”. Check the number, or add it.": "Ningún contenedor coincide con «{query}». Revisa el número o añádelo.",
+  "Simple home": "Inicio sencillo",
+  "Find a container in a few clicks": "Encuentra un contenedor en pocos clics",
+  "Search: container number, your reference or ship": "Buscar: número de contenedor, tu referencia o buque",
+  "Home": "Inicio",
+  "No container matches “{query}”.": "Ningún contenedor coincide con «{query}»."
 }

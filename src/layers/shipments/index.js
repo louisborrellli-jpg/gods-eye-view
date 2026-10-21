@@ -42,6 +42,8 @@ export const SHIPMENTS_LAYER_ID = 'shipments';
 export const SHIPMENTS_OVERLAY_SOURCE_ID = 'shipments';
 const PICK = 'shipment:';
 const ROUTE = 'shipment-route:';
+/** The focus value that asks for every container at once (home page). */
+const SHOW_ALL = '*';
 const ACCENT = '#ffb74d';
 const SEVERITY_ACCENT = Object.freeze({
   0: ACCENT,
@@ -445,6 +447,24 @@ export function createShipmentsLayer({
     }
   }
 
+  /** A container id, or SHOW_ALL for every container's position at once. */
+  function showFocus(focus) {
+    if (focus !== SHOW_ALL) return layer.board.showOnGlobe(focus);
+    const points = store
+      .list()
+      .map((shipment) => positionFor(shipment))
+      .filter(Boolean);
+    if (!points.length) return flyTo(45, -40, 3_200_000);
+    const lat = points.reduce((sum, p) => sum + p.lat, 0) / points.length;
+    const lon = points.reduce((sum, p) => sum + p.lon, 0) / points.length;
+    const spread = Math.max(
+      ...points.map((p) => Math.hypot(p.lat - lat, (p.lon - lon) * 0.7)),
+      8,
+    );
+    flyTo(lat, lon, Math.min(spread * 111_000 * 1.2, 4_000_000));
+    return true;
+  }
+
   // --- Board API -----------------------------------------------------------
 
   /** What the board (src/ui/shipmentsBoard.js) reads and changes. */
@@ -584,7 +604,7 @@ export function createShipmentsLayer({
       if (_pendingFocus) {
         const focus = _pendingFocus;
         _pendingFocus = null;
-        layer.board.showOnGlobe(focus);
+        showFocus(focus);
       }
       void check();
     },
@@ -655,6 +675,12 @@ export function createShipmentsLayer({
       const shipments = store.list();
       const day = today();
       const chips = [
+        {
+          id: 'home',
+          label: t('Simple home'),
+          title: t('Find a container in a few clicks'),
+          onClick: () => globalThis.location?.assign?.('/home.html'),
+        },
         {
           id: 'page',
           label: t('Shipments page'),
@@ -735,9 +761,10 @@ export function createShipmentsLayer({
       } catch {
         focus = null;
       }
-      if (!_shell || !focus || !store.get(focus)) return;
+      if (!_shell || !focus) return;
+      if (focus !== SHOW_ALL && !store.get(focus)) return;
       _pendingFocus = focus;
-      if (_enabled) layer.board.showOnGlobe(focus);
+      if (_enabled) showFocus(focus);
       else _shell.setLayerEnabled?.(SHIPMENTS_LAYER_ID, true);
     },
 

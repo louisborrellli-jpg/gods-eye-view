@@ -3351,5 +3351,51 @@
     "other": "Снят с поезда + {count} дней"
   },
   "The ramp’s last free day is counted from the day the box comes off the rail (CN: 1 free day). The empty must be back 4 working days after pickup (MSC). Rail takes about 4 days. Port days count only if you set them. Change a number only if your contract differs.": "Последний свободный день на терминале отсчитывается со дня снятия контейнера с поезда (CN: 1 свободный день). Порожний нужно вернуть через 4 рабочих дня после вывоза (MSC). Ж/д занимает около 4 дней. Дни в порту учитываются, только если вы их зададите. Меняйте число, только если ваш контракт отличается.",
-  "Saved in this browser only. Before the box is off the rail, its last free day is estimated from the expected rail arrival.": "Хранится только в этом браузере. Пока контейнер не снят с поезда, его последний свободный день оценивается по ожидаемому прибытию поезда."
+  "Saved in this browser only. Before the box is off the rail, its last free day is estimated from the expected rail arrival.": "Хранится только в этом браузере. Пока контейнер не снят с поезда, его последний свободный день оценивается по ожидаемому прибытию поезда.",
+  "ETA": "ETA",
+  "Estimated time of arrival: the day the ship or train is expected.": "Ожидаемое время прибытия: день, когда ждут судно или поезд.",
+  "The last day the container can stay before storage charges start. Pick it up by then.": "Последний день, когда контейнер может стоять без платы за хранение. Заберите его до этого дня.",
+  "Off the rail": "Снят с поезда",
+  "The container has come off the train at the Toronto rail yard. Free days are counted from here.": "Контейнер сняли с поезда на ж/д терминале в Торонто. Свободные дни считаются с этого момента.",
+  "The rail yard where the train drops the container (Toronto).": "Ж/д терминал, где поезд оставляет контейнер (Торонто).",
+  "After unloading, the empty container goes back to the shipping line by this day, or charges start.": "После разгрузки порожний контейнер нужно вернуть линии до этого дня, иначе начнутся начисления.",
+  "Estimated: worked out from the latest ETA. It turns into an exact date once the container arrives.": "Оценка: рассчитана по последнему ETA. Станет точной датой, когда контейнер прибудет.",
+  "What do you want to do?": "Что вы хотите сделать?",
+  "Find a container": "Найти контейнер",
+  "Container number, your reference or ship name": "Номер контейнера, ваш номер или название судна",
+  "Find": "Найти",
+  "{count} containers need attention": {
+    "one": "{count} контейнер требует внимания",
+    "few": "{count} контейнера требуют внимания",
+    "many": "{count} контейнеров требуют внимания",
+    "other": "{count} контейнеров требуют внимания"
+  },
+  "Nothing needs attention right now": "Сейчас ничего не требует внимания",
+  "and {count} more": {
+    "one": "и ещё {count}",
+    "few": "и ещё {count}",
+    "many": "и ещё {count}",
+    "other": "и ещё {count}"
+  },
+  "Every container is on time with free days left.": "Все контейнеры идут по графику, свободные дни ещё есть.",
+  "Add your first container to start tracking.": "Добавьте первый контейнер, чтобы начать отслеживание.",
+  "See all shipments": "Все поставки",
+  "{count} containers on the way": {
+    "one": "{count} контейнер в пути",
+    "few": "{count} контейнера в пути",
+    "many": "{count} контейнеров в пути",
+    "other": "{count} контейнеров в пути"
+  },
+  "Your list of containers": "Ваш список контейнеров",
+  "Show ships on the map": "Показать суда на карте",
+  "Where each container is right now": "Где сейчас каждый контейнер",
+  "Type the number; everything else fills in by itself": "Введите номер — остальное заполнится само",
+  "What do these words mean?": "Что означают эти слова?",
+  "Open the full map (advanced)": "Открыть полную карту (для опытных)",
+  "No container matches “{query}”. Check the number, or add it.": "Нет контейнера по запросу «{query}». Проверьте номер или добавьте его.",
+  "Simple home": "Простой режим",
+  "Find a container in a few clicks": "Найти контейнер в пару кликов",
+  "Search: container number, your reference or ship": "Поиск: номер контейнера, ваш номер или судно",
+  "Home": "Главная",
+  "No container matches “{query}”.": "Нет контейнера по запросу «{query}»."
 }

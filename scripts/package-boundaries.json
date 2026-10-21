@@ -1103,6 +1103,7 @@
       "src/layers/shipments/text.js",
       "src/layers/shipments/tracking.js",
       "src/layers/shipments/geo.js",
+      "src/layers/shipments/search.js",
       "src/layers/shipments/tracker.js",
       "src/i18n/marker.js",
       "src/i18n/locale.js",
@@ -2587,6 +2588,7 @@
       "src/layers/shipments/text.js",
       "src/layers/shipments/tracking.js",
       "src/layers/shipments/geo.js",
+      "src/layers/shipments/search.js",
       "src/layers/shipments/tracker.js",
       "src/ui/shipmentsBoard.js"
     ],
@@ -3192,6 +3194,7 @@
       "src/layers/shipments/text.js",
       "src/layers/shipments/tracking.js",
       "src/layers/shipments/geo.js",
+      "src/layers/shipments/search.js",
       "src/layers/shipments/tracker.js",
       "src/ui/shipmentsBoard.js"
     ],

@@ -1016,6 +1016,21 @@ year nearest to now. Urgent alerts (severity 2 and 3) raise one toast and,
 with the tab hidden, one system notification per shipment, alert and day.
 `scripts/qa-shipments.mjs` is the gate.
 
+### Simple home
+
+`/home.html` (entry `src/homePage.js`, UI `src/ui/simpleHome.js`, styles in
+`src/ui/styles/shipments-page.css`) is the start page for people who only need
+the shipments: "What do you want to do?", a large "Find a container" search
+(number, own reference, ship, line or port, via
+`src/layers/shipments/search.js`) with tap-through results, one line per
+container that needs attention, and three large buttons (see all shipments,
+show ships on the map, add a container), plus a plain-language glossary. It is
+a third build input. The Shipments page accepts `?q=` (opens the box when one
+matches), `?add=1` and `?filter=`, and has its own search box. "Show ships on
+the map" stores `*` under `gev.shipments.focus`, which the layer answers by
+turning on and framing every container. The globe's Shipments row links to
+both pages.
+
 ### Shipments page and globe estimates
 
 `/shipments.html` (entry `src/shipmentsPage.js`, UI `src/ui/shipmentsDashboard.js`,
