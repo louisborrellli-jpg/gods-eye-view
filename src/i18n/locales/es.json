@@ -388,6 +388,7 @@
   "Search location by name or coordinates": "Buscar ubicación por nombre o coordenadas",
   "Expand LOCATION": "Expandir UBICACIÓN",
   "UNAVAILABLE": "NO DISPONIBLE",
+  "Me": "Yo",
   "Live Flights": "Vuelos en vivo",
   "Earthquakes (24h)": "Terremotos (24 h)",
   "Aurora (nowcast)": "Auroras (pronóstico)",
@@ -3030,5 +3031,10 @@
   "Traffic signals": "Semáforos",
   "Crime (30d)": "Delitos (30 d)",
   "Construction": "Obras viales",
-  "311 requests (7d)": "Solicitudes 311 (7 d)"
+  "311 requests (7d)": "Solicitudes 311 (7 d)",
+  "Location permission denied": "Permiso de ubicación denegado",
+  "Location unavailable": "Ubicación no disponible",
+  "Location request timed out": "Se agotó el tiempo de la solicitud de ubicación",
+  "Location error": "Error de ubicación",
+  "Location not available on this device": "Ubicación no disponible en este dispositivo"
 }

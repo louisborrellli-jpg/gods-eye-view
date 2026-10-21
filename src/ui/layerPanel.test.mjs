@@ -20,6 +20,7 @@ test('panel presentation places Transit between Street Traffic and Bike Share in
   assert.deepEqual(
     order.filter(({ label }) => label === 'Movement').map(({ id }) => id),
     [
+      'me',
       'satellites',
       'flights',
       'military',

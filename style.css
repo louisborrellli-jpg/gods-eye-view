@@ -27,4 +27,10 @@
 
 @import './src/ui/styles/weather.css';
 @import './src/ui/styles/panel-surfaces.css';
+
+/* Phone-first overrides: after every component sheet (esp. command-dock*.css,
+   which overrides responsive.css) so they win, but before cyber.css so the
+   cyber theme keeps the last word. The two sheets touch disjoint properties. */
+@import './src/ui/styles/mobile-foundation.css';
+
 @import './src/ui/styles/cyber.css';
