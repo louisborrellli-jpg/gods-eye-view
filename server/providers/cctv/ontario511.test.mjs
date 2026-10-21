@@ -73,6 +73,67 @@ test('with a key the camera list is requested with it and parsed', async (t) => 
   assert.doesNotMatch(lines.join('\n'), /test-key/);
 });
 
+test('every enabled view of a camera becomes its own source', async (t) => {
+  captureConsole(t);
+  const row = {
+    Id: '649',
+    Latitude: 42.3,
+    Longitude: -82.9,
+    Location: 'Highway 401 at Puce Road',
+    Direction: 'Unknown',
+    Views: [
+      {
+        Id: 1173,
+        Status: 'Enabled',
+        Url: 'https://511on.ca/map/Cctv/1173',
+        Description: 'Looking Down',
+      },
+      {
+        Id: 1172,
+        Status: 'Enabled',
+        Url: 'https://511on.ca/map/Cctv/1172',
+        Description: 'Looking East',
+      },
+      {
+        Id: 1174,
+        Status: 'Enabled',
+        Url: 'https://511on.ca/map/Cctv/1174',
+        Description: 'Looking West',
+      },
+      {
+        Id: 1175,
+        Status: 'Disabled',
+        Url: 'https://511on.ca/map/Cctv/1175',
+        Description: 'Looking North',
+      },
+    ],
+  };
+  t.mock.method(globalThis, 'fetch', async () => Response.json([row]));
+  const cameras = await loadOntarioSourcesFromOpenData(
+    {},
+    { ONTARIO_511_API_KEY: 'test-key' },
+  );
+  // The best (non-down) view keeps the camera's historical id; the down view
+  // is last; the disabled view is dropped.
+  assert.deepEqual(
+    cameras.map((camera) => camera.id),
+    ['on-649', 'on-649-1174', 'on-649-1173'],
+  );
+  assert.deepEqual(
+    cameras.map((camera) => camera.name),
+    [
+      'Highway 401 at Puce Road - Looking East',
+      'Highway 401 at Puce Road - Looking West',
+      'Highway 401 at Puce Road - Looking Down',
+    ],
+  );
+  // Each view aims along its own "Looking X", not the shared row direction.
+  assert.equal(cameras[0].headingDeg, 90);
+  assert.equal(cameras[1].headingDeg, 270);
+  assert.equal(cameras[0].headingConfidence, 'high');
+  assert.equal(cameras[2].url, 'https://511on.ca/map/Cctv/1173');
+});
+
 test('the source cap is read from the same environment as the key', async (t) => {
   captureConsole(t);
   const rows = Array.from({ length: 12 }, (_, i) => ({
