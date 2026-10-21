@@ -179,11 +179,19 @@
       }
       return action(d.action, args);
     }
-    if (d.layer)
-      return action('set_layer_visibility', {
-        layerId: d.layer,
-        enabled: !state?.layers?.[d.layer],
-      });
+    if (d.layer) {
+      // Show the change at once: a layer can take a few seconds to load, and
+      // a button that still looks off invites a second tap, which turns the
+      // layer straight back off.
+      const enabled = !state?.layers?.[d.layer];
+      if (state) state.layers = { ...state.layers, [d.layer]: enabled };
+      if (state) drawLayers();
+      pressedUntil = Date.now() + 4000;
+      flash(
+        `${enabled ? 'Turning on' : 'Turning off'} ${b.textContent.trim()}…`,
+      );
+      return action('set_layer_visibility', { layerId: d.layer, enabled });
+    }
     if (d.map) return action('set_map_stack', { stack: d.map });
     if ('hud' in d)
       return action('set_hud', { visible: state?.hud ? 'off' : 'on' });
@@ -626,6 +634,7 @@
     }
   });
 
+  let pressedUntil = 0;
   let refreshing = false;
   async function refresh() {
     if (!token || refreshing || document.hidden) return;
@@ -634,6 +643,10 @@
       const { ok, data } = await api('/api/state');
       if (ok) {
         tvOn = Boolean(data.tv);
+        // Right after a layer tap, the TV may not have reported the change
+        // yet: keep the tapped state until it has had time to.
+        if (Date.now() < pressedUntil && state?.layers && data.state)
+          data.state.layers = { ...data.state.layers, ...state.layers };
         state = data.state;
         drawState();
         drawBorder(data.border);
