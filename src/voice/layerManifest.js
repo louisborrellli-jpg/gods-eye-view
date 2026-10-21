@@ -429,6 +429,7 @@ export const VOICE_OFF_LAYERS = Object.freeze({
   me: "this device's own location; voice control is a follow-up",
   'weather-alerts':
     'NWS + Environment Canada alert polygons; voice control is a follow-up',
+  'great-lakes': 'NOAA CO-OPS water-level gauges; voice control is a follow-up',
 });
 
 const TYPE_NAMES = Object.freeze({

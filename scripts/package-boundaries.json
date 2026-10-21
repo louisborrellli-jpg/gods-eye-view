@@ -1083,6 +1083,15 @@
     ],
     "external": ["cesium"]
   },
+  "great-lakes": {
+    "exports": ["./layers/great-lakes"],
+    "modules": [
+      "src/layers/greatLakes/index.js",
+      "src/layers/greatLakes/source.js",
+      "src/layers/greatLakes/records.js"
+    ],
+    "external": ["cesium"]
+  },
   "recent-imagery": {
     "exports": ["./layers/recent-imagery"],
     "modules": [
@@ -2544,7 +2553,11 @@
       "src/app/layers/weatherAlerts.js",
       "src/layers/weatherAlerts/index.js",
       "src/layers/weatherAlerts/source.js",
-      "src/layers/weatherAlerts/records.js"
+      "src/layers/weatherAlerts/records.js",
+      "src/app/layers/greatLakes.js",
+      "src/layers/greatLakes/index.js",
+      "src/layers/greatLakes/source.js",
+      "src/layers/greatLakes/records.js"
     ],
     "external": [
       "hls.js",
@@ -3134,7 +3147,11 @@
       "src/app/layers/weatherAlerts.js",
       "src/layers/weatherAlerts/index.js",
       "src/layers/weatherAlerts/source.js",
-      "src/layers/weatherAlerts/records.js"
+      "src/layers/weatherAlerts/records.js",
+      "src/app/layers/greatLakes.js",
+      "src/layers/greatLakes/index.js",
+      "src/layers/greatLakes/source.js",
+      "src/layers/greatLakes/records.js"
     ],
     "external": [
       "hls.js",
@@ -3568,7 +3585,9 @@
       "src/layers/aurora/source.js",
       "src/layers/aurora/records.js",
       "src/layers/weatherAlerts/source.js",
-      "src/layers/weatherAlerts/records.js"
+      "src/layers/weatherAlerts/records.js",
+      "src/layers/greatLakes/source.js",
+      "src/layers/greatLakes/records.js"
     ],
     "external": []
   },

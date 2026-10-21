@@ -1,5 +1,6 @@
 import { createUsgsEarthquakeSource } from '../layers/earthquakes/source.js';
 import { createWeatherAlertsSource } from '../layers/weatherAlerts/source.js';
+import { createGreatLakesSource } from '../layers/greatLakes/source.js';
 import { createOvationAuroraSource } from '../layers/aurora/source.js';
 import { createEcccAirQualitySource } from '../layers/airQuality/source.js';
 import { createWfigsPerimeterSource } from '../layers/perimeters/source.js';
@@ -11,6 +12,7 @@ export function createReferenceSources() {
   return {
     earthquakes: createUsgsEarthquakeSource(),
     'weather-alerts': createWeatherAlertsSource(),
+    'great-lakes': createGreatLakesSource(),
     aurora: createOvationAuroraSource(),
     'air-quality': createEcccAirQualitySource(),
     'fire-perimeters': createWfigsPerimeterSource(),
