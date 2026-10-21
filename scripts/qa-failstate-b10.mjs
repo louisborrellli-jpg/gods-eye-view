@@ -316,10 +316,10 @@ async function main() {
     for (const outcome of refreshFeedback) {
       const passed = !outcome.missing
         && outcome.working.hidden === false
-        && outcome.working.label === 'REFRESHING LIVE DATA'
+        && outcome.working.label === 'Refreshing live data'
         && outcome.working.detail.includes(outcome.name)
         && outcome.failed.hidden === false
-        && outcome.failed.label === 'LOAD FAILED'
+        && outcome.failed.label === 'Load failed'
         && outcome.failed.state === 'error'
         && outcome.managerError?.includes('QA refresh failure')
         && outcome.recoveredError === null
@@ -360,10 +360,10 @@ async function main() {
       );
       if (!hasError) exitCode = 1;
     }
-    const aisControl = await readLayerControl(page, 'ais-live-vessels', 'UNAVAILABLE');
+    const aisControl = await readLayerControl(page, 'ais-live-vessels', 'Unavailable');
     const aisChipHonest = aisControl.feedState === 'unavailable'
-      && aisControl.ariaLabel === 'Live AIS Vessels: UNAVAILABLE';
-    const aisMetaHonest = /^UNAVAILABLE · AISStream · /i.test(aisControl.meta)
+      && aisControl.ariaLabel === 'Live AIS Vessels: Unavailable';
+    const aisMetaHonest = /^Unavailable · AISStream · /i.test(aisControl.meta)
       && aisStats.error
       && aisControl.meta.includes(aisStats.error);
     record(
@@ -407,12 +407,12 @@ async function main() {
         await new Promise((r) => setTimeout(r, 800));
         return dm.layers.get('satellites').module.getStats();
       });
-      const partialControl = await readLayerControl(page, 'satellites', 'DEGRADED');
+      const partialControl = await readLayerControl(page, 'satellites', 'Degraded');
       const partialChipHonest = partialStats.count > 0
         && /1 CelesTrak group unavailable/i.test(partialStats.error || '')
         && partialControl.feedState === 'degraded'
-        && partialControl.ariaLabel === 'Satellites: DEGRADED';
-      const partialMetaHonest = /^DEGRADED · CelesTrak · /i.test(partialControl.meta)
+        && partialControl.ariaLabel === 'Satellites: Degraded';
+      const partialMetaHonest = /^Degraded · CelesTrak · /i.test(partialControl.meta)
         && /1 CelesTrak group unavailable/i.test(partialControl.meta);
       record(
         'Satellites: partial outage renders a DEGRADED chip',
@@ -443,10 +443,10 @@ async function main() {
       const s = outageStats.stats;
       const notWiped = s.count > 0; // catalog preserved, not blanked to 0
       const errorSet = typeof s.error === 'string' && s.error.length > 0;
-      const outageControl = await readLayerControl(page, 'satellites', 'UNAVAILABLE');
+      const outageControl = await readLayerControl(page, 'satellites', 'Unavailable');
       const outageChipHonest = outageControl.feedState === 'unavailable'
-        && outageControl.ariaLabel === 'Satellites: UNAVAILABLE';
-      const outageMetaHonest = /^UNAVAILABLE · CelesTrak · /i.test(outageControl.meta)
+        && outageControl.ariaLabel === 'Satellites: Unavailable';
+      const outageMetaHonest = /^Unavailable · CelesTrak · /i.test(outageControl.meta)
         && outageControl.meta.includes(s.error || '');
       record(
         'Satellites: catalog NOT wiped to 0 on total outage',

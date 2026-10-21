@@ -1067,8 +1067,8 @@ const BROWSER_CHECKS = [
   ['C5', 'Satellites layer propagates the live catalog'],
   ['C6', 'Earthquakes layer populates'],
   ['C7', 'CCTV layer populates and its frame loop is healthy'],
-  ['C8', 'Vessels: live rows when keyed, honest UNAVAILABLE when not'],
-  ['C9', 'Fires: live cells when keyed, honest KEY REQUIRED when not'],
+  ['C8', 'Vessels: live rows when keyed, honest Unavailable when not'],
+  ['C9', 'Fires: live cells when keyed, honest Key required when not'],
   ['C10', 'Traffic: LIVE mode when keyed, clearly-labelled SIMULATION when not'],
   ['C11', 'Bundled layers render: datacenters, dams, submarine cables, installations'],
   ['C12', 'Attribution lightbox lists a credit for every enabled layer'],
@@ -1522,7 +1522,7 @@ async function runBrowserGroup(record) {
     const s = r.stats || {};
     // The rendered chip is the honesty claim, so read the chip. An empty layer
     // that says nothing is exactly the silent-failure this check must catch —
-    // count === 0 is NOT evidence of an honest UNAVAILABLE state.
+    // count === 0 is NOT evidence of an honest Unavailable state.
     const chipR = await mustEval(() => {
       const row = document.querySelector('[data-layer-id="ais-live-vessels"]');
       const btn = row?.querySelector('.data-toggle-btn');
@@ -1537,11 +1537,11 @@ async function runBrowserGroup(record) {
     if (!chip) return fail('no [data-layer-id="ais-live-vessels"] row in the DOM — cannot read the surfaced feed state');
 
     if (env.keys.AIS === false) {
-      const surfaced = chip.feedState === 'unavailable' && /UNAVAILABLE/i.test(chip.text);
+      const surfaced = chip.feedState === 'unavailable' && /Unavailable/i.test(chip.text);
       if (!surfaced) {
         return fail(`keyless vessels did not SURFACE the unavailable state: chip="${chip.text}" feedState=${chip.feedState} (stats: status=${s.status} error=${s.error}) — a silently empty layer is the failure mode this check exists for`);
       }
-      if (s.count > 0) return fail(`chip says UNAVAILABLE but the layer reports ${s.count} vessels`);
+      if (s.count > 0) return fail(`chip says Unavailable but the layer reports ${s.count} vessels`);
       return pass(`keyless and honest: chip="${chip.text}" feedState=unavailable, stats.status=${s.status}, error="${String(s.error || '').slice(0, 40)}", count=0`);
     }
     // getStats().status is ONLY ever 'unavailable' or undefined; the feed state
@@ -1550,22 +1550,22 @@ async function runBrowserGroup(record) {
     const transport = s.transportStatus;
     const live = transport === 'live' || transport === 'open';
     if (live && s.count > 0) {
-      // Chip vocabulary: ON / LOADING / DEGRADED / STALE / FALLBACK /
-      // UNAVAILABLE (src/data/manager.js:12-19). A live feed with rows reads ON.
-      return /^ON$/i.test(chip.text)
-        ? pass(`${s.count} vessels live: chip="ON", transport=${transport}, lastMessage=${s.lastMessageAt || 'n/a'}`)
-        : fail(`transport=${transport} with ${s.count} vessels, but the chip reads "${chip.text}" — a live feed must present as ON`);
+      // Chip vocabulary: On / Loading / Degraded / Stale / Fallback /
+      // Unavailable (src/ui/layerPanel.js FEED_STATE_LABEL_KEYS). A live feed with rows reads On.
+      return /^On$/i.test(chip.text)
+        ? pass(`${s.count} vessels live: chip="${chip.text}", transport=${transport}, lastMessage=${s.lastMessageAt || 'n/a'}`)
+        : fail(`transport=${transport} with ${s.count} vessels, but the chip reads "${chip.text}" — a live feed must present as On`);
     }
     if (transport === 'auth-failed') {
-      const surfaced = /UNAVAILABLE/i.test(chip.text) && /key rejected/i.test(String(s.error || ''));
+      const surfaced = /Unavailable/i.test(chip.text) && /key rejected/i.test(String(s.error || ''));
       return surfaced
         ? fail(`AISStream rejected the key — surfaced correctly (chip="${chip.text}", error="${s.error}", retryInSec=${s.retryInSec}) but a rejected key is a product-blocking failure, not an environment condition`)
         : fail(`AISStream rejected the key and the UI did not say so: chip="${chip.text}", error="${String(s.error || 'none')}"`);
     }
     if (['stale', 'reconnecting', 'down'].includes(transport)) {
-      // Degraded is ENV only when it is SURFACED. Cached rows must read STALE;
-      // no usable rows must read UNAVAILABLE.
-      const expected = s.count > 0 ? /STALE|DEGRADED/i : /UNAVAILABLE|DEGRADED/i;
+      // Degraded is ENV only when it is SURFACED. Cached rows must read Stale;
+      // no usable rows must read Unavailable.
+      const expected = s.count > 0 ? /Stale|Degraded/i : /Unavailable|Degraded/i;
       return expected.test(chip.text)
         ? skip(`feed is ${transport}${s.count > 0 ? ` with ${s.count} CACHED vessels` : ''} and the UI says so (chip="${chip.text}", error="${String(s.error || '').slice(0, 60)}", retryInSec=${s.retryInSec}) — honest degradation, not a live feed`, 'ENV')
         : fail(`feed is ${transport} with ${s.count} vessels but the chip reads "${chip.text}" — a degraded feed that presents as healthy is exactly the invisible outage this check exists for`);
@@ -1574,7 +1574,7 @@ async function runBrowserGroup(record) {
       return fail(`${s.count} vessels with transport="${transport}" — neither live nor a recognised degraded state, so this cannot be called a live feed (chip="${chip.text}")`);
     }
     // Keyed but empty: honest only if the UI says so.
-    return /UNAVAILABLE|LOADING|DEGRADED|STALE/i.test(chip.text)
+    return /Unavailable|Loading|Degraded|Stale/i.test(chip.text)
       ? skip(`keyed but 0 vessels and the UI says so (chip="${chip.text}", transport=${transport}, error="${String(s.error || '').slice(0, 60)}") — AISStream connects open-but-silent upstream`, 'ENV')
       : fail(`keyed, 0 vessels, and the chip claims "${chip.text}" — the layer is empty without surfacing it`);
   });
@@ -1585,9 +1585,9 @@ async function runBrowserGroup(record) {
     const r = await settle('local-firms', 30);
     const s = r.stats || {};
     if (env.keys.FIRMS === false) {
-      return s.error === 'KEY REQUIRED'
-        ? pass('keyless and honest: getStats().error === "KEY REQUIRED"')
-        : fail(`keyless but error=${s.error} count=${s.count} — expected "KEY REQUIRED"`);
+      return s.error === 'Key required'
+        ? pass('keyless and honest: getStats().error === "Key required"')
+        : fail(`keyless but error=${s.error} count=${s.count} — expected "Key required"`);
     }
     return s.count > 0 ? pass(`${s.count} fires, cells=${s.cells}`) : fail(`keyed but 0 fires (error=${s.error || ''})`);
   });
@@ -2024,7 +2024,7 @@ async function runBrowserGroup(record) {
     if (!surfacedR.ok) return crash(`could not drive the keyless voice path: ${surfacedR.reason}`);
     const surfaced = surfacedR.value;
     const saysKey = /OPENAI_API_KEY is not set/i.test(`${surfaced.errorDetail || ''} ${surfaced.recentError?.message || ''}`);
-    const saysUnavailable = surfaced.dataStatus === 'error' || /ERROR|UNAVAILABLE/i.test(`${surfaced.status || ''} ${surfaced.detail || ''}`);
+    const saysUnavailable = surfaced.dataStatus === 'error' || /Error|Unavailable/i.test(`${surfaced.status || ''} ${surfaced.detail || ''}`);
     if (!surfaced.appAlive) return fail('the app died when voice was started without a key — a missing optional key must never take the globe down');
     if (!saysUnavailable) {
       return fail(`voice start without a key left the UI at status="${surfaced.status}" detail="${surfaced.detail}" (data-status=${surfaced.dataStatus}) — the 503 never surfaced to the user`);

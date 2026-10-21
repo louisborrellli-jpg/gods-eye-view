@@ -799,13 +799,13 @@ async function main() {
         on.focused &&
         on.count === 4 &&
         /^GNSS Integrity: /.test(on.label) &&
-        !/OFF$/.test(on.label),
+        !/Off$/.test(on.label),
       JSON.stringify(on),
     );
     const off = await pressToggle(page, ' ', false);
     record(
-      'KEYBOARD: Space on the focused toggle disables it and the label says OFF',
-      !off.enabled && off.focused && /^GNSS Integrity: OFF$/.test(off.label),
+      'KEYBOARD: Space on the focused toggle disables it and the label says Off',
+      !off.enabled && off.focused && /^GNSS Integrity: Off$/.test(off.label),
       JSON.stringify(off),
     );
 
@@ -891,7 +891,7 @@ async function main() {
       'STARTUP: first 429 keeps the layer enabled and shows automatic retry timing',
       limited.enabled &&
         limited.failedStarts === 0 &&
-        limited.label === 'UNAVAILABLE' &&
+        limited.label === 'Unavailable' &&
         initial.stats.count === 0 &&
         initial.stats.retryInSec > 0 &&
         /rate limited.*Retrying automatically at/.test(limited.info),
@@ -926,10 +926,10 @@ async function main() {
       LAYER_ID,
     );
     record(
-      'STARTUP: one automatic retry recovers to ON without toggling and clears the warning',
+      'STARTUP: one automatic retry recovers to On without toggling and clears the warning',
       recovered.enabled &&
         recovered.requests === 2 &&
-        recovered.label === 'ON' &&
+        recovered.label === 'On' &&
         !/Retrying/.test(recovered.info),
       JSON.stringify(recovered),
     );

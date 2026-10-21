@@ -212,7 +212,7 @@ try {
     'Reply audio must play',
   );
   assert.equal(
-    result.session.meter.text === 'COST UNKNOWN',
+    result.session.meter.text === 'Cost unknown',
     auth === 'oauth',
     'Use the correct accounting display',
   );

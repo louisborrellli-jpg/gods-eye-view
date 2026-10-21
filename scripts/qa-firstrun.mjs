@@ -637,7 +637,7 @@ async function main() {
      *
      *   KEYED   — both datasets must actually arrive, and a failure banner in
      *             that state is a real defect, so the chip IS asserted.
-     *   KEYLESS — only the LAYER ROW is asserted: FIRMS reports KEY REQUIRED,
+     *   KEYLESS — only the LAYER ROW is asserted: FIRMS reports Key required,
      *             which is the honest surface a keyless visitor is judged on.
      *             The GLOBAL chip is deliberately NOT asserted in either
      *             direction here: it has no key-required terminal state and
@@ -646,13 +646,13 @@ async function main() {
      *             (`src/loadingFeedback.js`), LEDGERED post-launch — it is not
      *             a desirable outcome and not this tile's contract.
      */
-    const keyless = state.firmsError === 'KEY REQUIRED';
+    const keyless = state.firmsError === 'Key required';
     console.log(`  \x1b[2m   FIRMS key state: ${keyless ? 'KEYLESS' : 'KEYED'} `
       + `(row="${state.firmsError ?? 'none'}", count=${state.firmsCount})\x1b[0m`);
     if (keyless) {
       record(
-        'KEYLESS: the FIRMS row tells the visitor the truth (KEY REQUIRED)',
-        state.firmsError === 'KEY REQUIRED',
+        'KEYLESS: the FIRMS row tells the visitor the truth (Key required)',
+        state.firmsError === 'Key required',
         `layer row reports "${state.firmsError}"`,
       );
       record(
@@ -667,7 +667,7 @@ async function main() {
         `${state.counts.earthquakes} quakes · ${state.firmsCount} fire detections`,
       );
       const chip = await readLoadingChip(page);
-      const failed = chip.filter((entry) => /LOAD FAILED/i.test(entry));
+      const failed = chip.filter((entry) => /Load failed/i.test(entry));
       // A STALE served-from-cache FIRMS payload is degraded, not failed, and it
       // still carries data — so the failure test is the banner, not any
       // non-empty error string.

@@ -903,12 +903,12 @@ try {
     'ACQUIRING DOM notice persists, ignores stale terminals, and clears on ownership completion',
     acquiringLifecycle.pending.hidden === false
       && acquiringLifecycle.pending.state === 'acquiring'
-      && acquiringLifecycle.pending.label === 'ACQUIRING'
-      && acquiringLifecycle.pending.detail === 'SHARED FLIGHT'
+      && acquiringLifecycle.pending.label === 'Acquiring'
+      && acquiringLifecycle.pending.detail === 'Shared FLIGHT'
       && acquiringLifecycle.followed.hidden === true
       && acquiringLifecycle.staleTerminal.hidden === false
       && acquiringLifecycle.staleTerminal.state === 'acquiring'
-      && acquiringLifecycle.staleTerminal.detail === 'SHARED MILITARY FLIGHT'
+      && acquiringLifecycle.staleTerminal.detail === 'Shared MILITARY FLIGHT'
       && acquiringLifecycle.cancelled.hidden === true,
     JSON.stringify(acquiringLifecycle),
   );
@@ -1002,12 +1002,12 @@ try {
     'manager failure then queued share failure each receives its full visible dwell',
     acquiringFailureArbitration.failureStart.hidden === false
       && acquiringFailureArbitration.failureStart.state === 'error'
-      && acquiringFailureArbitration.failureStart.label === 'LOAD FAILED'
+      && acquiringFailureArbitration.failureStart.label === 'Load failed'
       && acquiringFailureArbitration.queuedNoticeReady === true
       && acquiringFailureArbitration.shareFailureQueued.state === 'error'
-      && acquiringFailureArbitration.shareFailureQueued.label === 'LOAD FAILED'
+      && acquiringFailureArbitration.shareFailureQueued.label === 'Load failed'
       && acquiringFailureArbitration.failureEnd.state === 'error'
-      && acquiringFailureArbitration.failureEnd.label === 'LOAD FAILED'
+      && acquiringFailureArbitration.failureEnd.label === 'Load failed'
       && acquiringFailureArbitration.shareFailureStart.state === 'error'
       && acquiringFailureArbitration.shareFailureStart.label === 'Shared flight could not be restored — feed unavailable'
       && acquiringFailureArbitration.shareFailureEnd.label === 'Shared flight could not be restored — feed unavailable'
@@ -1285,7 +1285,7 @@ try {
       locationTab.reached && hasVisibleControlFocus(locationClosed)
         && locationClosed.tag === 'BUTTON' && locationClosed.type === 'button'
         && locationClosed.controls === 'location-bar-popover' && locationClosed.popoverId === 'location-bar-popover'
-        && locationClosed.locationExpanded === 'false' && /^Expand Location$/i.test(locationClosed.locationLabel)
+        && locationClosed.locationExpanded === 'false' && /^Expand Places$/i.test(locationClosed.locationLabel)
         && locationClosed.transitions.length === 0, JSON.stringify({ locationTab, locationClosed }));
 
     await resetLocationTransitions();
@@ -1293,13 +1293,13 @@ try {
     const locationEnter = await locationState();
     check('Location: Enter opens once with visible focus and accurate name',
       hasVisibleControlFocus(locationEnter) && locationEnter.locationExpanded === 'true'
-        && /^Collapse Location$/i.test(locationEnter.locationLabel) && locationEnter.transitions.length === 1,
+        && /^Collapse Places$/i.test(locationEnter.locationLabel) && locationEnter.transitions.length === 1,
       JSON.stringify(locationEnter));
     await page.keyboard.press('Escape');
     const locationEscape = await locationState();
     check('Location: Escape on the disclosure closes without retaining focus',
       locationEscape.focusedId === null && locationEscape.locationExpanded === 'false'
-        && /^Expand Location$/i.test(locationEscape.locationLabel), JSON.stringify(locationEscape));
+        && /^Expand Places$/i.test(locationEscape.locationLabel), JSON.stringify(locationEscape));
 
     await page.focus('#location-bar-toggle');
     await resetLocationTransitions();
@@ -1505,7 +1505,7 @@ try {
           ));
         }, { timeout: 5_000 }, width);
         await page.focus('#data-panel .panel-collapse-btn');
-        const targets = [[dataSetup.offId, 'OFF', false], [dataSetup.fixtureIds[0], 'ON', true], [dataSetup.fixtureIds[1], 'STALE', true]];
+        const targets = [[dataSetup.offId, 'Off', false], [dataSetup.fixtureIds[0], 'On', true], [dataSetup.fixtureIds[1], 'Stale', true]];
         for (const [id, label, enabled] of targets) {
           const navigation = await tabTo(`[data-layer-id="${id}"] .data-toggle-btn`);
           const state = await layerFocusState(id);
@@ -1515,7 +1515,7 @@ try {
               && state.lifecycle?.lifecycleState === (enabled ? 'enabled' : 'disabled') && !state.lifecycle?.uncertain,
             JSON.stringify({ setup: enabled ? 'dev QA fixture' : 'real production OFF row; not activated', navigation, state }));
           await page.screenshot({ path: path.join(shotsDir, `${width}-data-${label.toLowerCase()}-focus.png`) });
-          if (label === 'OFF') {
+          if (label === 'Off') {
             const passive = await page.evaluate(async (layerId) => {
               const probe = window.__qaDataFocus;
               const focusBefore = document.activeElement;
@@ -1536,10 +1536,10 @@ try {
             const refreshed = await layerFocusState(id);
             check(`Data Layers: ${width} px passive refresh preserves OFF focus and state`,
               passive.focusRetained && passive.productionUnchanged && passive.durableUnchanged
-                && hasVisibleControlFocus(refreshed) && refreshed.label === 'OFF' && !refreshed.lifecycle?.enabled,
+                && hasVisibleControlFocus(refreshed) && refreshed.label === 'Off' && !refreshed.lifecycle?.enabled,
               JSON.stringify({ passive, refreshed }));
           }
-          if (label === 'STALE') check(`Data Layers: ${width} px native Tab scrolls to the lower status row`,
+          if (label === 'Stale') check(`Data Layers: ${width} px native Tab scrolls to the lower status row`,
             state.listScrollHeight > state.listClientHeight && state.listScrollTop > 0 && hasVisibleControlFocus(state), JSON.stringify(state));
         }
       }
@@ -1554,7 +1554,7 @@ try {
       const transitionTab = await tabTo(`[data-layer-id="${dataSetup.transitionId}"] .data-toggle-btn`);
       const transitionBefore = await layerFocusState(dataSetup.transitionId);
       check('Data Layers: transition fixture receives native Tab focus',
-        transitionTab.reached && transitionBefore.label === 'OFF' && hasVisibleControlFocus(transitionBefore),
+        transitionTab.reached && transitionBefore.label === 'Off' && hasVisibleControlFocus(transitionBefore),
         JSON.stringify({ transitionTab, transitionBefore }));
 
       await page.keyboard.press('Space');
@@ -1562,11 +1562,11 @@ try {
         const state = window.__qaDataFocus?.transition;
         const button = document.querySelector(`[data-layer-id="${layerId}"] .data-toggle-btn`);
         return state?.enableCalls === 1 && typeof state.releaseEnable === 'function'
-          && button?.textContent.trim() === 'ENABLING';
+          && button?.textContent.trim() === 'Enabling';
       }, { timeout: 5_000 }, dataSetup.transitionId);
       const enabling = await layerFocusState(dataSetup.transitionId);
       check('Data Layers: focused Space keeps a visible ring through ENABLING',
-        hasVisibleControlFocus(enabling) && enabling.label === 'ENABLING' && !enabling.disabled
+        hasVisibleControlFocus(enabling) && enabling.label === 'Enabling' && !enabling.disabled
           && enabling.ariaDisabled === 'true' && enabling.ariaBusy === 'true', JSON.stringify(enabling));
       const enablingEpoch = await page.evaluate((layerId) => (
         window.__godsEyeView.dataManager.layers.get(layerId).visibilityIntentEpoch
@@ -1593,11 +1593,11 @@ try {
         const state = window.__qaDataFocus?.transition;
         const button = document.querySelector(`[data-layer-id="${layerId}"] .data-toggle-btn`);
         return state?.disableCalls === 1 && typeof state.releaseDisable === 'function'
-          && button?.textContent.trim() === 'DISABLING';
+          && button?.textContent.trim() === 'Disabling';
       }, { timeout: 5_000 }, dataSetup.transitionId);
       const disabling = await layerFocusState(dataSetup.transitionId);
       check('Data Layers: focused Space keeps a visible ring through DISABLING',
-        hasVisibleControlFocus(disabling) && disabling.label === 'DISABLING' && !disabling.disabled
+        hasVisibleControlFocus(disabling) && disabling.label === 'Disabling' && !disabling.disabled
           && disabling.ariaDisabled === 'true' && disabling.ariaBusy === 'true', JSON.stringify(disabling));
       const disablingEpoch = await page.evaluate((layerId) => (
         window.__godsEyeView.dataManager.layers.get(layerId).visibilityIntentEpoch

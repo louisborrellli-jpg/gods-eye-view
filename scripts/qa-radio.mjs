@@ -358,7 +358,7 @@ async function main() {
     check('All is the initial Radio filter', initial.state.filter === 'all' && initial.state.filteredCount === 750, `${initial.state.filteredCount} stations`);
     check(
       'the default All filter exposes a draggable directory tuner band',
-      initial.tunerVisible && initial.tunerCount === 750 && initial.tunerLabel === 'DIRECTORY BAND',
+      initial.tunerVisible && initial.tunerCount === 750 && initial.tunerLabel === 'Directory band',
       JSON.stringify({ visible: initial.tunerVisible, count: initial.tunerCount, label: initial.tunerLabel }),
     );
     const uncertainPresentation = await page.evaluate(async () => {
@@ -470,13 +470,13 @@ async function main() {
         && uncertainPresentation.volumeDisabled
         && /compact Radio controls/i.test(uncertainPresentation.disclosureLabel)
         && /uncertain/i.test(uncertainPresentation.compactPowerLabel)
-        && uncertainPresentation.compactPowerText === 'RECONCILE'
+        && uncertainPresentation.compactPowerText === 'Reconcile'
         && /uncertain/i.test(uncertainPresentation.fullLabel)
-        && uncertainPresentation.fullText === 'RECONCILE'
-        && uncertainPresentation.layerState === 'UNCERTAIN'
+        && uncertainPresentation.fullText === 'Reconcile'
+        && uncertainPresentation.layerState === 'Uncertain'
         && /uncertain/i.test(uncertainPresentation.playbackMessage)
-        && uncertainPresentation.miniStation === 'RADIO STATE UNCERTAIN'
-        && uncertainPresentation.dataRailText === 'UNCERTAIN'
+        && uncertainPresentation.miniStation === 'Radio state uncertain'
+        && uncertainPresentation.dataRailText === 'Uncertain'
         && uncertainPresentation.dataRailState === 'uncertain'
         && /uncertain/i.test(uncertainPresentation.dataRailLabel)
         && /uncertain/i.test(uncertainPresentation.dataRailMeta)
@@ -533,10 +533,10 @@ async function main() {
         && disablingPresentation.manager.lifecycleState === 'disabling'
         && disablingPresentation.presentationActive === false
         && disablingPresentation.markerSourceVisible === false
-        && disablingPresentation.full === 'DISABLING'
+        && disablingPresentation.full === 'Disabling'
         && /compact Radio controls/i.test(disablingPresentation.disclosure)
-        && disablingPresentation.compactPower === 'DISABLING'
-        && disablingPresentation.layerState === 'DISABLING'
+        && disablingPresentation.compactPower === 'Disabling'
+        && disablingPresentation.layerState === 'Disabling'
         && /disabling/i.test(disablingPresentation.message)
         && disablingPresentation.stopDisabled
         && disablingPresentation.volumeDisabled,
@@ -609,12 +609,12 @@ async function main() {
         && enablingPresentation.manager.lifecycleState === 'enabling'
         && enablingPresentation.presentationActive === false
         && enablingPresentation.markerSourceVisible === false
-        && enablingPresentation.full === 'ENABLING'
+        && enablingPresentation.full === 'Enabling'
         && enablingPresentation.disclosure === 'Go to expanded Radio section'
         && enablingPresentation.disclosureControls === 'radio-panel'
         && enablingPresentation.disclosureExpanded === 'true'
-        && enablingPresentation.compactPower === 'ENABLING'
-        && enablingPresentation.layerState === 'ENABLING'
+        && enablingPresentation.compactPower === 'Enabling'
+        && enablingPresentation.layerState === 'Enabling'
         && /enabling/i.test(enablingPresentation.message)
         && enablingPresentation.tunerHidden
         && enablingPresentation.stopDisabled
@@ -2589,8 +2589,8 @@ async function main() {
       return { texts: radio.getOverlayDiagnostics().clusterTexts };
     });
     check(
-      'Weather / Emergency view labels its cluster callouts WEATHER',
-      weatherCluster.texts.length > 0 && weatherCluster.texts.every((text) => /^\d+ WEATHER$/.test(text)),
+      'Weather / Emergency view labels its cluster callouts Weather',
+      weatherCluster.texts.length > 0 && weatherCluster.texts.every((text) => /^\d+ Weather$/.test(text)),
       JSON.stringify(weatherCluster),
     );
     await page.select('#radio-filter', 'news');
@@ -3150,8 +3150,8 @@ async function main() {
         && tunerRefreshRelease.unavailableId === tunerRefreshTarget.id
         && tunerRefreshRelease.selectedId !== tunerRefreshTarget.id
         && tunerRefreshRelease.plays === tunerRefreshTarget.plays
-        && tunerRefreshRelease.value === 'OFF AIR'
-        && tunerRefreshRelease.stationText === 'STATION UNAVAILABLE'
+        && tunerRefreshRelease.value === 'Off air'
+        && tunerRefreshRelease.stationText === 'Station unavailable'
         && /unavailable after directory refresh/i.test(tunerRefreshRelease.message),
       JSON.stringify(tunerRefreshRelease),
     );

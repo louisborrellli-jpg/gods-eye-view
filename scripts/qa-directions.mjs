@@ -265,7 +265,7 @@ try {
   let state = await layerState();
   check(
     'the row guides the operator before anything is placed',
-    /SET A/.test(state.stats.coverage || ''),
+    /Set A/.test(state.stats.coverage || ''),
     state.stats.coverage,
   );
 
@@ -322,7 +322,7 @@ try {
   );
   check(
     'the armed chip tells the operator to click the map',
-    state.chips.find((chip) => chip.id === 'set-a')?.label === 'CLICK MAP',
+    state.chips.find((chip) => chip.id === 'set-a')?.label === 'Click map',
   );
 
   let at = await screenAt(FERRY.lat, FERRY.lon);

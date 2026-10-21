@@ -1171,7 +1171,7 @@ try {
       previousDisabled: previous?.disabled,
       nextDisabled: next?.disabled,
       navigation: snapshot?.navigation || null,
-      contextStandby: signalText.includes('CONTEXT STANDBY'),
+      contextStandby: signalText.includes('Context standby'),
     };
   });
   check(
@@ -1638,7 +1638,7 @@ try {
     };
   });
   const cycleModes = ['optical', 'crt', 'nvg', 'thermal', 'anime', 'noir', 'snow', 'optical'];
-  const cycleLabels = ['NORMAL', 'CRT', 'NVG', 'FLIR', 'ANIME', 'NOIR', 'SNOW', 'NORMAL'];
+  const cycleLabels = ['Normal', 'Retro', 'NVG', 'FLIR', 'Anime', 'Noir', 'Snow', 'Normal'];
   check(
     'Cockpit vision control exposes Normal, CRT, NVG, FLIR, Anime, Noir and Snow before wrapping',
     JSON.stringify(visionCycle.states.map((state) => state.mode)) === JSON.stringify(cycleModes)
@@ -1673,9 +1673,9 @@ try {
     'Cockpit enters on the Noir map preset, Normal clears it, and Exit Cockpit restores it',
     visionCycle.enteredOnNoir
       && visionCycle.entryNoir?.mode === 'noir'
-      && visionCycle.entryNoir?.label === 'NOIR'
+      && visionCycle.entryNoir?.label === 'Noir'
       && visionCycle.normalInsideNoir?.mode === 'optical'
-      && visionCycle.normalInsideNoir?.label === 'NORMAL'
+      && visionCycle.normalInsideNoir?.label === 'Normal'
       && visionCycle.normalInsideNoir?.activeStyle === 'noir'
       && Object.values(visionCycle.normalInsideNoir?.intensities || {}).every((value) => value === 0)
       && visionCycle.cockpitOnlyCrt?.mode === 'crt'
