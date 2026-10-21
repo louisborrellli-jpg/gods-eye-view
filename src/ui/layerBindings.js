@@ -133,6 +133,21 @@ export class LayerBindings {
     });
   }
 
+  _connectShipments() {
+    this._shipmentsShellModule?.attachShellServices?.(null);
+    this._shipmentsShellModule = null;
+    const layer = this._dataManager?.layers?.get('shipments')?.module;
+    if (typeof layer?.attachShellServices !== 'function') return;
+    this._shipmentsShellModule = layer;
+    layer.attachShellServices({
+      runNavigation: (navigate) =>
+        this.runImmediateNavigation('vessel', navigate),
+      showToast: (message) => this._showToast(message),
+      setLayerEnabled: (id, enabled) =>
+        this._dataManager?.setEnabled?.(id, enabled, { origin: 'user' }),
+    });
+  }
+
   _connectWeatherCamera() {
     for (const layer of this._weatherShellModules)
       layer.attachShellServices?.(null);
@@ -256,6 +271,7 @@ export class LayerBindings {
     this._connectDirectionsCamera();
     this._connectWeatherCamera();
     this._connectWatchZones();
+    this._connectShipments();
     if (!this._awarenessSelectedHandler) {
       this._awarenessSelectedHandler = (event) =>
         this._persistAwarenessSelection(event, false);
@@ -309,5 +325,6 @@ export class LayerBindings {
     this._dataManager = null;
     this._connectWeatherCamera();
     this._connectWatchZones();
+    this._connectShipments();
   }
 }

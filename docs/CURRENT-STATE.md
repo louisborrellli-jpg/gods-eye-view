@@ -968,6 +968,48 @@ and snapshot source. The standalone adapter keeps the existing USGS daily feed,
 M2.5+ filtering, static discs, magnitude labels and analyst records. Disabling or
 destroying the layer cancels pending work and ignores late results.
 
+## Shipments layer
+
+`shipments` (Movement group, share token `00`, enabled-only) tracks the
+operator's own containers. Records live only in browser storage
+(`gev.shipments.v1`, at most 60) and never enter share links; the board can
+export and import them as JSON. The layer row opens the Shipments board, a
+`<dialog>` owned by `src/ui/shipmentsBoard.js`; records, free-time arithmetic
+and alert codes live in `src/layers/shipments/` (`model.js` is pure and
+counts calendar days in the browser's time zone, a last free day of today
+being 0 days left).
+
+Container numbers are checked against the ISO 6346 check digit; a wrong check
+digit is shown as a likely typo but stays saveable. The owner code names the
+shipping line (MSC, Maersk, Hapag-Lloyd, CMA CGM and seven more) for its
+tracking-page link; lessor boxes ask the operator to pick the line.
+
+The operator only needs the container number. `GET /api/shipments/track`
+(`server/providers/shipping.js`) asks FindTEU (`FINDTEU_API_KEY`, Business
+plan; answers cached per container for three hours) and returns milestones
+parsed by `src/layers/shipments/tracking.js`: ship ETA, unloading, the rail
+leg when the line reports an inland destination, pickup, empty return and the
+ship carrying the box. With `TERMINAL49_API_KEY` each container is also
+registered with Terminal49 once per server run; its free plan accepts new
+containers but does not return data, so its own dashboard is where the rail
+leg can be followed. Tracked dates live in `auto` and typed ones in `manual`;
+`dates` merges them, a typed date winning. Board defaults (ramp and
+empty-return free days, usual rail days) are set once; without a rail ETA the
+ramp arrival is estimated from unloading plus the rail days. Both keys are
+rows in ADD KEYS. Only the container number and the ship query leave the
+browser.
+
+A shipment's ship (name, IMO or MMSI) is looked up every two minutes while the
+layer is on through `GET /api/vessels/find?q=`, answered from the server's
+live AISStream cache (exact MMSI or IMO, else exact then partial name). The
+ship followed is the typed one, else the one tracking reports, until the box is
+unloaded. The last position, speed, destination and
+the ship's own AIS ETA are remembered, so a ship that leaves coastal AIS range
+keeps a dimmed "last heard" pin. AIS ETAs carry no year; `aisEtaIso` picks the
+year nearest to now. Urgent alerts (severity 2 and 3) raise one toast and,
+with the tab hidden, one system notification per shipment, alert and day.
+`scripts/qa-shipments.mjs` is the gate.
+
 ## Vessel components and sources
 
 `src/data/aisLiveVessels.js` assembles `createVesselLayer` from the
