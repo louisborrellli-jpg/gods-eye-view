@@ -23,6 +23,7 @@ const COCKPIT_REFUSALS = Object.freeze({
   target: msg('Exit cockpit to fly to a target'),
   vessel: msg('Exit cockpit to fly to a vessel'),
   fire: msg('Exit cockpit to fly to a fire'),
+  zone: msg('Exit cockpit to fly to a watch zone'),
   route: msg('Exit cockpit to fly to a route'),
   file: msg('Exit cockpit to fly to a file'),
   scene: msg('Exit cockpit to fly to a scene'),

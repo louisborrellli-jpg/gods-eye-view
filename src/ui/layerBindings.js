@@ -120,6 +120,19 @@ export class LayerBindings {
     });
   }
 
+  _connectWatchZones() {
+    this._watchZonesShellModule?.attachShellServices?.(null);
+    this._watchZonesShellModule = null;
+    const layer = this._dataManager?.layers?.get('watch-zones')?.module;
+    if (typeof layer?.attachShellServices !== 'function') return;
+    this._watchZonesShellModule = layer;
+    layer.attachShellServices({
+      runNavigation: (navigate) =>
+        this.runImmediateNavigation('zone', navigate),
+      showToast: (message) => this._showToast(message),
+    });
+  }
+
   _connectWeatherCamera() {
     for (const layer of this._weatherShellModules)
       layer.attachShellServices?.(null);
@@ -242,6 +255,7 @@ export class LayerBindings {
     this._streetLevelControls?.connect();
     this._connectDirectionsCamera();
     this._connectWeatherCamera();
+    this._connectWatchZones();
     if (!this._awarenessSelectedHandler) {
       this._awarenessSelectedHandler = (event) =>
         this._persistAwarenessSelection(event, false);
@@ -294,5 +308,6 @@ export class LayerBindings {
     this._directionsShellModule = null;
     this._dataManager = null;
     this._connectWeatherCamera();
+    this._connectWatchZones();
   }
 }

@@ -2948,5 +2948,55 @@
     "many": "AÑADIR CLAVES · FALTAN {count} DE CLAVES",
     "other": "AÑADIR CLAVES · FALTAN {count} CLAVES"
   },
-  "Retro": "Retro"
+  "Retro": "Retro",
+  "Quakes": "Sismos",
+  "Fires": "Incendios",
+  "Mayday": "Socorro",
+  "hijack code": "código de secuestro",
+  "radio failure": "fallo de radio",
+  "general emergency": "emergencia general",
+  "M{mag} earthquake · {km} km from centre": "Sismo M{mag} · a {km} km del centro",
+  "{flight} squawking {code} ({meaning}) · {km} km from centre": "{flight} transmite {code} ({meaning}) · a {km} km del centro",
+  "emergency": "emergencia",
+  "{count} new fire detections · {km} km from centre": {
+    "one": "{count} nueva detección de fuego · a {km} km del centro",
+    "many": "{count} de nuevas detecciones de fuego · a {km} km del centro",
+    "other": "{count} nuevas detecciones de fuego · a {km} km del centro"
+  },
+  "Another map tool is using taps — close it first": "Otra herramienta del mapa está usando los toques; ciérrela primero",
+  "ZONE {name}": "ZONA {name}",
+  "FLASH · ZONE {name}": "FLASH · ZONA {name}",
+  "{radius} km · watching {kinds}": "{radius} km · vigilando {kinds}",
+  "nothing": "nada",
+  "Feed unavailable": "Fuente no disponible",
+  "FLASH · ZONE {name} — {what}": "FLASH · ZONA {name} — {what}",
+  "(+{count} more)": "(+{count} más)",
+  "Zone limit reached": "Se alcanzó el límite de zonas",
+  "Codename for this zone": "Nombre en clave de esta zona",
+  "Stand down zone {name}?": "¿Desactivar la zona {name}?",
+  "Tap the map…": "Toque el mapa…",
+  "New zone": "Nueva zona",
+  "Sweep now": "Barrer ahora",
+  "{radius} km": "{radius} km",
+  "Change the zone radius": "Cambiar el radio de la zona",
+  "Rename": "Renombrar",
+  "Stand down": "Desactivar",
+  "Tap the map to drop the zone centre": "Toque el mapa para fijar el centro de la zona",
+  "No zones yet — press New zone, then tap the map": "Aún no hay zonas: pulse Nueva zona y toque el mapa",
+  "{count} zones armed": {
+    "one": "{count} zona activa",
+    "many": "{count} de zonas activas",
+    "other": "{count} zonas activas"
+  },
+  "last sweep {age}": "último barrido {age}",
+  "fires need a NASA FIRMS key": "los incendios requieren una clave de NASA FIRMS",
+  "a feed failed; retrying": "falló una fuente; reintentando",
+  "Watch zones and alerts": "Zonas de vigilancia y alertas",
+  "{count} zones": {
+    "one": "{count} zona",
+    "many": "{count} de zonas",
+    "other": "{count} zonas"
+  },
+  "Exit cockpit to fly to a watch zone": "Salga de la cabina para volar a una zona de vigilancia",
+  "Watch Zones": "Zonas de vigilancia"
 }
