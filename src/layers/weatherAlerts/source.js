@@ -61,8 +61,10 @@ export function createWeatherAlertsSource({
       } else {
         partial = true;
       }
-      // Both feeds failing is a real outage, not a partial.
-      if (sources === 0) throw new Error('Weather alert feeds unavailable');
+      // Both feeds failing is a real outage, not a partial. The message is the
+      // i18n key the panel localizes (see index.js fallback + es/ru catalogs),
+      // so it must match exactly — not a differently-worded sibling.
+      if (sources === 0) throw new Error('Weather alert source unavailable');
 
       return {
         records: mergeAlertRecords(lists, { cap }),
