@@ -10,6 +10,7 @@ dist
 pinokio/ENVIRONMENT
 pinokio/.installed
 .gev-cache
+.gev-data
 .gev-logs
 qa-artifacts
 qa-shots

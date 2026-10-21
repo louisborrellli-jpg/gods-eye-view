@@ -134,7 +134,8 @@ export function createShipmentStore({
         ...input,
         manual: input?.manual ?? input?.dates ?? existing?.manual,
         auto: input?.auto ?? existing?.auto ?? null,
-        id: existing?.id ?? makeId(),
+        // A record made elsewhere (the server, another tab) keeps its id.
+        id: existing?.id ?? (validId(input?.id) ? input.id : makeId()),
         createdAt: existing?.createdAt ?? now(),
         updatedAt: now(),
         vessel: sameShip
@@ -176,6 +177,21 @@ export function createShipmentStore({
       persist();
       return withDefaults(next);
     },
+    /**
+     * Load records exactly as another store holds them (ids, tracking and
+     * all), replacing this store's list; and its defaults when given.
+     */
+    hydrate(entries, nextDefaults) {
+      byId.clear();
+      for (const entry of Array.isArray(entries) ? entries : []) {
+        if (byId.size >= MAX_SHIPMENTS) break;
+        const shipment = normalizeShipment(entry);
+        if (shipment.id && shipment.container) byId.set(shipment.id, shipment);
+      }
+      if (nextDefaults) defaults = normalizeDefaults(nextDefaults);
+      persist();
+      if (nextDefaults) write(storage, SHIPMENTS_DEFAULTS_KEY, defaults);
+    },
     /** Replace every shipment (import). Returns how many were kept. */
     replaceAll(entries) {
       byId.clear();
@@ -201,6 +217,10 @@ export function createShipmentStore({
       write(storage, SHIPMENTS_NOTIFIED_KEY, [...notified]);
     },
   };
+}
+
+function validId(value) {
+  return typeof value === 'string' && /^[A-Za-z0-9_-]{1,40}$/.test(value);
 }
 
 function shipKey(value) {

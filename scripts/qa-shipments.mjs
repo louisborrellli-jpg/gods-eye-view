@@ -8,6 +8,10 @@
  * FindTEU or AISStream key and never depends on real voyages. Dates are
  * written relative to the browser's own today.
  *
+ * The board runs first with the server's shared list hidden (the browser
+ * keeps the list, as on a static host), then once against the dev server's
+ * real shared list (/api/shipments/store), which it leaves as it found it.
+ *
  * Needs a dev server (npm run dev).
  *
  *   node scripts/qa-shipments.mjs [--url http://localhost:4173] [--shot out.png]
@@ -60,9 +64,16 @@ async function main() {
       return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
     };
     const tracked = [];
+    let sharedList = false;
     await page.setRequestInterception(true);
     page.on('request', (request) => {
       const url = new URL(request.url());
+      if (url.pathname.startsWith('/api/shipments/store') && !sharedList)
+        return request.respond({
+          status: 404,
+          contentType: 'application/json',
+          body: JSON.stringify({ error: 'not_found' }),
+        });
       if (url.pathname === '/api/shipments/track') {
         tracked.push(url.searchParams.get('container'));
         return request.respond({
@@ -286,6 +297,58 @@ async function main() {
     record(
       'kept in browser storage, never in the URL',
       privacy.stored && !privacy.inUrl,
+    );
+
+    // The same board on the server's shared list.
+    sharedList = true;
+    const before = await page.evaluate(async () => {
+      const answer = await fetch('/api/shipments/store');
+      return answer.ok ? (await answer.json()).shipments.length : -1;
+    });
+    await page.evaluate(() => {
+      localStorage.removeItem('gev.shipments.v1');
+      localStorage.removeItem('gev.shipments.v1.copied-to-server');
+    });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(
+      () => window.__godsEyeView?.viewer && window.__godsEyeView?.dataManager,
+      { timeout: 90000 },
+    );
+    await sleep(2500);
+    const shared = await page.evaluate(async () => {
+      const layer =
+        window.__godsEyeView.dataManager.layers.get('shipments').module;
+      const saved = layer.board.save({ container: 'TGHU0000008' });
+      const id = saved.shipment?.id;
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const list = await (await fetch('/api/shipments/store')).json();
+      const onServer = list.shipments.some((item) => item.id === id);
+      const inBrowser = (
+        localStorage.getItem('gev.shipments.v1') || ''
+      ).includes('TGHU0000008');
+      layer.board.remove(id);
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const after = await (await fetch('/api/shipments/store')).json();
+      return {
+        problem: saved.problem,
+        mode: list.mode,
+        onServer,
+        inBrowser,
+        removed: !after.shipments.some((item) => item.id === id),
+        count: after.shipments.length,
+      };
+    });
+    record(
+      'with the shared list, a container is kept on the server, not the browser',
+      before >= 0 &&
+        shared.mode === 'server' &&
+        shared.onServer &&
+        !shared.inBrowser,
+      JSON.stringify(shared),
+    );
+    record(
+      'removing it removes it from the shared list',
+      shared.removed && shared.count === before,
     );
 
     if (SHOT) {

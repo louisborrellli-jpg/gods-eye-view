@@ -3308,5 +3308,11 @@
   "Find a container in a few clicks": "Encuentra un contenedor en pocos clics",
   "Search: container number, your reference or ship": "Buscar: número de contenedor, tu referencia o buque",
   "Home": "Inicio",
-  "No container matches “{query}”.": "Ningún contenedor coincide con «{query}»."
+  "No container matches “{query}”.": "Ningún contenedor coincide con «{query}».",
+  "Loaded at origin": "Cargado en origen",
+  "Ship left origin": "El barco salió del origen",
+  "Loaded": "Cargado",
+  "planned": "previsto",
+  "Loaded {day}": "Cargado el {day}",
+  "Shared with everyone on this server, and tracked even with no page open. Before the box is off the rail, its last free day is estimated from the expected rail arrival.": "Compartido con todos en este servidor y seguido aunque no haya ninguna página abierta. Hasta que el contenedor sale del tren, su último día libre se estima a partir de la llegada prevista del tren."
 }

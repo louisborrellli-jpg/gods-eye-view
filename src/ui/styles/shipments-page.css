@@ -258,8 +258,8 @@ body.sp-body {
 .sp-row {
   display: grid;
   grid-template-columns:
-    minmax(150px, 1.15fr) minmax(170px, 1.4fr) 100px 100px 130px
-    minmax(170px, 1.6fr) 20px;
+    minmax(140px, 1.1fr) minmax(160px, 1.3fr) 92px 92px 96px 122px
+    minmax(160px, 1.5fr) 20px;
   gap: 14px;
   align-items: center;
 }

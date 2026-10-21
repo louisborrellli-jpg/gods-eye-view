@@ -3397,5 +3397,11 @@
   "Find a container in a few clicks": "Найти контейнер в пару кликов",
   "Search: container number, your reference or ship": "Поиск: номер контейнера, ваш номер или судно",
   "Home": "Главная",
-  "No container matches “{query}”.": "Нет контейнера по запросу «{query}»."
+  "No container matches “{query}”.": "Нет контейнера по запросу «{query}».",
+  "Loaded at origin": "Погружен в порту отправления",
+  "Ship left origin": "Судно вышло из порта отправления",
+  "Loaded": "Погрузка",
+  "planned": "по плану",
+  "Loaded {day}": "Погружен {day}",
+  "Shared with everyone on this server, and tracked even with no page open. Before the box is off the rail, its last free day is estimated from the expected rail arrival.": "Общий для всех на этом сервере; отслеживается, даже когда страница закрыта. Пока контейнер не снят с поезда, последний бесплатный день рассчитывается по ожидаемому прибытию поезда."
 }
