@@ -31,6 +31,10 @@ import { weatherProxy } from './weather.js';
 import { firePerimetersProxy } from './firePerimeters.js';
 import { gnssIntegrityProxy } from './gnssIntegrity.js';
 import { cycloneProxy } from './cyclones.js';
+// Windsor mode and the phone remote read /api/border-waits (both directions
+// per crossing); the Border Waits layer reads /api/border/waits (border.js).
+import { borderWaitsProxy as windsorBorderWaitsProxy } from './borders.js';
+import { roadEventsProxy } from './roadEvents.js';
 import { windProxy } from './wind.js';
 
 /**
@@ -69,6 +73,8 @@ function localProviderPlugins({ realtime, gemini } = {}) {
     windProxy(),
     weatherProxy(),
     cycloneProxy(),
+    windsorBorderWaitsProxy(),
+    roadEventsProxy(),
     mapillaryProxy(),
     firePerimetersProxy(),
     gnssIntegrityProxy(),

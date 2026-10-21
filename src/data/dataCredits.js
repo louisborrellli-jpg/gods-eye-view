@@ -280,6 +280,22 @@ export const DATA_CREDITS = [
       '<a href="https://data.calgary.ca/stories/s/Open-Calgary-Terms-of-Use/u45n-7awa" target="_blank" rel="noopener">Open Government Licence – City of Calgary</a>',
   },
   {
+    key: 'mdot-cctv',
+    html:
+      'Traffic cameras (Michigan): Mi Drive, Michigan Department of Transportation. ' +
+      'See the <a href="https://www.michigan.gov/mdot/about/mi-drive-disclaimer" target="_blank" rel="noopener">Mi Drive disclaimer</a>',
+  },
+  {
+    key: 'ccg-cctv',
+    html: 'River cameras: <a href="https://e-navigation.canada.ca/topics/cameras/index-en" target="_blank" rel="noopener">Canadian Coast Guard</a>, offered as a public courtesy for information only',
+  },
+  {
+    key: 'border-waits',
+    html:
+      'Border wait times: <a href="https://www.cbsa-asfc.gc.ca/bwt-taf/menu-eng.html" target="_blank" rel="noopener">Canada Border Services Agency</a> (into Canada); ' +
+      '<a href="https://bwt.cbp.gov/" target="_blank" rel="noopener">U.S. Customs and Border Protection</a> (into the U.S.)',
+  },
+  {
     key: 'florida-cctv',
     html:
       'Traffic cameras (Florida): FL511, Florida Department of Transportation. ' +

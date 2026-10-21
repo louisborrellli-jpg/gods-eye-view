@@ -44,6 +44,11 @@ import { panelRequest } from './queries/panelRequest.js';
 import { showInGodsEyeView } from './queries/share.js';
 import { findAlprCameras } from './queries/surveillance.js';
 import {
+  getBorderWaits,
+  getRoadEvents,
+  windsorCommuteBrief,
+} from './queries/windsor.js';
+import {
   findCctvCameras,
   findRadioStations,
   getCctvSnapshot,
@@ -115,6 +120,9 @@ export const coreTools = Object.freeze([
   getBhoteKoshiFlood,
   getRegionalBrief,
   getCyclones,
+  getBorderWaits,
+  getRoadEvents,
+  windsorCommuteBrief,
   getFirePerimeters,
   getTerrainHeight,
   findMilitaryInstallations,

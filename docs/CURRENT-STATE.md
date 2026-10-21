@@ -1110,6 +1110,19 @@ Tracking answers carry a parser version (`TRACKING_VERSION`); a box read by an
 older parser is fetched again once, so new fields such as the loading date
 fill in without a manual refresh.
 
+### Shipments on the phone remote
+
+The phone remote (`server/remote/`, opt-in with `GEV_REMOTE=1`, see
+WINDSOR.md) has a Shipments tab. Its LAN server reads the shared list from
+the app over loopback (`/api/shipments/store`) and sends paired phones
+compact rows from `server/remote/shipments.js` (stage, route, ship, loaded
+day, port or rail ETA, nearest last free day, urgency), most urgent first.
+`POST /api/shipments {container}` adds a container through the same store
+route the pages use (duplicates are refused); nothing on the phone removes or
+edits. The `shipment` command (an id, checked against the store's id shape)
+makes the TV tab turn on the Shipments layer and select that container,
+which flies to its ship.
+
 ## Vessel components and sources
 
 `src/data/aisLiveVessels.js` assembles `createVesselLayer` from the

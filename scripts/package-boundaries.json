@@ -3925,6 +3925,7 @@
       "src/tools/queries/places.js",
       "src/tools/queries/mobility.js",
       "src/tools/queries/environment.js",
+      "src/tools/queries/windsor.js",
       "src/tools/queries/brief.js",
       "src/tools/queries/maritime.js",
       "src/tools/queries/share.js",
@@ -4051,7 +4052,9 @@
       "src/layers/alpr/records.js",
       "src/layers/alpr/tileRecords.js",
       "src/sources/infrastructureData.js",
-      "src/sources/eventPacks.js"
+      "src/sources/eventPacks.js",
+      "src/sources/borderWaits.js",
+      "src/sources/roadEvents.js"
     ],
     "external": ["@mapbox/vector-tile", "pbf"]
   },
