@@ -2998,5 +2998,19 @@
     "other": "{count} zonas"
   },
   "Exit cockpit to fly to a watch zone": "Salga de la cabina para volar a una zona de vigilancia",
-  "Watch Zones": "Zonas de vigilancia"
+  "Watch Zones": "Zonas de vigilancia",
+  "—": "—",
+  "Closed": "Cerrado",
+  "No delay": "Sin demora",
+  "{count} min": "{count} min",
+  "Into Canada — cars {travellers}, trucks {commercial}": "Hacia Canadá — autos {travellers}, camiones {commercial}",
+  "Into U.S. — cars {travellers}, trucks {commercial}": "Hacia EE. UU. — autos {travellers}, camiones {commercial}",
+  "Updated {when}": "Actualizado {when}",
+  "Border feed unavailable": "Fuente fronteriza no disponible",
+  "{count} crossings": {
+    "one": "{count} cruce",
+    "many": "{count} de cruces",
+    "other": "{count} cruces"
+  },
+  "Border Crossings": "Cruces fronterizos"
 }

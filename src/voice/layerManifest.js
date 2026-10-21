@@ -423,6 +423,7 @@ export const VOICE_OFF_LAYERS = Object.freeze({
   'bhote-koshi-locator': 'scene-driven event layer (control_scene)',
   'watch-zones':
     'operator-drawn zones and alerts in this browser; voice control is a follow-up',
+  'border-waits': 'CBSA border wait times; voice control is a follow-up',
 });
 
 const TYPE_NAMES = Object.freeze({
