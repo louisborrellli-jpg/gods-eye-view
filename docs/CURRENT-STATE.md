@@ -993,12 +993,14 @@ ship carrying the box. With `TERMINAL49_API_KEY` each container is also
 registered with Terminal49 once per server run; its free plan accepts new
 containers but does not return data, so its own dashboard is where the rail
 leg can be followed. Tracked dates live in `auto` and typed ones in `manual`;
-`dates` merges them, a typed date winning. Last free days are computed
-without input from `STANDARD_FREE_TIME` (MSC Montreal port demurrage 6
-working days after unloading, CN ramp storage 1 day after arrival, MSC
-detention 4 working days after pickup, about 4 rail days); clocks from these
-published rules are marked estimated. Board-wide or per-container numbers
-replace them for a contract that differs. Without a rail ETA the ramp arrival
+`dates` merges them, a typed date winning. The ramp's last free day is a
+count of free days from the day the box comes off the rail (CN: 1), not a
+published date: once the ramp arrival is reported it is exact; before that the
+clock is `pending` and shows an estimate from the freshest rail ETA (or port
+ETA plus rail days; `latestPortEta` prefers the ship's own AIS ETA when heard
+after the last tracking answer). Pending clocks raise no last-free-day alerts.
+Empty return counts 4 MSC working days from pickup; port days count only when
+set. Board-wide or per-container numbers replace `STANDARD_FREE_TIME`. Without a rail ETA the ramp arrival
 is estimated from unloading plus the rail days. Both keys are
 rows in ADD KEYS. Only the container number and the ship query leave the
 browser.
@@ -1013,6 +1015,21 @@ keeps a dimmed "last heard" pin. AIS ETAs carry no year; `aisEtaIso` picks the
 year nearest to now. Urgent alerts (severity 2 and 3) raise one toast and,
 with the tab hidden, one system notification per shipment, alert and day.
 `scripts/qa-shipments.mjs` is the gate.
+
+### Simple home
+
+`/home.html` (entry `src/homePage.js`, UI `src/ui/simpleHome.js`, styles in
+`src/ui/styles/shipments-page.css`) is the start page for people who only need
+the shipments: "What do you want to do?", a large "Find a container" search
+(number, own reference, ship, line or port, via
+`src/layers/shipments/search.js`) with tap-through results, one line per
+container that needs attention, and three large buttons (see all shipments,
+show ships on the map, add a container), plus a plain-language glossary. It is
+a third build input. The Shipments page accepts `?q=` (opens the box when one
+matches), `?add=1` and `?filter=`, and has its own search box. "Show ships on
+the map" stores `*` under `gev.shipments.focus`, which the layer answers by
+turning on and framing every container. The globe's Shipments row links to
+both pages.
 
 ### Shipments page and globe estimates
 

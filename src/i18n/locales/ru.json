@@ -3285,7 +3285,6 @@
   "Tracked: {day}": "По отслеживанию: {day}",
   "Saved only in this browser and never put in share links. To track them, this app’s server sends container numbers to FindTEU and Terminal49 and ship names or numbers to its live ship feed; nothing else leaves. Export to keep a copy.": "Хранится только в этом браузере и никогда не попадает в ссылки. Для отслеживания сервер этого приложения отправляет номера контейнеров в FindTEU и Terminal49, а названия или номера судов — в свой поток данных о судах; больше ничего не передаётся. Экспортируйте, чтобы сохранить копию.",
   "Free time rules (automatic)": "Правила свободного времени (автоматически)",
-  "Last free days are worked out automatically from the standard rules: MSC Montreal port 6 working days, CN Toronto ramp 1 day, MSC empty return 4 working days, rail about 4 days. Change a number only if your contract differs; dates from these rules are marked est.": "Последние свободные дни рассчитываются автоматически по стандартным правилам: порт Монреаля (MSC) — 6 рабочих дней, терминал Торонто (CN) — 1 день, возврат порожнего (MSC) — 4 рабочих дня, ж/д — около 4 дней. Меняйте число, только если ваш контракт отличается; даты по этим правилам помечены как оценка.",
   "Free time saved": "Свободное время сохранено",
   "Port free days (working days)": "Свободные дни в порту (рабочие дни)",
   "Ramp free days": "Свободные дни на терминале",
@@ -3302,7 +3301,6 @@
   "Last free day": "Последний свободный день",
   "Next step": "Следующий шаг",
   "Updated {age}": "Обновлено {age}",
-  "Saved in this browser only. Last free days marked est. use standard MSC and CN rules.": "Хранится только в этом браузере. Последние свободные дни с пометкой «оценка» рассчитаны по стандартным правилам MSC и CN.",
   "Open the map": "Открыть карту",
   "Need action": "Требуют действий",
   "Arriving in 7 days": "Прибудут за 7 дней",
@@ -3339,5 +3337,65 @@
   "{name} (est.)": "{name} (оценка)",
   "Estimated from its departure and ETA; live position returns near the coast": "Оценка по дате отправления и ETA; живая позиция появится у побережья",
   "Shipments page": "Страница поставок",
-  "Every container on one easy-to-read page": "Все контейнеры на одной удобной странице"
+  "Every container on one easy-to-read page": "Все контейнеры на одной удобной странице",
+  "{count} free days once it is off the rail": {
+    "one": "{count} свободный день после снятия с поезда",
+    "few": "{count} свободных дня после снятия с поезда",
+    "many": "{count} свободных дней после снятия с поезда",
+    "other": "{count} свободных дней после снятия с поезда"
+  },
+  "Off rail + {count} days": {
+    "one": "Снят с поезда + {count} день",
+    "few": "Снят с поезда + {count} дня",
+    "many": "Снят с поезда + {count} дней",
+    "other": "Снят с поезда + {count} дней"
+  },
+  "The ramp’s last free day is counted from the day the box comes off the rail (CN: 1 free day). The empty must be back 4 working days after pickup (MSC). Rail takes about 4 days. Port days count only if you set them. Change a number only if your contract differs.": "Последний свободный день на терминале отсчитывается со дня снятия контейнера с поезда (CN: 1 свободный день). Порожний нужно вернуть через 4 рабочих дня после вывоза (MSC). Ж/д занимает около 4 дней. Дни в порту учитываются, только если вы их зададите. Меняйте число, только если ваш контракт отличается.",
+  "Saved in this browser only. Before the box is off the rail, its last free day is estimated from the expected rail arrival.": "Хранится только в этом браузере. Пока контейнер не снят с поезда, его последний свободный день оценивается по ожидаемому прибытию поезда.",
+  "ETA": "ETA",
+  "Estimated time of arrival: the day the ship or train is expected.": "Ожидаемое время прибытия: день, когда ждут судно или поезд.",
+  "The last day the container can stay before storage charges start. Pick it up by then.": "Последний день, когда контейнер может стоять без платы за хранение. Заберите его до этого дня.",
+  "Off the rail": "Снят с поезда",
+  "The container has come off the train at the Toronto rail yard. Free days are counted from here.": "Контейнер сняли с поезда на ж/д терминале в Торонто. Свободные дни считаются с этого момента.",
+  "The rail yard where the train drops the container (Toronto).": "Ж/д терминал, где поезд оставляет контейнер (Торонто).",
+  "After unloading, the empty container goes back to the shipping line by this day, or charges start.": "После разгрузки порожний контейнер нужно вернуть линии до этого дня, иначе начнутся начисления.",
+  "Estimated: worked out from the latest ETA. It turns into an exact date once the container arrives.": "Оценка: рассчитана по последнему ETA. Станет точной датой, когда контейнер прибудет.",
+  "What do you want to do?": "Что вы хотите сделать?",
+  "Find a container": "Найти контейнер",
+  "Container number, your reference or ship name": "Номер контейнера, ваш номер или название судна",
+  "Find": "Найти",
+  "{count} containers need attention": {
+    "one": "{count} контейнер требует внимания",
+    "few": "{count} контейнера требуют внимания",
+    "many": "{count} контейнеров требуют внимания",
+    "other": "{count} контейнеров требуют внимания"
+  },
+  "Nothing needs attention right now": "Сейчас ничего не требует внимания",
+  "and {count} more": {
+    "one": "и ещё {count}",
+    "few": "и ещё {count}",
+    "many": "и ещё {count}",
+    "other": "и ещё {count}"
+  },
+  "Every container is on time with free days left.": "Все контейнеры идут по графику, свободные дни ещё есть.",
+  "Add your first container to start tracking.": "Добавьте первый контейнер, чтобы начать отслеживание.",
+  "See all shipments": "Все поставки",
+  "{count} containers on the way": {
+    "one": "{count} контейнер в пути",
+    "few": "{count} контейнера в пути",
+    "many": "{count} контейнеров в пути",
+    "other": "{count} контейнеров в пути"
+  },
+  "Your list of containers": "Ваш список контейнеров",
+  "Show ships on the map": "Показать суда на карте",
+  "Where each container is right now": "Где сейчас каждый контейнер",
+  "Type the number; everything else fills in by itself": "Введите номер — остальное заполнится само",
+  "What do these words mean?": "Что означают эти слова?",
+  "Open the full map (advanced)": "Открыть полную карту (для опытных)",
+  "No container matches “{query}”. Check the number, or add it.": "Нет контейнера по запросу «{query}». Проверьте номер или добавьте его.",
+  "Simple home": "Простой режим",
+  "Find a container in a few clicks": "Найти контейнер в пару кликов",
+  "Search: container number, your reference or ship": "Поиск: номер контейнера, ваш номер или судно",
+  "Home": "Главная",
+  "No container matches “{query}”.": "Нет контейнера по запросу «{query}»."
 }

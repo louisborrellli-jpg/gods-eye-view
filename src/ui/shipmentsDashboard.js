@@ -18,13 +18,17 @@ import {
   STAGE_LABELS,
   STANDARD_FREE_TIME,
   daysBetween,
+  latestPortEta,
   localDay,
   rampEtaFor,
   shipmentAlerts,
   shipmentClocks,
   shipmentStage,
 } from '../layers/shipments/model.js';
+import { searchShipments } from '../layers/shipments/search.js';
 import {
+  describePendingRule,
+  describePendingShort,
   describeShipmentAlert,
   displayDay,
   relativeDays,
@@ -95,6 +99,11 @@ export function createShipmentsDashboard({
   let store = createShipmentStore({ storage, now });
   let tracker = createShipmentTracker({ store, source: trackingSource, now });
   let filter = 'all';
+  const params = new URLSearchParams(globalThis.location?.search ?? '');
+  let query = String(params.get('q') ?? '').slice(0, 60);
+  if (FILTERS.some(([id]) => id === params.get('filter')))
+    filter = params.get('filter');
+  let listHost = null;
   let lastRefresh = null;
   let status = '';
   let sheet = null;
@@ -148,11 +157,16 @@ export function createShipmentsDashboard({
     return shipmentAlerts(shipment, day)[0]?.severity ?? 0;
   }
 
-  /** The open clock that runs out first, if any. */
+  /**
+   * The open clock that runs out first; a pending one (the box is not off
+   * the rail yet) only when nothing has started.
+   */
   function nearestClock(shipment, day) {
-    return shipmentClocks(shipment, day)
-      .filter((clock) => !clock.closed)
-      .sort((a, b) => a.daysLeft - b.daysLeft)[0];
+    const open = shipmentClocks(shipment, day).filter((clock) => !clock.closed);
+    const running = open
+      .filter((clock) => !clock.pending)
+      .sort((a, b) => a.daysLeft - b.daysLeft);
+    return running[0] ?? open.find((clock) => clock.pending);
   }
 
   function matchesFilter(shipment, day) {
@@ -174,6 +188,7 @@ export function createShipmentsDashboard({
       if (severity) return severity;
       const clockA = nearestClock(a, day)?.daysLeft ?? 999;
       const clockB = nearestClock(b, day)?.daysLeft ?? 999;
+      // Pending clocks have no days left yet (null sorts as 999).
       return clockA - clockB;
     });
   }
@@ -219,6 +234,8 @@ export function createShipmentsDashboard({
   function render() {
     const day = today();
     const shipments = store.list();
+    // A refresh re-renders the page; keep the search box where it was.
+    const searching = doc.activeElement?.classList?.contains('sp-search');
     root.replaceChildren();
 
     const header = el('header', 'sp-header');
@@ -284,32 +301,30 @@ export function createShipmentsDashboard({
     }
     root.append(segments);
 
-    const visible = sorted(
-      shipments.filter((item) => matchesFilter(item, day)),
-      day,
-    );
-    if (!shipments.length) root.append(emptyState());
-    else if (!visible.length)
-      root.append(el('p', 'sp-empty-filter', t('Nothing here right now.')));
-    else {
-      const table = el('section', 'sp-table');
-      table.setAttribute('aria-label', t('Your containers'));
-      table.append(
-        el(
-          'div',
-          'sp-table-head',
-          el('span', '', t('Container')),
-          el('span', '', t('Status')),
-          el('span', '', t('Port ETA')),
-          el('span', '', t('Ramp ETA')),
-          el('span', '', t('Last free day')),
-          el('span', '', t('Next step')),
-          el('span', ''),
-        ),
+    if (shipments.length) {
+      const search = el('input', 'sp-search');
+      search.type = 'search';
+      search.value = query;
+      search.placeholder = t(
+        'Search: container number, your reference or ship',
       );
-      for (const shipment of visible) table.append(row(shipment, day));
-      root.append(table);
+      search.setAttribute('aria-label', t('Find a container'));
+      search.autocomplete = 'off';
+      search.spellcheck = false;
+      search.addEventListener('input', () => {
+        query = search.value;
+        renderList();
+      });
+      root.append(el('div', 'sp-search-wrap', search));
+      if (searching) {
+        search.focus();
+        search.setSelectionRange?.(search.value.length, search.value.length);
+      }
     }
+
+    listHost = el('div', 'sp-list-host');
+    root.append(listHost);
+    renderList();
 
     const footer = [];
     if (status) footer.push(status);
@@ -318,13 +333,65 @@ export function createShipmentsDashboard({
       footer.push(t('Updated {age}', { age: age(lastRefresh) }));
     footer.push(
       t(
-        'Saved in this browser only. Last free days marked est. use standard MSC and CN rules.',
+        'Saved in this browser only. Before the box is off the rail, its last free day is estimated from the expected rail arrival.',
       ),
     );
     root.append(el('p', 'sp-footer', footer.join(' · ')));
     root.append(
-      el('p', 'sp-footer sp-footer-link', linkTo('/', t('Open the map'))),
+      el(
+        'p',
+        'sp-footer sp-footer-link',
+        linkTo('/home.html', t('Home')),
+        ' · ',
+        linkTo('/', t('Open the map')),
+      ),
     );
+  }
+
+  /** The rows: the current filter, then the search, most urgent first. */
+  function renderList() {
+    if (!listHost) return;
+    const day = today();
+    const shipments = store.list();
+    listHost.replaceChildren();
+    let visible = sorted(
+      shipments.filter((item) => matchesFilter(item, day)),
+      day,
+    );
+    if (query.trim()) visible = searchShipments(visible, query);
+    if (!shipments.length) {
+      listHost.append(emptyState());
+      return;
+    }
+    if (!visible.length) {
+      listHost.append(
+        el(
+          'p',
+          'sp-empty-filter',
+          query.trim()
+            ? t('No container matches “{query}”.', { query: query.trim() })
+            : t('Nothing here right now.'),
+        ),
+      );
+      return;
+    }
+    const table = el('section', 'sp-table');
+    table.setAttribute('aria-label', t('Your containers'));
+    table.append(
+      el(
+        'div',
+        'sp-table-head',
+        el('span', '', t('Container')),
+        el('span', '', t('Status')),
+        el('span', '', t('Port ETA')),
+        el('span', '', t('Ramp ETA')),
+        el('span', '', t('Last free day')),
+        el('span', '', t('Next step')),
+        el('span', ''),
+      ),
+    );
+    for (const shipment of visible) table.append(row(shipment, day));
+    listHost.append(table);
   }
 
   function linkTo(href, label) {
@@ -419,7 +486,7 @@ export function createShipmentsDashboard({
       el('span', 'sp-sub', route(shipment)),
     );
 
-    const portDay = shipment.dates.discharged || shipment.dates.portEta;
+    const portDay = shipment.dates.discharged || latestPortEta(shipment);
     const port = el(
       'span',
       'sp-cell sp-cell-date',
@@ -460,7 +527,20 @@ export function createShipmentsDashboard({
     const clock = nearestClock(shipment, day);
     const lfd = el('span', 'sp-cell sp-cell-date');
     lfd.append(el('span', 'sp-cell-label', t('Last free day')));
-    if (clock) {
+    if (clock?.pending) {
+      // Not off the rail yet: the expected rail arrival plus the free days.
+      lfd.append(
+        clock.day
+          ? el(
+              'span',
+              'sp-date-value',
+              displayDay(clock.day),
+              el('span', 'sp-est', t('est.')),
+            )
+          : el('span', 'sp-date-value', '—'),
+        el('span', 'sp-sub', describePendingShort(clock)),
+      );
+    } else if (clock) {
       lfd.append(
         el(
           'span',
@@ -668,7 +748,7 @@ export function createShipmentsDashboard({
           'p',
           'sp-hint sp-hint-block',
           t(
-            'Last free days are worked out automatically from the standard rules: MSC Montreal port 6 working days, CN Toronto ramp 1 day, MSC empty return 4 working days, rail about 4 days. Change a number only if your contract differs; dates from these rules are marked est.',
+            'The ramp’s last free day is counted from the day the box comes off the rail (CN: 1 free day). The empty must be back 4 working days after pickup (MSC). Rail takes about 4 days. Port days count only if you set them. Change a number only if your contract differs.',
           ),
         ),
       );
@@ -684,7 +764,7 @@ export function createShipmentsDashboard({
         input.max = '60';
         input.inputMode = 'numeric';
         input.value = defaults[name] ?? '';
-        input.placeholder = String(STANDARD_FREE_TIME[name]);
+        input.placeholder = String(STANDARD_FREE_TIME[name] ?? '—');
         input.setAttribute('aria-label', label);
         input.addEventListener('change', () => {
           store.setDefaults({ [name]: input.value });
@@ -749,9 +829,16 @@ export function createShipmentsDashboard({
             clocks.map((clock) =>
               line(
                 t(CLOCK_LABELS[clock.id]),
-                clock.closed
-                  ? t('{day} · done', { day: displayDay(clock.day) })
-                  : when(clock.day, day),
+                clock.pending
+                  ? clock.day
+                    ? t('{day} · {when}', {
+                        day: displayDay(clock.day),
+                        when: describePendingShort(clock),
+                      })
+                    : describePendingRule(clock)
+                  : clock.closed
+                    ? t('{day} · done', { day: displayDay(clock.day) })
+                    : when(clock.day, day),
                 clock.estimated ? el('span', 'sp-est', t('est.')) : null,
                 `clock-${clock.state}`,
               ),
@@ -964,6 +1051,13 @@ export function createShipmentsDashboard({
   }
 
   render();
+  // Links from the home page: ?q= opens a search (and the box itself when
+  // exactly one matches), ?add=1 opens the add sheet.
+  if (params.get('add')) openAdd();
+  else if (query.trim()) {
+    const found = searchShipments(store.list(), query);
+    if (found.length === 1) openDetail(found[0].id);
+  }
   void refresh();
 
   return {

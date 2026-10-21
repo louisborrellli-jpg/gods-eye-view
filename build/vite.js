@@ -163,6 +163,7 @@ export function createBrowserViteConfig({
           shipments: fileURLToPath(
             new URL('../shipments.html', import.meta.url),
           ),
+          home: fileURLToPath(new URL('../home.html', import.meta.url)),
         },
       },
     },

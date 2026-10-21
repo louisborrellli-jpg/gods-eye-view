@@ -134,3 +134,25 @@ export function describeShipmentStatus(shipment, today) {
     when,
   });
 }
+
+/**
+ * A clock that has not started: "1 free day once it is off the rail".
+ * @param {{freeDays:number|null}} clock
+ */
+export function describePendingRule(clock) {
+  const count = clock.freeDays ?? 0;
+  return tn(
+    count,
+    '{count} free day once it is off the rail',
+    '{count} free days once it is off the rail',
+    { count },
+  );
+}
+
+/** "Off rail + 1 day": how a not-yet-started ramp clock is counted. */
+export function describePendingShort(clock) {
+  const count = clock.freeDays ?? 0;
+  return tn(count, 'Off rail + {count} day', 'Off rail + {count} days', {
+    count,
+  });
+}
