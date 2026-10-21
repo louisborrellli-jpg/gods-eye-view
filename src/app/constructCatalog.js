@@ -33,6 +33,7 @@ import { createApplicationStreetLevel } from './layers/streetLevel.js';
 import { createApplicationWatchZones } from './layers/watchZones.js';
 import { createApplicationBorderWaits } from './layers/borderWaits.js';
 import { createApplicationDetroit } from './layers/detroit.js';
+import { createApplicationMe } from './layers/me.js';
 import { createInfrastructureLayers } from '../data/infrastructure.js';
 import { localGeoJsonServices } from './localGeojsonServices.js';
 import { createBhoteKoshiEventLayer } from '../data/bhoteKoshiEvent.js';
@@ -46,6 +47,8 @@ export const LOCAL_ONLY_LAYER_METADATA = Object.freeze([
   Object.freeze({ id: 'local-adsb', disposition: 'local-only' }),
   // Zones and their alert memory live in this browser's storage only.
   Object.freeze({ id: 'watch-zones', disposition: 'local-only' }),
+  // This device's own location; another browser cannot have it.
+  Object.freeze({ id: 'me', disposition: 'local-only' }),
 ]);
 
 /** Serialization metadata for every layer the application catalog constructs. */
@@ -124,6 +127,7 @@ export function createApplicationCatalog({
           displayParams: () => flights.getParams(),
           ...(resolveAsset ? { resolveAsset } : {}),
         }),
+        createApplicationMe(),
         createApplicationWatchZones(),
         createApplicationBorderWaits(),
         createApplicationDetroit(),

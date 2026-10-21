@@ -42,6 +42,7 @@ const PANEL_GROUPS = [
   {
     label: msg('Movement'),
     ids: [
+      'me',
       'satellites',
       'flights',
       'military',

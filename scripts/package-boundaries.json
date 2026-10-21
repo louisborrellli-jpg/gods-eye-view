@@ -1069,6 +1069,11 @@
     ],
     "external": ["cesium"]
   },
+  "me": {
+    "exports": ["./layers/me"],
+    "modules": ["src/layers/me/index.js"],
+    "external": ["cesium"]
+  },
   "recent-imagery": {
     "exports": ["./layers/recent-imagery"],
     "modules": [
@@ -1700,6 +1705,7 @@
       "src/app/layers/alprCameras.js",
       "src/app/layers/bikeshare.js",
       "src/app/layers/cctv.js",
+      "src/app/layers/me.js",
       "src/app/layers/earthquakes.js",
       "src/app/layers/firms.js",
       "src/app/layers/flights.js",
@@ -1931,6 +1937,7 @@
       "src/layers/cctv/source.js",
       "src/layers/cctv/state.js",
       "src/layers/cctv/testing.js",
+      "src/layers/me/index.js",
       "src/layers/earthquakes/index.js",
       "src/layers/earthquakes/model.js",
       "src/layers/earthquakes/source.js",
@@ -2576,6 +2583,7 @@
       "src/app/layers/alprCameras.js",
       "src/app/layers/bikeshare.js",
       "src/app/layers/cctv.js",
+      "src/app/layers/me.js",
       "src/app/layers/earthquakes.js",
       "src/app/layers/firms.js",
       "src/app/layers/flights.js",
@@ -2731,6 +2739,7 @@
       "src/layers/cctv/source.js",
       "src/layers/cctv/state.js",
       "src/layers/cctv/testing.js",
+      "src/layers/me/index.js",
       "src/layers/earthquakes/index.js",
       "src/layers/earthquakes/model.js",
       "src/layers/earthquakes/source.js",
