@@ -1,5 +1,6 @@
 import { createStandaloneApplication } from './standalone/application.js';
 import { describeError } from './standalone/errors.js';
+import { registerServiceWorker } from './pwa/register.js';
 import { t } from './i18n/index.js';
 
 const application = createStandaloneApplication({
@@ -16,5 +17,9 @@ application.start().catch((error) => {
   });
   loaderStatus.style.color = '#ff4444';
 });
+
+// Installable PWA + offline shell. Production + secure-context only; it never
+// caches /api or map tiles (see public/sw.js). Harmless if it does not register.
+registerServiceWorker({ enabled: import.meta.env.PROD });
 
 export { application };
