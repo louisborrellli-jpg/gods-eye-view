@@ -84,6 +84,26 @@ export const KEY_SETUP_KEYS = Object.freeze([
     tier: 'free',
   }),
   Object.freeze({
+    id: 'findteu',
+    title: 'FINDTEU', // i18n-ignore: provider product name
+    unlocks: msg(
+      'Automatic container tracking in Shipments: ship, ETAs, unloading, delivery and empty return. API access needs the Business plan',
+    ),
+    getUrl: 'https://www.findteu.com/pricing',
+    envVars: Object.freeze(['FINDTEU_API_KEY']),
+    tier: 'paid',
+  }),
+  Object.freeze({
+    id: 'terminal49',
+    title: 'TERMINAL49', // i18n-ignore: provider product name
+    unlocks: msg(
+      'Shipments also registers each container with Terminal49, whose dashboard follows the rail leg. Free plan',
+    ),
+    getUrl: 'https://app.terminal49.com/developers',
+    envVars: Object.freeze(['TERMINAL49_API_KEY']),
+    tier: 'free',
+  }),
+  Object.freeze({
     id: 'firms',
     title: 'NASA FIRMS', // i18n-ignore: provider product name
     unlocks: msg('Live active-fire detections'),

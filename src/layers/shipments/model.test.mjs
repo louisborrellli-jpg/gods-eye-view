@@ -5,7 +5,9 @@ import {
   daysBetween,
   localDay,
   normalizeDay,
+  normalizeDefaults,
   normalizeShipment,
+  rampEtaFor,
   shipmentAlerts,
   shipmentClocks,
   shipmentStage,
@@ -238,5 +240,63 @@ test('a returned box raises nothing and the summary names the next date', () => 
       TODAY,
     ).next,
     { kind: 'clock:ramp', day: '2026-10-22', days: 1 },
+  );
+});
+
+test('tracked dates fill in, and a typed date always wins', () => {
+  const shipment = ship({
+    dates: { portEta: '2026-10-26' },
+    auto: {
+      source: 'FindTEU',
+      carrier: 'msc',
+      dates: { portEta: '2026-10-24', discharged: '2026-10-25', bogus: 'x' },
+      vessel: { name: 'MSC TESTA', imo: '9900123', mmsi: '990000123' },
+      fetchedAt: 7,
+    },
+  });
+  assert.equal(shipment.carrier, 'msc');
+  assert.equal(shipment.manual.portEta, '2026-10-26');
+  assert.equal(shipment.dates.portEta, '2026-10-26');
+  assert.equal(shipment.dates.discharged, '2026-10-25');
+  assert.equal(shipmentStage(shipment), 'at-port');
+  assert.equal(shipment.auto.dates.bogus, undefined);
+});
+
+test('board defaults give every box its free days and a rail estimate', () => {
+  const defaults = normalizeDefaults({
+    rampFreeDays: '3',
+    returnFreeDays: 5,
+    railDays: 4,
+  });
+  const atPort = ship({ dates: { discharged: '2026-10-20' } });
+  assert.deepEqual(rampEtaFor(atPort, defaults), {
+    day: '2026-10-24',
+    estimated: true,
+  });
+  const ramp = shipmentClocks(atPort, TODAY, defaults).find(
+    (clock) => clock.id === 'ramp',
+  );
+  assert.equal(ramp.day, '2026-10-26');
+  assert.equal(ramp.estimated, true);
+  // A box's own free days win; attached defaults are read when none passed.
+  const own = {
+    ...ship({ dates: { rampArrived: TODAY }, freeDays: { ramp: 1 } }),
+    defaults,
+  };
+  assert.equal(
+    shipmentClocks(own, TODAY).find((c) => c.id === 'ramp').day,
+    TODAY,
+  );
+  const sameplace = ship({
+    port: 'Toronto',
+    ramp: 'toronto',
+    dates: { discharged: TODAY },
+  });
+  assert.equal(rampEtaFor(sameplace, defaults).day, '');
+  assert.ok(
+    shipmentAlerts(ship({ dates: { discharged: '2026-10-20' } }), TODAY, {
+      ...defaults,
+      railDays: 2,
+    }).some((alert) => alert.code === 'book-truck'),
   );
 });

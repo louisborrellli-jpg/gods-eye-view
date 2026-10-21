@@ -47,6 +47,67 @@ export function createShipmentVesselSource({
 }
 
 /**
+ * Automatic container tracking through this app's server
+ * (`/api/shipments/track`), which holds the FindTEU and Terminal49 keys.
+ * Only the container number and its line are sent.
+ */
+export function createShipmentTrackingSource({
+  fetchImpl = (...args) => globalThis.fetch(...args),
+  endpoint = '/api/shipments/track',
+} = {}) {
+  return {
+    /**
+     * @param {string} container Normalized container number.
+     * @param {{carrier?: string, signal?: AbortSignal}} [options]
+     * @returns {Promise<{configured:boolean, tracking:object|null,
+     *   terminal49:string, error:string|null}>}
+     */
+    async trackContainer(container, { carrier = '', signal } = {}) {
+      signal?.throwIfAborted();
+      const query = new URLSearchParams({ container });
+      if (carrier) query.set('carrier', carrier);
+      const response = await fetchImpl(`${endpoint}?${query}`, {
+        signal,
+        headers: { Accept: 'application/json' },
+      });
+      let payload = null;
+      try {
+        payload = await response.json();
+      } catch {
+        payload = null;
+      }
+      signal?.throwIfAborted();
+      if (!payload || (!response.ok && response.status !== 502))
+        throw Object.assign(new Error(msg('Automatic tracking unavailable')), {
+          status: response.status,
+        });
+      return {
+        configured: payload.configured !== false,
+        tracking: payload.tracking ?? null,
+        terminal49:
+          typeof payload.terminal49 === 'string' ? payload.terminal49 : 'off',
+        error: typeof payload.error === 'string' ? payload.error : null,
+      };
+    },
+  };
+}
+
+/**
+ * The ship to follow: the one the operator named, else the one automatic
+ * tracking says is carrying the box.
+ * @param {object} shipment Normalized shipment.
+ * @returns {{query:string, mmsi:string, imo:string}}
+ */
+export function effectiveVessel(shipment) {
+  const own = shipment?.vessel ?? {};
+  if (own.query || own.mmsi || own.imo)
+    return { query: own.query || '', mmsi: own.mmsi || '', imo: own.imo || '' };
+  const auto = shipment?.auto?.vessel;
+  if (!auto) return { query: '', mmsi: '', imo: '' };
+  return { query: auto.name, mmsi: auto.mmsi || '', imo: auto.imo || '' };
+}
+
+/**
  * The best match for a shipment's ship: its known MMSI, then its IMO, then
  * a name the operator typed. A name that matches several ships is only
  * accepted when exactly one has that exact name.

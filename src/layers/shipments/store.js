@@ -1,12 +1,18 @@
 /**
  * The operator's shipments, kept in this browser's storage only. They never
- * enter share links, and nothing is sent anywhere except a ship's name or
- * number to this app's own server when a ship is looked up.
+ * enter share links. To track them, this app's own server receives the
+ * container number (passed on to FindTEU and Terminal49) and the ship's
+ * name or number (answered from its live AIS cache); nothing else leaves.
  */
-import { MAX_SHIPMENTS, normalizeShipment } from './model.js';
+import {
+  MAX_SHIPMENTS,
+  normalizeDefaults,
+  normalizeShipment,
+} from './model.js';
 
 export const SHIPMENTS_STORAGE_KEY = 'gev.shipments.v1';
 export const SHIPMENTS_NOTIFIED_KEY = 'gev.shipments.notified.v1';
+export const SHIPMENTS_DEFAULTS_KEY = 'gev.shipments.defaults.v1';
 const MAX_NOTIFIED = 400;
 
 function read(storage, key, fallback) {
@@ -53,11 +59,21 @@ export function createShipmentStore({
       : [],
   );
   let saveError = false;
+  let defaults = normalizeDefaults(read(storage, SHIPMENTS_DEFAULTS_KEY, {}));
 
+  // `dates` is derived from `manual` and `auto`, so it is not stored.
   const persist = () => {
-    saveError = !write(storage, SHIPMENTS_STORAGE_KEY, [...byId.values()]);
+    saveError = !write(
+      storage,
+      SHIPMENTS_STORAGE_KEY,
+      [...byId.values()].map(({ dates, ...stored }) => stored),
+    );
     return !saveError;
   };
+  // Shipments leave the store carrying the board defaults, so every reader
+  // of the model counts free days the same way.
+  const withDefaults = (shipment) =>
+    shipment ? { ...shipment, defaults } : null;
 
   return {
     get size() {
@@ -69,10 +85,38 @@ export function createShipmentStore({
     },
     /** Shipments in the order they were added. */
     list() {
-      return [...byId.values()];
+      return [...byId.values()].map(withDefaults);
     },
     get(id) {
-      return byId.get(String(id)) ?? null;
+      return withDefaults(byId.get(String(id)) ?? null);
+    },
+    /** Board-wide free days and rail transit, set once. */
+    get defaults() {
+      return defaults;
+    },
+    setDefaults(value) {
+      defaults = normalizeDefaults({ ...defaults, ...value });
+      saveError = !write(storage, SHIPMENTS_DEFAULTS_KEY, defaults);
+      return defaults;
+    },
+    /** Store what automatic tracking reported; a new ship forgets the old. */
+    setAuto(id, auto) {
+      const shipment = byId.get(String(id));
+      if (!shipment) return null;
+      const oldShip = shipment.auto?.vessel?.imo || shipment.auto?.vessel?.name;
+      const newShip = auto?.vessel?.imo || auto?.vessel?.name;
+      const followsAuto = !shipment.vessel.query;
+      const next = normalizeShipment({
+        ...shipment,
+        auto,
+        lastSeen:
+          followsAuto && oldShip && newShip && oldShip !== newShip
+            ? null
+            : shipment.lastSeen,
+      });
+      byId.set(next.id, next);
+      persist();
+      return withDefaults(next);
     },
     /**
      * Add (no id) or replace (known id) a shipment. Returns the stored
@@ -86,6 +130,8 @@ export function createShipmentStore({
       const sameShip = Boolean(existing) && sameVessel(existing, input);
       const shipment = normalizeShipment({
         ...input,
+        manual: input?.manual ?? input?.dates ?? existing?.manual,
+        auto: input?.auto ?? existing?.auto ?? null,
         id: existing?.id ?? makeId(),
         createdAt: existing?.createdAt ?? now(),
         updatedAt: now(),
@@ -102,7 +148,7 @@ export function createShipmentStore({
       if (!shipment.container) return null;
       byId.set(shipment.id, shipment);
       persist();
-      return shipment;
+      return withDefaults(shipment);
     },
     remove(id) {
       const removed = byId.delete(String(id));
@@ -116,15 +162,17 @@ export function createShipmentStore({
       const next = normalizeShipment({
         ...shipment,
         lastSeen,
-        vessel: {
-          ...shipment.vessel,
-          mmsi: shipment.vessel.mmsi || lastSeen?.mmsi,
-          imo: shipment.vessel.imo || lastSeen?.imo,
-        },
+        vessel: shipment.vessel.query
+          ? {
+              ...shipment.vessel,
+              mmsi: shipment.vessel.mmsi || lastSeen?.mmsi,
+              imo: shipment.vessel.imo || lastSeen?.imo,
+            }
+          : shipment.vessel,
       });
       byId.set(next.id, next);
       persist();
-      return next;
+      return withDefaults(next);
     },
     /** Replace every shipment (import). Returns how many were kept. */
     replaceAll(entries) {

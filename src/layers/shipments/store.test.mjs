@@ -108,3 +108,41 @@ test('alerts are announced once and import replaces the list', () => {
     ['MSKU1234567'],
   );
 });
+
+test('tracking results and board defaults persist; typed dates stay typed', () => {
+  const storage = memoryStorage();
+  const store = createShipmentStore({ storage, makeId });
+  const saved = store.save({
+    container: 'MSCU1234566',
+    dates: { pickupPlanned: '2026-10-28' },
+  });
+  store.setAuto(saved.id, {
+    source: 'FindTEU',
+    dates: { portEta: '2026-10-24' },
+    vessel: { name: 'MSC TESTA', imo: '9900123' },
+    fetchedAt: 9,
+  });
+  store.setDefaults({ rampFreeDays: 3 });
+  const reloaded = createShipmentStore({ storage, makeId });
+  const shipment = reloaded.list()[0];
+  assert.equal(shipment.dates.portEta, '2026-10-24');
+  assert.equal(shipment.manual.portEta, '');
+  assert.equal(shipment.manual.pickupPlanned, '2026-10-28');
+  assert.equal(shipment.defaults.rampFreeDays, 3);
+  assert.ok(!JSON.parse(storage.data.get(SHIPMENTS_STORAGE_KEY))[0].dates);
+  // Editing keeps the tracked data.
+  const edited = reloaded.save({
+    id: shipment.id,
+    container: 'MSCU1234566',
+    dates: {},
+  });
+  assert.equal(edited.dates.portEta, '2026-10-24');
+  assert.equal(edited.manual.pickupPlanned, '');
+  // A tracked ship change forgets the old ship's position.
+  reloaded.setLastSeen(shipment.id, { lat: 1, lon: 2, at: 3 });
+  const moved = reloaded.setAuto(shipment.id, {
+    vessel: { name: 'MSC OTHER' },
+    fetchedAt: 10,
+  });
+  assert.equal(moved.lastSeen, null);
+});

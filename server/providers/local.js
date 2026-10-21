@@ -20,6 +20,7 @@ import { emergenciesProxy } from './aircraft/emergencies.js';
 import { borderWaitsProxy } from './border.js';
 import { detroitProxy } from './detroit.js';
 import { aisLiveProxy } from './vessels/ais-live.js';
+import { shippingProxy } from './shipping.js';
 import { trackBackfillProxies } from './aircraft/tracks.js';
 import { openAiRealtimeProxy } from './openai.js';
 import { geminiLiveProxy } from './gemini.js';
@@ -60,6 +61,7 @@ function localProviderPlugins({ realtime, gemini } = {}) {
     borderWaitsProxy(),
     detroitProxy(),
     aisLiveProxy(),
+    shippingProxy(),
     trackBackfillProxies(),
     openAiRealtimeProxy({ realtime }),
     ...(gemini ? [geminiLiveProxy({ realtime: gemini })] : []),

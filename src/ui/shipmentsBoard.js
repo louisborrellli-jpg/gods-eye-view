@@ -5,7 +5,7 @@
  * It owns only DOM. Records, arithmetic and ship lookups live in the layer
  * (src/layers/shipments/), reached through `layer.board`.
  */
-import { t, tn } from '../i18n/index.js';
+import { formatRelativeTime, t, tn } from '../i18n/index.js';
 import {
   CARRIER_IDS,
   CLOCK_LABELS,
@@ -16,6 +16,7 @@ import {
   STAGE_LABELS,
   daysBetween,
   describeShipmentAlert,
+  rampEtaFor,
   displayDay,
   parseContainerNumber,
   relativeDays,
@@ -25,6 +26,7 @@ import {
 } from '../layers/shipments/index.js';
 
 const DIALOG_ID = 'shipments-board';
+const relativeTime = (value, unit) => formatRelativeTime(value, unit);
 
 function element(doc, tag, className, text) {
   const node = doc.createElement(tag);
@@ -73,7 +75,7 @@ export function createShipmentsBoard({
     dialog.id = DIALOG_ID;
     dialog.setAttribute('aria-labelledby', `${DIALOG_ID}-title`);
     const header = element(doc, 'header', 'shipments-board-header');
-    const title = element(doc, 'h2', 'shipments-board-title', t('SHIPMENTS'));
+    const title = element(doc, 'h2', 'shipments-board-title', t('Shipments'));
     title.id = `${DIALOG_ID}-title`;
     const close = element(doc, 'button', 'shipments-board-close');
     close.type = 'button';
@@ -92,7 +94,7 @@ export function createShipmentsBoard({
       'p',
       'shipments-board-privacy',
       t(
-        'Saved only in this browser and never put in share links. Only a ship name or number is sent, to this app’s own server, to find the ship. Export to keep a copy.',
+        'Saved only in this browser and never put in share links. To track them, this app’s server sends container numbers to FindTEU and Terminal49 and ship names or numbers to its live ship feed; nothing else leaves. Export to keep a copy.',
       ),
     );
     dialog.append(header, status, body, privacy);
@@ -137,17 +139,13 @@ export function createShipmentsBoard({
       ),
     );
     const shipments = board.list();
-    if (
-      shipments.some(
-        (item) => item.vessel.query || item.vessel.mmsi || item.vessel.imo,
-      )
-    )
+    if (shipments.length)
       actions.append(
-        button(t('Find ships now'), () => {
-          setStatus(t('Looking for ships…'));
+        button(t('Refresh tracking'), () => {
+          setStatus(t('Checking every container…'));
           void board.check().then(() => {
-            const note = board.feedNote();
-            setStatus(note ? t(note) : t('Ship positions updated'));
+            const note = board.trackingNote() || board.feedNote();
+            setStatus(note ? t(note) : t('Tracking updated'));
           });
         }),
       );
@@ -156,6 +154,10 @@ export function createShipmentsBoard({
       button(t('Import'), importAll),
     );
     body.append(actions);
+    const trackingNote = board.trackingNote();
+    if (trackingNote)
+      body.append(element(doc, 'p', 'shipments-banner', t(trackingNote)));
+    body.append(settings());
 
     if (!shipments.length) {
       const empty = element(doc, 'div', 'shipments-empty');
@@ -166,7 +168,7 @@ export function createShipmentsBoard({
           'p',
           '',
           t(
-            'Add a container number and, if you know it, the ship it is on. Then fill in dates as they come: ship ETA, unloading, rail, ramp arrival and the last free days. The board counts down every deadline and warns you before charges start.',
+            'Add a container number. The board finds its ship, ETAs, unloading, rail move and pickup by itself, counts down every free-time deadline and warns you before charges start.',
           ),
         ),
       );
@@ -182,6 +184,81 @@ export function createShipmentsBoard({
     list.setAttribute('aria-label', t('Your containers'));
     for (const shipment of sorted) list.append(card(shipment, today));
     body.append(list);
+  }
+
+  /** Free days and rail transit, set once for every container. */
+  function settings() {
+    const defaults = board.defaults();
+    const box = element(doc, 'details', 'shipments-settings');
+    if (defaults.rampFreeDays === null && defaults.returnFreeDays === null)
+      box.open = true;
+    box.append(
+      element(doc, 'summary', '', t('Free days for every container')),
+      element(
+        doc,
+        'p',
+        'shipments-hint',
+        t(
+          'Set these once from your contract. The board uses them to work out each last free day; a container’s own numbers win.',
+        ),
+      ),
+    );
+    const grid = element(doc, 'div', 'shipments-grid');
+    const number = (name, value, label) => {
+      const control = input('number', name, value ?? '', {
+        min: '0',
+        max: '60',
+        inputmode: 'numeric',
+      });
+      control.addEventListener('change', () => {
+        board.setDefaults({ [name]: control.value });
+        setStatus(t('Free days saved'));
+      });
+      return field(label, control);
+    };
+    grid.append(
+      number('rampFreeDays', defaults.rampFreeDays, t('Free days at the ramp')),
+      number(
+        'returnFreeDays',
+        defaults.returnFreeDays,
+        t('Free days to return the empty'),
+      ),
+      number('railDays', defaults.railDays, t('Usual rail days, port to ramp')),
+    );
+    box.append(grid);
+    return box;
+  }
+
+  function routeText(shipment) {
+    const auto = shipment.auto;
+    if (auto?.pod?.port) {
+      const stops = [auto.pol?.port, auto.pod.port];
+      if (auto.destination?.port && auto.destination.code !== auto.pod.code)
+        stops.push(auto.destination.port);
+      return stops.filter(Boolean).join(' → ');
+    }
+    return t('{port} → {ramp}', { port: shipment.port, ramp: shipment.ramp });
+  }
+
+  function trackedText(shipment) {
+    const fetchedAt = shipment.auto?.fetchedAt;
+    if (!fetchedAt) return '';
+    const hours = Math.round((fetchedAt - Date.now()) / 3_600_000);
+    return t('Tracked by {source} · updated {age}', {
+      source: shipment.auto.source || 'FindTEU', // i18n-ignore: provider name
+      age:
+        Math.abs(hours) < 1 ? relativeMinutes(fetchedAt) : relativeHours(hours),
+    });
+  }
+
+  function relativeMinutes(at) {
+    return relativeTime(Math.round((at - Date.now()) / 60_000), 'minute');
+  }
+
+  function relativeHours(hours) {
+    return Math.abs(hours) < 48
+      ? relativeTime(hours, 'hour')
+      : relativeTime(Math.round(hours / 24), 'day');
   }
 
   function card(shipment, today) {
@@ -216,12 +293,13 @@ export function createShipmentsBoard({
     );
     item.append(top);
 
-    const route = [
-      t('{port} → {ramp}', { port: shipment.port, ramp: shipment.ramp }),
-    ];
+    const route = [routeText(shipment)];
     if (shipment.reference)
       route.push(t('Ref {reference}', { reference: shipment.reference }));
-    const ship = shipment.lastSeen?.name || shipment.vessel.query;
+    const ship =
+      shipment.lastSeen?.name ||
+      shipment.vessel.query ||
+      shipment.auto?.vessel?.name;
     if (ship) route.push(t('Ship {name}', { name: ship }));
     item.append(element(doc, 'p', 'shipment-card-route', route.join(' · ')));
 
@@ -282,6 +360,12 @@ export function createShipmentsBoard({
     const lookup = board.lookupNote(shipment.id);
     if (lookup && stage !== 'done')
       item.append(element(doc, 'p', 'shipment-card-note', t(lookup)));
+    const trackNote = board.trackNote(shipment.id);
+    if (trackNote)
+      item.append(element(doc, 'p', 'shipment-card-note', trackNote));
+    const tracked = trackedText(shipment);
+    if (tracked)
+      item.append(element(doc, 'p', 'shipment-card-tracked', tracked));
     if (shipment.notes)
       item.append(element(doc, 'p', 'shipment-card-notes', shipment.notes));
 
@@ -339,8 +423,17 @@ export function createShipmentsBoard({
         : '';
     if (stage === 'at-sea')
       return at('portEta', t('Ship ETA at {place}', { place: shipment.port }));
-    if (stage === 'on-rail')
-      return at('rampEta', t('Rail ETA at {place}', { place: shipment.ramp }));
+    if (stage === 'on-rail' || stage === 'at-port') {
+      const eta = rampEtaFor(shipment);
+      if (!eta.day) return '';
+      return t('{what}: {day} ({when})', {
+        what: eta.estimated
+          ? t('Expected at {place} (est.)', { place: shipment.ramp })
+          : t('Rail ETA at {place}', { place: shipment.ramp }),
+        day: displayDay(eta.day),
+        when: relativeDays(daysBetween(today, eta.day)),
+      });
+    }
     if (stage === 'at-ramp' && d.pickupPlanned)
       return at('pickupPlanned', t('Truck booked'));
     return '';
@@ -439,14 +532,30 @@ export function createShipmentsBoard({
     const top = element(doc, 'div', 'shipments-grid');
     top.append(
       field(t('Container number'), container, containerHint),
-      field(t('Shipping line'), carrier),
       field(
-        t('Booking or B/L number'),
+        t('Your reference (optional)'),
         input('text', 'reference', shipment?.reference, {
           maxlength: '80',
           autocomplete: 'off',
         }),
       ),
+    );
+    form.append(
+      top,
+      element(
+        doc,
+        'p',
+        'shipments-hint shipments-auto-hint',
+        t(
+          'That is all: the ship, dates and rail move fill in by themselves. Use More details only to correct something.',
+        ),
+      ),
+    );
+    const more = element(doc, 'details', 'shipments-more');
+    more.append(element(doc, 'summary', '', t('More details (optional)')));
+    const extra = element(doc, 'div', 'shipments-grid');
+    extra.append(
+      field(t('Shipping line'), carrier),
       field(
         t('Ship name or IMO number'),
         input('text', 'vessel', shipment?.vessel.query, {
@@ -473,7 +582,8 @@ export function createShipmentsBoard({
         input('text', 'ramp', shipment?.ramp ?? 'Toronto', { maxlength: '80' }),
       ),
     );
-    form.append(top);
+    more.append(extra);
+    form.append(more);
 
     const datesHeading = element(
       doc,
@@ -486,18 +596,28 @@ export function createShipmentsBoard({
       'p',
       'shipments-hint',
       t(
-        'Fill in what you know; leave the rest empty. Expected dates are fine and can be changed later.',
+        'Leave these empty to use automatic tracking. A date typed here replaces the tracked one.',
       ),
     );
     const dates = element(doc, 'div', 'shipments-grid shipments-dates');
-    for (const name of DATE_FIELDS)
+    for (const name of DATE_FIELDS) {
+      const tracked = shipment?.auto?.dates?.[name];
       dates.append(
         field(
           t(DATE_LABELS[name]),
-          input('date', `date:${name}`, shipment?.dates[name]),
+          input('date', `date:${name}`, shipment?.manual?.[name]),
+          tracked
+            ? element(
+                doc,
+                'span',
+                'shipments-hint',
+                t('Tracked: {day}', { day: displayDay(tracked) }),
+              )
+            : undefined,
         ),
       );
-    form.append(datesHeading, datesHint, dates);
+    }
+    more.append(datesHeading, datesHint, dates);
 
     const freeHeading = element(
       doc,
@@ -510,7 +630,7 @@ export function createShipmentsBoard({
       'p',
       'shipments-hint',
       t(
-        'Optional. If you have no last free day yet, the board estimates one: ramp free days count from the ramp arrival (or rail ETA), empty-return days from the pickup.',
+        'Only if this container differs from your usual free days, set on the board.',
       ),
     );
     const free = element(doc, 'div', 'shipments-grid');
@@ -532,7 +652,7 @@ export function createShipmentsBoard({
         }),
       ),
     );
-    form.append(freeHeading, freeHint, free);
+    more.append(freeHeading, freeHint, free);
 
     const holdsHeading = element(
       doc,
@@ -548,14 +668,14 @@ export function createShipmentsBoard({
       wrap.append(box, element(doc, 'span', '', t(HOLD_LABELS[kind])));
       holds.append(wrap);
     }
-    form.append(holdsHeading, holds);
+    more.append(holdsHeading, holds);
 
     const notes = doc.createElement('textarea');
     notes.name = 'notes';
     notes.rows = 2;
     notes.maxLength = 600;
     notes.value = shipment?.notes ?? '';
-    form.append(field(t('Notes'), notes));
+    more.append(field(t('Notes'), notes));
 
     const problem = element(doc, 'p', 'shipments-problem');
     problem.setAttribute('role', 'alert');

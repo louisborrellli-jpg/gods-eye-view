@@ -1,10 +1,12 @@
 /**
- * Shipments gate: add a container through the board form, link its ship,
- * and prove the board, the globe pin and the free-time alerts agree.
+ * Shipments gate: add a container by its number alone, let automatic
+ * tracking fill in the ship and dates, and prove the board, the globe pin
+ * and the free-time alerts agree.
  *
- * The ship lookup (/api/vessels/find) is stubbed in the browser, so the run
- * needs no AISStream key and never depends on which ships are on air. Dates
- * are written relative to the browser's own today.
+ * Container tracking (/api/shipments/track) and the ship lookup
+ * (/api/vessels/find) are stubbed in the browser, so the run needs no
+ * FindTEU or AISStream key and never depends on real voyages. Dates are
+ * written relative to the browser's own today.
  *
  * Needs a dev server (npm run dev).
  *
@@ -52,9 +54,41 @@ async function main() {
     page.on('pageerror', (e) => errors.push(String(e).slice(0, 200)));
     // The ship reports an ETA five days out: three days later than planned.
     const etaMs = Date.now() + 5 * 86_400_000;
+    const day = (offset) => {
+      const date = new Date(Date.now() + offset * 86_400_000);
+      const pad = (v) => String(v).padStart(2, '0');
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+    };
+    const tracked = [];
     await page.setRequestInterception(true);
     page.on('request', (request) => {
       const url = new URL(request.url());
+      if (url.pathname === '/api/shipments/track') {
+        tracked.push(url.searchParams.get('container'));
+        return request.respond({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            configured: true,
+            terminal49: 'registered',
+            tracking: {
+              source: 'FindTEU',
+              carrier: 'msc',
+              completed: false,
+              pol: { port: 'Gioia Tauro', code: 'ITGIT' },
+              pod: { port: 'Montreal', code: 'CAMTR' },
+              destination: { port: 'Toronto', code: 'CATOR' },
+              vessel: {
+                name: 'QA TESTSHIP',
+                imo: '9900123',
+                mmsi: '990000123',
+              },
+              dates: { portEta: day(2) },
+              fetchedAt: Date.now(),
+            },
+          }),
+        });
+      }
       if (url.pathname !== '/api/vessels/find') return request.continue();
       lookups.push(url.searchParams.get('q'));
       return request.respond({
@@ -136,17 +170,7 @@ async function main() {
     const valid = await hint();
     record('a valid MSC number is recognised', /MSC/.test(valid), valid);
 
-    await page.type('#shipments-board input[name="vessel"]', 'QA TESTSHIP');
-    await page.evaluate(() => {
-      const day = (offset) => {
-        const date = new Date(Date.now() + offset * 86_400_000);
-        const pad = (v) => String(v).padStart(2, '0');
-        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-      };
-      const form = document.querySelector('#shipments-board form');
-      form.elements.namedItem('date:portEta').value = day(2);
-      form.elements.namedItem('free:ramp').value = '3';
-    });
+    // Nothing but the number: no ship, no dates.
     await page.click('#shipments-board button[type="submit"]');
     await page.waitForSelector('#shipments-board .shipment-card', {
       timeout: 5000,
@@ -158,11 +182,14 @@ async function main() {
       (node) => node.innerText,
     );
     record(
-      'the card shows the box, its line and the stage',
+      'tracking fills in the route, ship and ETA from the number alone',
       card.includes('MSCU1234566') &&
-        card.includes('MSC') &&
-        /At sea/i.test(card),
-      card.replace(/\s+/g, ' ').slice(0, 160),
+        /At sea/i.test(card) &&
+        card.includes('Gioia Tauro → Montreal → Toronto') &&
+        card.includes('QA TESTSHIP') &&
+        /Tracked by FindTEU/.test(card) &&
+        tracked.includes('MSCU1234566'),
+      card.replace(/\s+/g, ' ').slice(0, 200),
     );
     record(
       'only the ship name is sent to the lookup',
@@ -188,9 +215,9 @@ async function main() {
       };
     });
     record(
-      'the ship is remembered and pinned on the globe',
+      'the tracked ship is found live and pinned on the globe',
       pin.lastSeen?.name === 'QA TESTSHIP' &&
-        pin.mmsi === '990000123' &&
+        pin.lastSeen?.mmsi === '990000123' &&
         pin.entities?.some((id) => id.startsWith('shipment:')),
       JSON.stringify(pin.entities),
     );

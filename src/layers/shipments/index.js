@@ -19,7 +19,9 @@ import {
 } from './model.js';
 import { createShipmentStore } from './store.js';
 import {
+  createShipmentTrackingSource,
   createShipmentVesselSource,
+  effectiveVessel,
   pickVesselMatch,
   vesselLookupQuery,
 } from './source.js';
@@ -28,6 +30,8 @@ export * from './containers.js';
 export * from './model.js';
 export * from './store.js';
 export * from './text.js';
+export * from './tracking.js';
+export { effectiveVessel } from './source.js';
 
 export const SHIPMENTS_LAYER_ID = 'shipments';
 export const SHIPMENTS_OVERLAY_SOURCE_ID = 'shipments';
@@ -41,6 +45,14 @@ const SEVERITY_ACCENT = Object.freeze({
 });
 /** How often each linked ship is looked up while the layer is on. */
 const LOOKUP_INTERVAL_MS = 2 * 60_000;
+/**
+ * How often each container's milestones are refreshed. FindTEU updates its
+ * data every 6 to 48 hours and the server caches each answer for 3.
+ */
+const TRACK_INTERVAL_MS = 3 * 60 * 60_000;
+const TRACKING_KEY_NOTE = msg(
+  'Automatic tracking needs a FindTEU key — add it under ADD KEYS',
+);
 /** A ship position older than this is shown as "last seen", not live. */
 const LIVE_POSITION_MS = 45 * 60_000;
 
@@ -49,8 +61,11 @@ const LIVE_POSITION_MS = 45 * 60_000;
  * rail milestones and the "last free day" clocks that decide when storage
  * and detention charges start.
  *
- * The operator types a container number and, when they know it, the ship.
- * The layer looks that ship up in the live AIS feed, pins it on the globe,
+ * The operator types only a container number. Automatic tracking (FindTEU
+ * through this app's server) fills in the ship, ETAs, unloading, the rail
+ * leg when the line reports it, pickup and empty return; anything the
+ * operator types wins. The layer looks the ship up in the live AIS feed,
+ * pins it on the globe,
  * remembers where it was last heard (ships leave coastal AIS coverage
  * mid-ocean), and raises a toast and a system notification once per day for
  * any clock that is about to run out. Everything is kept in this browser.
@@ -59,6 +74,7 @@ const LIVE_POSITION_MS = 45 * 60_000;
  * @param {object} options.services Scene services (picking, input, overlays).
  * @param {Storage|null} [options.storage]
  * @param {object} [options.source] Ship lookup source.
+ * @param {object} [options.trackingSource] Container tracking source.
  * @param {(id: string|null) => void} [options.openBoard] Opens the board.
  * @param {object|null} [options.notifier]
  * @param {() => number} [options.now]
@@ -67,6 +83,7 @@ export function createShipmentsLayer({
   services,
   storage = null,
   source = createShipmentVesselSource(),
+  trackingSource = createShipmentTrackingSource(),
   openBoard = () => {},
   notifier = null,
   now = () => Date.now(),
@@ -84,6 +101,10 @@ export function createShipmentsLayer({
   let _checking = null;
   let _lastCheck = null;
   let _feedNote = null;
+  let _trackingNote = null;
+  /** @type {Map<string, string>} shipment id → why tracking failed */
+  const _trackNotes = new Map();
+  const _lastTrack = new Map();
   /** @type {Map<string, string>} shipment id → why its ship was not found */
   const _lookupNotes = new Map();
   const _lastLookup = new Map();
@@ -103,8 +124,13 @@ export function createShipmentsLayer({
     }
   };
 
+  /** The ship matters until the box comes off it. */
+  function followsShip(shipment) {
+    return shipmentStage(shipment) === 'at-sea';
+  }
+
   function shipLabel(shipment) {
-    return shipment.lastSeen?.name || shipment.vessel.query || '';
+    return shipment.lastSeen?.name || effectiveVessel(shipment).query || '';
   }
 
   function positionAge(shipment) {
@@ -127,7 +153,7 @@ export function createShipmentsLayer({
     if (_selectedId && !store.get(_selectedId)) _selectedId = null;
     for (const shipment of store.list()) {
       const seen = shipment.lastSeen;
-      if (!seen || shipmentStage(shipment) === 'done') continue;
+      if (!seen || !followsShip(shipment)) continue;
       const alerts = shipmentAlerts(shipment, day);
       const severity = alerts[0]?.severity ?? 0;
       const accent = SEVERITY_ACCENT[severity];
@@ -237,8 +263,42 @@ export function createShipmentsLayer({
 
   // --- Ship lookups and alerts -----------------------------------------------
 
+  async function trackBox(shipment, { signal } = {}) {
+    _lastTrack.set(shipment.id, now());
+    const result = await trackingSource.trackContainer(shipment.container, {
+      carrier: shipment.carrier,
+      signal,
+    });
+    if (!result.configured) {
+      _trackingNote = TRACKING_KEY_NOTE;
+      return false;
+    }
+    if (!result.tracking) {
+      _trackNotes.set(
+        shipment.id,
+        result.error
+          ? t('The tracking service says: {reason}', { reason: result.error })
+          : t(msg('Automatic tracking unavailable')),
+      );
+      return true;
+    }
+    _trackNotes.delete(shipment.id);
+    store.setAuto(shipment.id, result.tracking);
+    return true;
+  }
+
+  function trackingDue(shipment, force) {
+    if (shipment.auto?.completed) return false;
+    const last = Math.max(
+      _lastTrack.get(shipment.id) ?? 0,
+      shipment.auto?.fetchedAt ?? 0,
+    );
+    return force || now() - last >= TRACK_INTERVAL_MS;
+  }
+
   async function lookupShip(shipment, { signal } = {}) {
-    const query = vesselLookupQuery(shipment.vessel);
+    const vessel = effectiveVessel(shipment);
+    const query = vesselLookupQuery(vessel);
     if (!query) return;
     _lastLookup.set(shipment.id, now());
     const result = await source.findVessel(query, { signal });
@@ -246,7 +306,7 @@ export function createShipmentsLayer({
       _feedNote = msg('Live ship positions need an AISStream key');
       return;
     }
-    const match = pickVesselMatch(result.matches, shipment.vessel);
+    const match = pickVesselMatch(result.matches, vessel);
     if (!match) {
       _lookupNotes.set(
         shipment.id,
@@ -279,10 +339,28 @@ export function createShipmentsLayer({
     const controller = new AbortController();
     const run = (async () => {
       _feedNote = null;
+      // Milestones first: they can name the ship to follow.
+      if (_trackingNote !== TRACKING_KEY_NOTE || force) {
+        _trackingNote = null;
+        for (const listed of store.list()) {
+          if (onlyId && listed.id !== onlyId) continue;
+          if (shipmentStage(listed) === 'done' || !trackingDue(listed, force))
+            continue;
+          try {
+            if (!(await trackBox(listed, { signal: controller.signal }))) break;
+          } catch {
+            if (controller.signal.aborted) return;
+            _trackNotes.set(
+              listed.id,
+              t(msg('Automatic tracking unavailable')),
+            );
+          }
+        }
+      }
       for (const shipment of store.list()) {
         if (onlyId && shipment.id !== onlyId) continue;
-        if (shipmentStage(shipment) === 'done') continue;
-        if (!vesselLookupQuery(shipment.vessel)) continue;
+        if (!followsShip(shipment)) continue;
+        if (!vesselLookupQuery(effectiveVessel(shipment))) continue;
         const last = _lastLookup.get(shipment.id) ?? 0;
         if (!force && now() - last < LOOKUP_INTERVAL_MS) continue;
         try {
@@ -386,8 +464,7 @@ export function createShipmentsLayer({
         return { shipment: null, problem: msg('The board is full') };
       _selectedId = shipment.id;
       changed();
-      if (vesselLookupQuery(shipment.vessel))
-        void check({ force: true, onlyId: shipment.id });
+      void check({ force: true, onlyId: shipment.id });
       return {
         shipment,
         problem: store.saveError ? msg('Could not save in this browser') : null,
@@ -398,11 +475,14 @@ export function createShipmentsLayer({
       if (removed) {
         _lookupNotes.delete(id);
         _lastLookup.delete(id);
+        _trackNotes.delete(id);
+        _lastTrack.delete(id);
         changed();
       }
       return removed;
     },
-    exportAll: () => store.list().map(({ lastSeen, ...rest }) => rest),
+    exportAll: () =>
+      store.list().map(({ lastSeen, dates, defaults, ...rest }) => rest),
     importAll(entries) {
       const count = store.replaceAll(entries);
       _lookupNotes.clear();
@@ -413,7 +493,16 @@ export function createShipmentsLayer({
     },
     check: (id = null) => check({ force: true, onlyId: id }),
     lookupNote: (id) => _lookupNotes.get(id) ?? null,
+    /** Already translated: it can carry the tracking service's own words. */
+    trackNote: (id) => _trackNotes.get(id) ?? null,
     feedNote: () => _feedNote,
+    trackingNote: () => _trackingNote,
+    defaults: () => store.defaults,
+    setDefaults(value) {
+      const next = store.setDefaults(value);
+      changed();
+      return next;
+    },
     trackingUrl: (shipment) =>
       carrierTrackingUrl(shipment.carrier, shipment.container),
     carrierName: (id) => CARRIERS[id]?.name ?? '',
@@ -548,10 +637,10 @@ export function createShipmentsLayer({
           onClick: () => layer.setParams({ command: 'add' }),
         },
       ];
-      if (shipments.some((item) => vesselLookupQuery(item.vessel)))
+      if (shipments.length)
         chips.push({
           id: 'check',
-          label: t('Find ships now'),
+          label: t('Refresh tracking'),
           disabled: Boolean(_checking),
           onClick: () => layer.setParams({ command: 'check' }),
         });
@@ -573,6 +662,7 @@ export function createShipmentsLayer({
               count: urgent,
             }),
           );
+        if (_trackingNote) parts.push(t(_trackingNote));
         if (_feedNote) parts.push(t(_feedNote));
         info = parts.join(' · ');
       }

@@ -9,6 +9,7 @@
  */
 import { msg } from '../../i18n/marker.js';
 import { CARRIER_IDS, normalizeContainerNumber } from './containers.js';
+import { AUTO_DATE_FIELDS } from './tracking.js';
 
 export const MAX_SHIPMENTS = 60;
 const MAX_TEXT = 80;
@@ -179,23 +180,79 @@ function normalizeLastSeen(value) {
   };
 }
 
+function normalizeVesselRef(value) {
+  if (!value || typeof value !== 'object') return null;
+  const name = text(value.name);
+  if (!name) return null;
+  return {
+    name,
+    imo: /^\d{7}$/.test(String(value.imo ?? '')) ? String(value.imo) : '',
+    mmsi: /^\d{9}$/.test(String(value.mmsi ?? '')) ? String(value.mmsi) : '',
+    voyage: text(value.voyage, 20),
+  };
+}
+
+function normalizePlace(value) {
+  return {
+    port: text(value?.port),
+    code: text(value?.code, 8),
+  };
+}
+
+/**
+ * Automatic tracking as stored on a shipment: only the milestone dates the
+ * board uses, the ship, the ports and when it was fetched.
+ */
+export function normalizeAuto(value) {
+  if (!value || typeof value !== 'object') return null;
+  const dates = {};
+  for (const field of AUTO_DATE_FIELDS)
+    dates[field] = normalizeDay(value.dates?.[field]);
+  return {
+    source: text(value.source, 20),
+    carrier: CARRIER_IDS.includes(value.carrier) ? value.carrier : '',
+    completed: Boolean(value.completed),
+    vessel: normalizeVesselRef(value.vessel),
+    pol: normalizePlace(value.pol),
+    pod: normalizePlace(value.pod),
+    destination: normalizePlace(value.destination),
+    dates,
+    fetchedAt: finite(value.fetchedAt) ?? 0,
+  };
+}
+
 /**
  * A shipment from stored or typed input, with every field bounded and
  * typed. Unknown fields are dropped.
+ *
+ * `manual` holds the dates the operator typed and `auto` what automatic
+ * tracking reported; `dates` is the two merged, a typed date always
+ * winning. Records saved before automatic tracking kept typed dates in
+ * `dates`, which is read as `manual`.
+ *
  * @param {object} input
  * @returns {object}
  */
 export function normalizeShipment(input = {}) {
+  const manual = {};
+  const typed = input.manual ?? input.dates;
+  for (const field of DATE_FIELDS) manual[field] = normalizeDay(typed?.[field]);
+  const auto = normalizeAuto(input.auto);
   const dates = {};
   for (const field of DATE_FIELDS)
-    dates[field] = normalizeDay(input.dates?.[field]);
+    dates[field] = manual[field] || auto?.dates[field] || '';
+  // A box the line reports as finished needs no clocks.
+  if (auto?.completed && !dates.emptyReturned && dates.pickedUp)
+    dates.emptyReturned = dates.pickedUp;
   const holds = {};
   for (const kind of HOLD_KINDS) holds[kind] = Boolean(input.holds?.[kind]);
   const vessel = input.vessel || {};
   return {
     id: text(input.id, 40),
     container: normalizeContainerNumber(input.container).slice(0, 11),
-    carrier: CARRIER_IDS.includes(input.carrier) ? input.carrier : '',
+    carrier: CARRIER_IDS.includes(input.carrier)
+      ? input.carrier
+      : (auto?.carrier ?? ''),
     reference: text(input.reference),
     port: text(input.port) || 'Montreal',
     ramp: text(input.ramp) || 'Toronto',
@@ -206,6 +263,8 @@ export function normalizeShipment(input = {}) {
         : '',
       imo: /^\d{7}$/.test(String(vessel.imo ?? '')) ? String(vessel.imo) : '',
     },
+    manual,
+    auto,
     dates,
     freeDays: {
       ramp: freeDays(input.freeDays?.ramp),
@@ -234,6 +293,48 @@ export function shipmentStage(shipment) {
   return 'at-sea';
 }
 
+/**
+ * Board-wide defaults the operator sets once: free days at the ramp and to
+ * return the empty, and the usual rail transit from port to ramp. A
+ * shipment's own free days win.
+ */
+export function normalizeDefaults(value = {}) {
+  return {
+    rampFreeDays: freeDays(value?.rampFreeDays),
+    returnFreeDays: freeDays(value?.returnFreeDays),
+    railDays: freeDays(value?.railDays),
+  };
+}
+
+function freeDaysFor(shipment, defaults, kind) {
+  const own = shipment.freeDays[kind];
+  if (own !== null && own !== undefined) return own;
+  const fallback =
+    kind === 'ramp' ? defaults?.rampFreeDays : defaults?.returnFreeDays;
+  return fallback ?? null;
+}
+
+/**
+ * When the box should reach the rail ramp: the reported or typed rail ETA,
+ * else (when port and ramp differ and a usual rail transit is set) the
+ * unloading date, or the ship's ETA, plus that transit.
+ *
+ * @returns {{day:string, estimated:boolean}}
+ */
+export function rampEtaFor(shipment, defaults = null) {
+  defaults ??= shipment.defaults ?? null;
+  const d = shipment.dates;
+  if (d.rampArrived) return { day: d.rampArrived, estimated: false };
+  if (d.rampEta) return { day: d.rampEta, estimated: false };
+  const rail = defaults?.railDays;
+  const base = d.railDeparted || d.discharged || d.portEta;
+  const sameplace =
+    shipment.port.trim().toLowerCase() === shipment.ramp.trim().toLowerCase();
+  if (rail === null || rail === undefined || !base || sameplace)
+    return { day: '', estimated: false };
+  return { day: addDays(base, rail), estimated: true };
+}
+
 function clockState(daysLeft) {
   if (daysLeft < 0) return 'overdue';
   if (daysLeft === 0) return 'today';
@@ -251,10 +352,13 @@ function clockState(daysLeft) {
  *
  * @param {object} shipment Normalized shipment.
  * @param {string} today Local `YYYY-MM-DD`.
+ * @param {object|null} [defaults] Board defaults (normalizeDefaults); the
+ *   shipment's own `defaults`, attached by the store, when omitted.
  * @returns {Array<{id:string, day:string, estimated:boolean,
  *   daysLeft:number, state:string, closed:boolean}>}
  */
-export function shipmentClocks(shipment, today) {
+export function shipmentClocks(shipment, today, defaults = null) {
+  defaults ??= shipment.defaults ?? null;
   const d = shipment.dates;
   const clocks = [];
   const push = (id, day, estimated, closed) => {
@@ -278,19 +382,21 @@ export function shipmentClocks(shipment, today) {
 
   let rampDay = d.rampLfd;
   let rampEstimated = false;
-  if (!rampDay && shipment.freeDays.ramp !== null) {
-    const from = d.rampArrived || d.rampEta;
-    if (from) {
+  const rampFree = freeDaysFor(shipment, defaults, 'ramp');
+  if (!rampDay && rampFree !== null) {
+    const eta = rampEtaFor(shipment, defaults);
+    if (eta.day) {
       // The arrival day itself is free day one.
-      rampDay = addDays(from, Math.max(0, shipment.freeDays.ramp - 1));
+      rampDay = addDays(eta.day, Math.max(0, rampFree - 1));
       rampEstimated = !d.rampArrived;
     }
   }
   push('ramp', rampDay, rampEstimated, Boolean(d.pickedUp || d.emptyReturned));
 
   let returnDay = d.emptyReturnBy;
-  if (!returnDay && shipment.freeDays.return !== null && d.pickedUp)
-    returnDay = addDays(d.pickedUp, Math.max(0, shipment.freeDays.return - 1));
+  const returnFree = freeDaysFor(shipment, defaults, 'return');
+  if (!returnDay && returnFree !== null && d.pickedUp)
+    returnDay = addDays(d.pickedUp, Math.max(0, returnFree - 1));
   push('return', returnDay, false, Boolean(d.emptyReturned));
   return clocks;
 }
@@ -317,12 +423,13 @@ function aisEtaSlipDays(shipment) {
  * @returns {Array<{code:string, severity:number, clock?:string,
  *   days?:number, holds?:string[]}>}
  */
-export function shipmentAlerts(shipment, today) {
+export function shipmentAlerts(shipment, today, defaults = null) {
+  defaults ??= shipment.defaults ?? null;
   const stage = shipmentStage(shipment);
   if (stage === 'done') return [];
   const d = shipment.dates;
   const alerts = [];
-  const clocks = shipmentClocks(shipment, today).filter(
+  const clocks = shipmentClocks(shipment, today, defaults).filter(
     (clock) => !clock.closed,
   );
   for (const clock of clocks) {
@@ -371,14 +478,19 @@ export function shipmentAlerts(shipment, today) {
     });
 
   if (!d.pickedUp && !d.pickupPlanned) {
+    const rampEta = rampEtaFor(shipment, defaults);
     const railSoon =
-      stage === 'on-rail' && d.rampEta && daysBetween(today, d.rampEta) <= 2;
+      (stage === 'on-rail' || stage === 'at-port') &&
+      rampEta.day &&
+      daysBetween(today, rampEta.day) <= 2;
     if (stage === 'at-ramp' || railSoon)
       alerts.push({
         code: 'book-truck',
         severity: 2,
         days:
-          stage === 'at-ramp' ? 0 : Math.max(0, daysBetween(today, d.rampEta)),
+          stage === 'at-ramp'
+            ? 0
+            : Math.max(0, daysBetween(today, rampEta.day)),
       });
   }
 
@@ -413,10 +525,14 @@ export function shipmentAlerts(shipment, today) {
  * @param {string} today Local `YYYY-MM-DD`.
  * @returns {{stage:string, next:{kind:string, day:string, days:number}|null}}
  */
-export function shipmentSummary(shipment, today) {
+export function shipmentSummary(shipment, today, defaults = null) {
+  defaults ??= shipment.defaults ?? null;
   const stage = shipmentStage(shipment);
   const d = shipment.dates;
-  const open = shipmentClocks(shipment, today).filter((clock) => !clock.closed);
+  const open = shipmentClocks(shipment, today, defaults).filter(
+    (clock) => !clock.closed,
+  );
+  const rampEta = rampEtaFor(shipment, defaults);
   const clock = open.sort((a, b) => a.daysLeft - b.daysLeft)[0];
   let next = null;
   if (stage === 'at-sea' && d.portEta)
@@ -425,11 +541,16 @@ export function shipmentSummary(shipment, today) {
       day: d.portEta,
       days: daysBetween(today, d.portEta),
     };
-  else if (stage === 'on-rail' && d.rampEta && !clock)
+  else if (
+    (stage === 'on-rail' || stage === 'at-port') &&
+    rampEta.day &&
+    !clock
+  )
     next = {
       kind: 'ramp-eta',
-      day: d.rampEta,
-      days: daysBetween(today, d.rampEta),
+      day: rampEta.day,
+      days: daysBetween(today, rampEta.day),
+      estimated: rampEta.estimated,
     };
   else if (clock)
     next = { kind: `clock:${clock.id}`, day: clock.day, days: clock.daysLeft };
@@ -441,10 +562,10 @@ export function shipmentSummary(shipment, today) {
  * @param {Array<object>} shipments
  * @param {string} today
  */
-export function worstSeverity(shipments, today) {
+export function worstSeverity(shipments, today, defaults = null) {
   let worst = 0;
   for (const shipment of shipments)
-    for (const alert of shipmentAlerts(shipment, today))
+    for (const alert of shipmentAlerts(shipment, today, defaults))
       worst = Math.max(worst, alert.severity);
   return worst;
 }

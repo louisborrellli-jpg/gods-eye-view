@@ -1101,6 +1101,7 @@
       "src/layers/shipments/store.js",
       "src/layers/shipments/source.js",
       "src/layers/shipments/text.js",
+      "src/layers/shipments/tracking.js",
       "src/i18n/marker.js",
       "src/i18n/locale.js",
       "src/i18n/locales/es.json",
@@ -2582,6 +2583,7 @@
       "src/layers/shipments/store.js",
       "src/layers/shipments/source.js",
       "src/layers/shipments/text.js",
+      "src/layers/shipments/tracking.js",
       "src/ui/shipmentsBoard.js"
     ],
     "external": [
@@ -3184,6 +3186,7 @@
       "src/layers/shipments/store.js",
       "src/layers/shipments/source.js",
       "src/layers/shipments/text.js",
+      "src/layers/shipments/tracking.js",
       "src/ui/shipmentsBoard.js"
     ],
     "external": [
