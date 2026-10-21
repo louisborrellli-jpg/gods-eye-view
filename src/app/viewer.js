@@ -134,6 +134,16 @@ export function createApplicationViewer({ container, creditContainer }) {
     viewer.scene.skyAtmosphere.atmosphereLightIntensity = 18;
     viewer.scene.skyAtmosphere.saturationShift = -0.12;
     viewer.scene.skyAtmosphere.brightnessShift = -0.08;
+    // Real-world day/night: light the globe from the true Sun position for the
+    // actual current time, and keep the simulation clock locked to the
+    // system wall-clock so the terminator tracks the real world — dark where
+    // it is night outside, bright where it is day. SYSTEM_CLOCK also keeps
+    // time-dynamic layers (satellites, aircraft interpolation) on real time.
+    viewer.clock.clockStep = Cesium.ClockStep.SYSTEM_CLOCK;
+    viewer.clock.shouldAnimate = true;
+    viewer.scene.globe.enableLighting = true;
+    viewer.scene.globe.dynamicAtmosphereLighting = true;
+    viewer.scene.globe.dynamicAtmosphereLightingFromSun = true;
     return viewer;
   } catch (error) {
     viewer.destroy();
