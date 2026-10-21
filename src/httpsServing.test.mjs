@@ -37,6 +37,24 @@ test('resolveServerTls reads the PEM files when both are set', () => {
   assert.deepEqual(reads, ['/etc/cert.pem', '/etc/key.pem']);
 });
 
+test('a set-but-unreadable cert/key falls back to plain HTTP with a warning, not a crash', () => {
+  const warnings = [];
+  const readFile = (p) => {
+    if (p === '/bad/cert.pem') {
+      throw Object.assign(new Error('ENOENT: no such file'), { path: p });
+    }
+    return `PEM:${p}`;
+  };
+  const tls = resolveServerTls(
+    { GEV_TLS_CERT: '/bad/cert.pem', GEV_TLS_KEY: '/etc/key.pem' },
+    { readFile, warn: (m) => warnings.push(m) },
+  );
+  assert.equal(tls, undefined, 'startup does not crash; TLS stays off');
+  assert.equal(warnings.length, 1, 'the failure is reported, not silent');
+  assert.match(warnings[0], /TLS disabled/);
+  assert.match(warnings[0], /\/bad\/cert\.pem/, 'names the offending path');
+});
+
 test('TLS threads into both the dev server and the preview server', () => {
   const https = { cert: 'C', key: 'K' };
   const config = createBrowserViteConfig({ https });

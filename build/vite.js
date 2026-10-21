@@ -12,18 +12,33 @@ import { panelBuildPlugin } from './panel.js';
  * readable PEM files; otherwise TLS stays off and the server runs plain HTTP.
  * The key never reaches the browser — it is read here, server-side, at startup.
  *
+ * A set-but-unreadable cert/key (a typo'd path, the wrong mkcert filename, an
+ * unreadable key) does not crash startup: it falls back to plain HTTP — the
+ * documented behaviour — and warns with the paths and the OS error, so the
+ * operator fixes it instead of reading a raw stack trace out of Vite's config
+ * load. The one surprising outcome, an HTTPS request the operator asked for
+ * quietly downgraded to HTTP, is exactly what the warning names.
+ *
  * @param {Record<string,string|undefined>} [env]
- * @param {{readFile?: (path: string) => (Buffer|string)}} [io]
+ * @param {{readFile?: (path: string) => (Buffer|string), warn?: (message: string) => void}} [io]
  * @returns {{cert: Buffer|string, key: Buffer|string}|undefined}
  */
 export function resolveServerTls(
   env = process.env,
-  { readFile = readFileSync } = {},
+  { readFile = readFileSync, warn = console.warn } = {},
 ) {
   const certPath = String(env.GEV_TLS_CERT || '').trim();
   const keyPath = String(env.GEV_TLS_KEY || '').trim();
   if (!certPath || !keyPath) return undefined;
-  return { cert: readFile(certPath), key: readFile(keyPath) };
+  try {
+    return { cert: readFile(certPath), key: readFile(keyPath) };
+  } catch (error) {
+    warn(
+      `[gev] TLS disabled: could not read GEV_TLS_CERT (${certPath}) or ` +
+        `GEV_TLS_KEY (${keyPath}): ${error?.message || error}. Serving plain HTTP.`,
+    );
+    return undefined;
+  }
 }
 
 /**
