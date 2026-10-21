@@ -199,3 +199,12 @@ test('the remote is opt-in and never runs while sharing', () => {
   assert.equal(remoteEnabled({ GEV_REMOTE: 'true' }), true);
   assert.equal(remoteEnabled({ GEV_REMOTE: '1' }, true), false);
 });
+
+test('a container can be shown on the TV by its id, nothing else', () => {
+  assert.deepEqual(parseRemoteCommand({ cmd: 'shipment', arg: 'smv1abc_9' }), {
+    cmd: 'shipment',
+    arg: 'smv1abc_9',
+  });
+  for (const arg of ['', null, 42, '../etc', 'x'.repeat(41), { id: 'a' }])
+    assert.equal(parseRemoteCommand({ cmd: 'shipment', arg }), null);
+});

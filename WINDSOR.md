@@ -102,13 +102,18 @@ Restart `npm run dev`. The terminal and the TV both show the address and a
 4-digit PIN. On your phone (same Wi-Fi), open that address, e.g.
 `http://192.168.1.23:4180`, enter the PIN, then Share → Add to Home Screen.
 
-The remote has four tabs:
+The remote has five tabs:
 
 - **Drive**: a touch pad (drag to move, pinch to zoom, twist to turn, two
   fingers up/down to tilt, double-tap to zoom in), search any place or
   address, quick places (Windsor, Downtown Detroit, Belle Isle, the bridges,
   DTW, Point Pelee), and press-and-hold buttons if you prefer them. Slow
   orbit for leaving it running.
+- **Shipments**: your containers from the shared list, most urgent first,
+  each with where it is, when it loaded, its port or rail ETA and its last
+  free day. Tap one to show its ship on the TV; type a container number at
+  the top to add it (tracking fills in the rest). Removing and editing stay
+  on the Shipments page.
 - **Watch**: traffic cameras (prev/next nearest downtown first, nearest,
   auto tour), follow the nearest plane, planes/ships/satellites overhead,
   next ISS pass, and the live border board (tap a crossing to fly there).
@@ -121,7 +126,8 @@ The remote has four tabs:
 Safety: the globe server still only listens on this computer (it holds your
 API keys). The remote is a separate tiny server that only serves the remote
 page and accepts a fixed list of commands, and only from a phone that
-entered the PIN. Wrong guesses lock out after five tries; a pile of wrong
+entered the PIN. A paired phone can read the container list and add a
+container number; it cannot remove or edit anything. Wrong guesses lock out after five tries; a pile of wrong
 guesses changes the PIN. Leave it off (`GEV_REMOTE=0`) on public Wi-Fi.
 
 ### Talk to it from Claude Desktop

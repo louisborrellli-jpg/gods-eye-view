@@ -107,6 +107,8 @@
       s.classList.toggle('active', s.id === `tab-${name}`);
     store.set(TAB_KEY, name);
     window.scrollTo(0, 0);
+    // Deferred: the first showTab runs before the shipments code below.
+    if (name === 'ships') setTimeout(() => loadShips(true));
   }
   for (const b of document.querySelectorAll('#tabs [data-tab]'))
     b.addEventListener('click', () => showTab(b.dataset.tab));
@@ -463,6 +465,167 @@
     pressed('#autohop-btn', () => state.autoHop);
   }
 
+  // ── Shipments ───────────────────────────────────────────
+  let ships = [];
+  let shipsAt = 0;
+  const MONTHS = 'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split(' ');
+  const shortDay = (day) => {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(day || '');
+    return m ? `${MONTHS[Number(m[2]) - 1]} ${Number(m[3])}` : '—';
+  };
+  const fold = (text) =>
+    String(text || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '');
+
+  function dateCell(label, value, small, tone = '') {
+    const cell = document.createElement('span');
+    if (tone) cell.className = tone;
+    const tag = document.createElement('small');
+    tag.textContent = label;
+    cell.append(tag, document.createTextNode(value));
+    if (small) {
+      const sub = document.createElement('small');
+      sub.textContent = small;
+      cell.append(sub);
+    }
+    return cell;
+  }
+
+  function lastFreeText(lfd) {
+    if (!lfd) return ['—', ''];
+    if (lfd.daysLeft === null)
+      return [lfd.day ? `${shortDay(lfd.day)} est.` : '—', 'after off rail'];
+    if (lfd.daysLeft < 0)
+      return [shortDay(lfd.day), `${-lfd.daysLeft} day(s) over`];
+    if (lfd.daysLeft === 0) return [shortDay(lfd.day), 'today'];
+    return [
+      shortDay(lfd.day) + (lfd.estimated ? ' est.' : ''),
+      `${lfd.daysLeft} day(s) left`,
+    ];
+  }
+
+  function drawShips() {
+    const host = $('ships');
+    if (!host) return;
+    const query = fold($('ship-filter')?.value);
+    const shown = ships.filter(
+      (row) =>
+        !query ||
+        [row.container, row.reference, row.ship, row.carrier].some((v) =>
+          fold(v).includes(query),
+        ),
+    );
+    $('ship-count').textContent = ships.length ? `${ships.length}` : '';
+    host.replaceChildren();
+    if (!shown.length) {
+      const empty = document.createElement('div');
+      empty.className = 'note';
+      empty.textContent = ships.length
+        ? 'No container matches.'
+        : 'No containers yet. Add one above.';
+      host.append(empty);
+      return;
+    }
+    for (const row of shown) {
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = `ship sev-${row.severity}`;
+      const number = document.createElement('span');
+      number.className = 'ship-number';
+      number.textContent = row.container;
+      const stage = document.createElement('span');
+      stage.className = 'ship-stage';
+      stage.textContent = row.onHold
+        ? `${row.stageLabel} · hold`
+        : row.stageLabel;
+      const line = document.createElement('span');
+      line.className = 'ship-line';
+      line.textContent = [row.reference, row.carrier, row.ship, row.route]
+        .filter(Boolean)
+        .join(' · ');
+      const dates = document.createElement('span');
+      dates.className = 'ship-dates';
+      const [lfdValue, lfdSmall] = lastFreeText(row.lastFreeDay);
+      const lfdTone =
+        row.lastFreeDay?.daysLeft == null
+          ? ''
+          : row.lastFreeDay.daysLeft < 0
+            ? 'late'
+            : row.lastFreeDay.daysLeft <= 2
+              ? 'soon'
+              : '';
+      dates.append(
+        dateCell('Loaded', shortDay(row.loaded)),
+        row.portEta
+          ? dateCell('Port ETA', shortDay(row.portEta))
+          : dateCell(
+              'Rail ETA',
+              row.rampEta
+                ? shortDay(row.rampEta.day) +
+                    (row.rampEta.estimated ? ' est.' : '')
+                : '—',
+            ),
+        dateCell('Last free day', lfdValue, lfdSmall, lfdTone),
+      );
+      item.append(number, stage, line, dates);
+      item.addEventListener('click', () => {
+        send('shipment', row.id);
+        flash(`Showing ${row.container} on the TV`);
+      });
+      host.append(item);
+    }
+  }
+
+  async function loadShips(force = false) {
+    if (!token || document.hidden) return;
+    if (!force && Date.now() - shipsAt < 30_000) return;
+    try {
+      const { ok, data } = await api('/api/shipments');
+      shipsAt = Date.now();
+      if (ok) {
+        ships = data.shipments || [];
+        const msg = $('ship-msg');
+        if (data.keyMissing && msg && !msg.textContent) {
+          msg.className = 'ship-msg bad';
+          msg.textContent = 'Tracking needs a FindTEU key on the computer.';
+        }
+      } else if ($('ship-msg')) {
+        $('ship-msg').className = 'ship-msg bad';
+        $('ship-msg').textContent =
+          data.error || 'Could not load the containers.';
+      }
+      drawShips();
+    } catch {
+      /* the next poll tries again */
+    }
+  }
+
+  $('ship-filter')?.addEventListener('input', drawShips);
+  $('ship-add')?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const input = $('ship-add-input');
+    const container = String(input.value || '')
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, '');
+    const msg = $('ship-msg');
+    if (!container) return;
+    buzz();
+    msg.className = 'ship-msg';
+    msg.textContent = 'Adding…';
+    const { ok, data } = await api('/api/shipments', { container });
+    if (ok) {
+      input.value = '';
+      msg.className = 'ship-msg good';
+      msg.textContent = `Added ${container}. Tracking fills in by itself.`;
+      loadShips(true);
+    } else {
+      msg.className = 'ship-msg bad';
+      msg.textContent = data.error || 'Could not add it.';
+      navigator.vibrate?.([30, 40, 30]);
+    }
+  });
+
   let refreshing = false;
   async function refresh() {
     if (!token || refreshing || document.hidden) return;
@@ -474,6 +637,7 @@
         state = data.state;
         drawState();
         drawBorder(data.border);
+        if (store.get(TAB_KEY) === 'ships') loadShips();
       }
     } catch {
       tvOn = false;

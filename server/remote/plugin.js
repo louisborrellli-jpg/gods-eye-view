@@ -16,6 +16,7 @@ import os from 'node:os';
 import { readFileSync } from 'node:fs';
 import { isSharingEnabled } from '../../src/keySetupCore.mjs';
 import { isLocalMcpRequest } from '../mcp/plugin.js';
+import { summarizeShipments } from './shipments.js';
 import {
   createRemoteHub,
   lanAddresses,
@@ -124,6 +125,34 @@ export function phoneRemotePlugin({ env = process.env } = {}) {
     return border;
   }
 
+  /**
+   * The app's shared shipments list, asked over loopback like a browser on
+   * this machine would. Returns {status, body}.
+   */
+  async function shipmentsCall(method, path = '', body) {
+    if (!mainPort) return { status: 503, body: { error: 'App not ready' } };
+    try {
+      const response = await fetch(
+        `http://localhost:${mainPort}/api/shipments/store${path}`,
+        {
+          method,
+          headers: {
+            Accept: 'application/json',
+            ...(body ? { 'Content-Type': 'application/json' } : {}),
+          },
+          body: body ? JSON.stringify(body) : undefined,
+          signal: AbortSignal.timeout(8000),
+        },
+      );
+      return {
+        status: response.status,
+        body: await response.json().catch(() => ({})),
+      };
+    } catch {
+      return { status: 503, body: { error: 'Shipments unavailable' } };
+    }
+  }
+
   // ── LAN server: what the phone talks to ─────────────────
   async function handleRemote(req, res) {
     const url = new URL(req.url || '/', 'http://remote');
@@ -155,6 +184,34 @@ export function phoneRemotePlugin({ env = process.env } = {}) {
         if (!command) return sendJson(res, 400, { error: 'Unknown command' });
         const delivered = broadcast(command);
         return sendJson(res, 200, { ok: true, tv: delivered });
+      }
+
+      // Containers: read the shared list; add one by its number. Removing
+      // and editing stay on the Shipments page.
+      if (req.method === 'GET' && url.pathname === '/api/shipments') {
+        const { status, body } = await shipmentsCall('GET');
+        if (status !== 200 || body?.mode !== 'server')
+          return sendJson(res, 503, {
+            error: 'The shared shipments list is not available',
+          });
+        return sendJson(res, 200, {
+          shipments: summarizeShipments(body),
+          keyMissing: Boolean(body.tracking?.keyMissing),
+        });
+      }
+      if (req.method === 'POST' && url.pathname === '/api/shipments') {
+        const input = await readJson(req);
+        const container = String(input?.container ?? '').slice(0, 20);
+        const reference = String(input?.reference ?? '').slice(0, 60);
+        const { status, body } = await shipmentsCall('PUT', '/item', {
+          shipment: { container, reference },
+        });
+        if (status === 200) console.log(`[remote] container added (${client})`);
+        return sendJson(res, status === 200 ? 200 : status || 502, {
+          ok: status === 200,
+          id: body?.shipment?.id ?? body?.id ?? null,
+          error: status === 200 ? null : body?.error || 'Could not add it',
+        });
       }
 
       if (req.method === 'GET' && url.pathname === '/api/state') {

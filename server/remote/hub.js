@@ -12,6 +12,7 @@ import { randomBytes, randomInt, timingSafeEqual } from 'node:crypto';
 import { validateValue } from '../../src/tools/schema.js';
 import { GEV_ACTION_SCHEMAS } from '../../src/voice/actionSchemas.js';
 import { VOICE_TOGGLE_LAYER_IDS } from '../../src/voice/layerManifest.js';
+import { parseShipmentId } from './shipments.js';
 
 /** Every layer the app can switch on and off. */
 export const REMOTE_LAYERS = VOICE_TOGGLE_LAYER_IDS;
@@ -125,12 +126,22 @@ const MAX_TOKENS = 16;
 export function parseRemoteCommand(body) {
   if (!body || typeof body !== 'object') return null;
   const cmd = typeof body.cmd === 'string' ? body.cmd : '';
-  if (!Object.hasOwn(COMMANDS, cmd) && cmd !== 'action' && cmd !== 'pad')
+  if (
+    !Object.hasOwn(COMMANDS, cmd) &&
+    cmd !== 'action' &&
+    cmd !== 'pad' &&
+    cmd !== 'shipment'
+  )
     return null;
   const allowed = COMMANDS[cmd];
   if (cmd === 'action') {
     const action = parseRemoteAction(body.arg);
     return action ? { cmd, arg: action } : null;
+  }
+  // Show one container on the TV (an id from the phone's shipments list).
+  if (cmd === 'shipment') {
+    const id = parseShipmentId(body.arg);
+    return id ? { cmd, arg: id } : null;
   }
   if (cmd === 'pad') {
     const pad = parsePadDelta(body.arg);

@@ -334,6 +334,18 @@ export async function startPhoneRemote({
     });
   }
 
+  /** Turn on the Shipments layer and fly to one container's ship. */
+  async function showShipment(id) {
+    stopOrbit();
+    try {
+      if (!dataManager.isEnabled('shipments'))
+        await dataManager.setEnabled('shipments', true, { origin: 'user' });
+      dataManager.setLayerParams?.('shipments', { select: id });
+    } catch {
+      say(t('That container is not on the map yet'));
+    }
+  }
+
   function run({ cmd, arg }) {
     switch (cmd) {
       case 'paired':
@@ -366,6 +378,8 @@ export async function startPhoneRemote({
         return motion?.release();
       case 'action':
         return runAction(arg);
+      case 'shipment':
+        return showShipment(arg);
       case 'advanced': {
         // Show or hide the full control surface on the TV.
         const simpleBtn = doc.getElementById('windsor-simple-btn');
