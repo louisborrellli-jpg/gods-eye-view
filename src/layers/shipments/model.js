@@ -294,24 +294,77 @@ export function shipmentStage(shipment) {
 }
 
 /**
- * Board-wide defaults the operator sets once: free days at the ramp and to
- * return the empty, and the usual rail transit from port to ramp. A
- * shipment's own free days win.
+ * Published free time used when the operator has set nothing, so every last
+ * free day is worked out without asking. These are the standard rules for
+ * the Montreal → Toronto (CN Brampton) carrier-haulage route, and contracts
+ * often differ, so clocks built on them are shown as estimates:
+ * - port: MSC Montreal import demurrage, 6 working days after unloading;
+ * - ramp: CN intermodal storage, 1 free day after the box reaches the ramp;
+ * - return: MSC Montreal import detention, 4 working days after pickup;
+ * - rail: about 4 days from Montreal to Toronto.
+ */
+export const STANDARD_FREE_TIME = Object.freeze({
+  portFreeDays: 6,
+  rampFreeDays: 1,
+  returnFreeDays: 4,
+  railDays: 4,
+});
+
+/** Which clocks count working days (Monday to Friday) rather than all days. */
+const WORKING_DAY_CLOCKS = new Set(['port', 'return']);
+
+/**
+ * Board-wide free time the operator may set once from their contract. Unset
+ * values fall back to STANDARD_FREE_TIME. A shipment's own free days win.
  */
 export function normalizeDefaults(value = {}) {
   return {
+    portFreeDays: freeDays(value?.portFreeDays),
     rampFreeDays: freeDays(value?.rampFreeDays),
     returnFreeDays: freeDays(value?.returnFreeDays),
     railDays: freeDays(value?.railDays),
   };
 }
 
-function freeDaysFor(shipment, defaults, kind) {
-  const own = shipment.freeDays[kind];
-  if (own !== null && own !== undefined) return own;
-  const fallback =
-    kind === 'ramp' ? defaults?.rampFreeDays : defaults?.returnFreeDays;
-  return fallback ?? null;
+const DEFAULT_KEYS = Object.freeze({
+  port: 'portFreeDays',
+  ramp: 'rampFreeDays',
+  return: 'returnFreeDays',
+  rail: 'railDays',
+});
+
+/**
+ * The free days that apply to one clock, and whether they are the published
+ * standard rather than numbers from the operator.
+ * @returns {{days:number, standard:boolean}}
+ */
+export function freeTimeFor(shipment, defaults, kind) {
+  const own = kind === 'rail' ? null : shipment.freeDays?.[kind];
+  if (own !== null && own !== undefined) return { days: own, standard: false };
+  const set = defaults?.[DEFAULT_KEYS[kind]];
+  if (set !== null && set !== undefined) return { days: set, standard: false };
+  return { days: STANDARD_FREE_TIME[DEFAULT_KEYS[kind]], standard: true };
+}
+
+function isWorkingDay(day) {
+  const weekday = new Date(`${day}T00:00:00Z`).getUTCDay();
+  return weekday !== 0 && weekday !== 6;
+}
+
+/**
+ * The last free day when free time starts the day after `from`: `count`
+ * calendar days, or `count` working days for working-day clocks.
+ */
+export function lastFreeDay(from, count, { workingDays = false } = {}) {
+  if (!normalizeDay(from) || !Number.isFinite(count) || count < 0) return '';
+  if (!workingDays) return addDays(from, count);
+  let day = from;
+  let counted = 0;
+  while (counted < count) {
+    day = addDays(day, 1);
+    if (isWorkingDay(day)) counted++;
+  }
+  return day;
 }
 
 /**
@@ -326,7 +379,7 @@ export function rampEtaFor(shipment, defaults = null) {
   const d = shipment.dates;
   if (d.rampArrived) return { day: d.rampArrived, estimated: false };
   if (d.rampEta) return { day: d.rampEta, estimated: false };
-  const rail = defaults?.railDays;
+  const rail = freeTimeFor(shipment, defaults, 'rail').days;
   const base = d.railDeparted || d.discharged || d.portEta;
   const sameplace =
     shipment.port.trim().toLowerCase() === shipment.ramp.trim().toLowerCase();
@@ -373,31 +426,46 @@ export function shipmentClocks(shipment, today, defaults = null) {
       closed,
     });
   };
+  // Port free time matters only while the box waits at the port.
+  let portDay = d.portLfd;
+  let portEstimated = false;
+  if (!portDay && d.discharged) {
+    const free = freeTimeFor(shipment, defaults, 'port');
+    portDay = lastFreeDay(d.discharged, free.days, {
+      workingDays: WORKING_DAY_CLOCKS.has('port'),
+    });
+    portEstimated = free.standard;
+  }
   push(
     'port',
-    d.portLfd,
-    false,
+    portDay,
+    portEstimated,
     Boolean(d.railDeparted || d.pickedUp || d.emptyReturned),
   );
 
   let rampDay = d.rampLfd;
   let rampEstimated = false;
-  const rampFree = freeDaysFor(shipment, defaults, 'ramp');
-  if (!rampDay && rampFree !== null) {
+  if (!rampDay) {
+    const free = freeTimeFor(shipment, defaults, 'ramp');
     const eta = rampEtaFor(shipment, defaults);
     if (eta.day) {
-      // The arrival day itself is free day one.
-      rampDay = addDays(eta.day, Math.max(0, rampFree - 1));
-      rampEstimated = !d.rampArrived;
+      // Free time starts the day after the box reaches the ramp.
+      rampDay = lastFreeDay(eta.day, free.days);
+      rampEstimated = !d.rampArrived || free.standard;
     }
   }
   push('ramp', rampDay, rampEstimated, Boolean(d.pickedUp || d.emptyReturned));
 
   let returnDay = d.emptyReturnBy;
-  const returnFree = freeDaysFor(shipment, defaults, 'return');
-  if (!returnDay && returnFree !== null && d.pickedUp)
-    returnDay = addDays(d.pickedUp, Math.max(0, returnFree - 1));
-  push('return', returnDay, false, Boolean(d.emptyReturned));
+  let returnEstimated = false;
+  if (!returnDay && d.pickedUp) {
+    const free = freeTimeFor(shipment, defaults, 'return');
+    returnDay = lastFreeDay(d.pickedUp, free.days, {
+      workingDays: WORKING_DAY_CLOCKS.has('return'),
+    });
+    returnEstimated = free.standard;
+  }
+  push('return', returnDay, returnEstimated, Boolean(d.emptyReturned));
   return clocks;
 }
 

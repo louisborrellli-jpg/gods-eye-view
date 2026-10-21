@@ -5,6 +5,7 @@ import {
   daysBetween,
   localDay,
   normalizeDay,
+  lastFreeDay,
   normalizeDefaults,
   normalizeShipment,
   rampEtaFor,
@@ -73,7 +74,7 @@ test('the stage follows the latest recorded milestone', () => {
   );
 });
 
-test('a ramp last free day is estimated from arrival and free days, counting the arrival day', () => {
+test('a ramp last free day counts free days from the day after arrival', () => {
   const estimated = shipmentClocks(
     ship({
       dates: { railDeparted: '2026-10-19', rampEta: '2026-10-22' },
@@ -81,15 +82,15 @@ test('a ramp last free day is estimated from arrival and free days, counting the
     }),
     TODAY,
   ).find((clock) => clock.id === 'ramp');
-  assert.equal(estimated.day, '2026-10-23');
+  assert.equal(estimated.day, '2026-10-24');
   assert.equal(estimated.estimated, true);
-  assert.equal(estimated.daysLeft, 2);
+  assert.equal(estimated.daysLeft, 3);
 
   const actual = shipmentClocks(
     ship({ dates: { rampArrived: '2026-10-21' }, freeDays: { ramp: 2 } }),
     TODAY,
   ).find((clock) => clock.id === 'ramp');
-  assert.equal(actual.day, '2026-10-22');
+  assert.equal(actual.day, '2026-10-23');
   assert.equal(actual.estimated, false);
 
   const typed = shipmentClocks(
@@ -276,7 +277,7 @@ test('board defaults give every box its free days and a rail estimate', () => {
   const ramp = shipmentClocks(atPort, TODAY, defaults).find(
     (clock) => clock.id === 'ramp',
   );
-  assert.equal(ramp.day, '2026-10-26');
+  assert.equal(ramp.day, '2026-10-27');
   assert.equal(ramp.estimated, true);
   // A box's own free days win; attached defaults are read when none passed.
   const own = {
@@ -285,7 +286,7 @@ test('board defaults give every box its free days and a rail estimate', () => {
   };
   assert.equal(
     shipmentClocks(own, TODAY).find((c) => c.id === 'ramp').day,
-    TODAY,
+    '2026-10-22',
   );
   const sameplace = ship({
     port: 'Toronto',
@@ -298,5 +299,35 @@ test('board defaults give every box its free days and a rail estimate', () => {
       ...defaults,
       railDays: 2,
     }).some((alert) => alert.code === 'book-truck'),
+  );
+});
+
+test('with nothing set, the standard free time gives every clock a date', () => {
+  // Unloaded Tuesday 20 Oct: 6 working days → Wednesday 28 Oct.
+  const atPort = ship({ dates: { discharged: '2026-10-20' } });
+  const clocks = shipmentClocks(atPort, TODAY);
+  const port = clocks.find((clock) => clock.id === 'port');
+  assert.equal(port.day, '2026-10-28');
+  assert.equal(port.estimated, true);
+  // Rail about 4 days → ramp 24 Oct, CN's 1 free day → 25 Oct.
+  const ramp = clocks.find((clock) => clock.id === 'ramp');
+  assert.equal(ramp.day, '2026-10-25');
+  assert.equal(ramp.estimated, true);
+  // Picked up Friday 23 Oct: 4 working days → Thursday 29 Oct.
+  const returned = shipmentClocks(
+    ship({ dates: { rampArrived: '2026-10-22', pickedUp: '2026-10-23' } }),
+    TODAY,
+  ).find((clock) => clock.id === 'return');
+  assert.equal(returned.day, '2026-10-29');
+  assert.equal(returned.estimated, true);
+  // Contract numbers replace the standard and drop the estimate mark.
+  const contract = shipmentClocks(atPort, TODAY, { portFreeDays: 3 }).find(
+    (clock) => clock.id === 'port',
+  );
+  assert.equal(contract.day, '2026-10-23');
+  assert.equal(contract.estimated, false);
+  assert.equal(
+    lastFreeDay('2026-10-23', 1, { workingDays: true }),
+    '2026-10-26',
   );
 });

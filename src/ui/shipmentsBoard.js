@@ -17,6 +17,7 @@ import {
   daysBetween,
   describeShipmentAlert,
   rampEtaFor,
+  STANDARD_FREE_TIME,
   displayDay,
   parseContainerNumber,
   relativeDays,
@@ -186,44 +187,43 @@ export function createShipmentsBoard({
     body.append(list);
   }
 
-  /** Free days and rail transit, set once for every container. */
+  /**
+   * Free-time rules. They apply automatically from the published standard;
+   * the box stays closed and is only for a contract that differs.
+   */
   function settings() {
     const defaults = board.defaults();
     const box = element(doc, 'details', 'shipments-settings');
-    if (defaults.rampFreeDays === null && defaults.returnFreeDays === null)
-      box.open = true;
     box.append(
-      element(doc, 'summary', '', t('Free days for every container')),
+      element(doc, 'summary', '', t('Free time rules (automatic)')),
       element(
         doc,
         'p',
         'shipments-hint',
         t(
-          'Set these once from your contract. The board uses them to work out each last free day; a container’s own numbers win.',
+          'Last free days are worked out automatically from the standard rules: MSC Montreal port 6 working days, CN Toronto ramp 1 day, MSC empty return 4 working days, rail about 4 days. Change a number only if your contract differs; dates from these rules are marked est.',
         ),
       ),
     );
     const grid = element(doc, 'div', 'shipments-grid');
-    const number = (name, value, label) => {
-      const control = input('number', name, value ?? '', {
+    const number = (name, label) => {
+      const control = input('number', name, defaults[name] ?? '', {
         min: '0',
         max: '60',
         inputmode: 'numeric',
+        placeholder: String(STANDARD_FREE_TIME[name]),
       });
       control.addEventListener('change', () => {
         board.setDefaults({ [name]: control.value });
-        setStatus(t('Free days saved'));
+        setStatus(t('Free time saved'));
       });
       return field(label, control);
     };
     grid.append(
-      number('rampFreeDays', defaults.rampFreeDays, t('Free days at the ramp')),
-      number(
-        'returnFreeDays',
-        defaults.returnFreeDays,
-        t('Free days to return the empty'),
-      ),
-      number('railDays', defaults.railDays, t('Usual rail days, port to ramp')),
+      number('portFreeDays', t('Port free days (working days)')),
+      number('rampFreeDays', t('Ramp free days')),
+      number('returnFreeDays', t('Days to return the empty (working days)')),
+      number('railDays', t('Usual rail days, port to ramp')),
     );
     box.append(grid);
     return box;
@@ -629,9 +629,7 @@ export function createShipmentsBoard({
       doc,
       'p',
       'shipments-hint',
-      t(
-        'Only if this container differs from your usual free days, set on the board.',
-      ),
+      t('Leave empty to use the board’s free time rules.'),
     );
     const free = element(doc, 'div', 'shipments-grid');
     free.append(

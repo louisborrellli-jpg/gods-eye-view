@@ -993,9 +993,13 @@ ship carrying the box. With `TERMINAL49_API_KEY` each container is also
 registered with Terminal49 once per server run; its free plan accepts new
 containers but does not return data, so its own dashboard is where the rail
 leg can be followed. Tracked dates live in `auto` and typed ones in `manual`;
-`dates` merges them, a typed date winning. Board defaults (ramp and
-empty-return free days, usual rail days) are set once; without a rail ETA the
-ramp arrival is estimated from unloading plus the rail days. Both keys are
+`dates` merges them, a typed date winning. Last free days are computed
+without input from `STANDARD_FREE_TIME` (MSC Montreal port demurrage 6
+working days after unloading, CN ramp storage 1 day after arrival, MSC
+detention 4 working days after pickup, about 4 rail days); clocks from these
+published rules are marked estimated. Board-wide or per-container numbers
+replace them for a contract that differs. Without a rail ETA the ramp arrival
+is estimated from unloading plus the rail days. Both keys are
 rows in ADD KEYS. Only the container number and the ship query leave the
 browser.
 
