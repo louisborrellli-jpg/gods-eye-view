@@ -472,6 +472,7 @@
   "DEGRADED": "ПЕРЕБОИ",
   "PARTIAL": "ЧАСТИЧНО",
   "FALLBACK": "РЕЗЕРВ",
+  "Me": "Я",
   "Live Flights": "Рейсы онлайн",
   "Military Flights": "Военные рейсы",
   "Earthquakes (24h)": "Землетрясения (24 ч)",
@@ -3108,5 +3109,10 @@
   "Extreme": "Экстремальная",
   "Severe": "Сильная",
   "Minor": "Незначительная",
-  "Weather Alerts": "Метеопредупреждения"
+  "Weather Alerts": "Метеопредупреждения",
+  "Location permission denied": "Доступ к геолокации запрещён",
+  "Location unavailable": "Местоположение недоступно",
+  "Location request timed out": "Истекло время запроса местоположения",
+  "Location error": "Ошибка геолокации",
+  "Location not available on this device": "Геолокация недоступна на этом устройстве"
 }
