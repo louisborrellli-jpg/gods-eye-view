@@ -295,6 +295,62 @@
         margin-top: 6px;
       }
 
+      /* Touch pad */
+      #touchpad {
+        position: relative;
+        margin: 12px 0 10px;
+        height: min(46vh, 380px);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background:
+          linear-gradient(rgba(120, 220, 255, 0.06) 1px, transparent 1px) 0 0 /
+            100% 36px,
+          linear-gradient(90deg, rgba(120, 220, 255, 0.06) 1px, transparent 1px)
+            0 0 / 36px 100%,
+          radial-gradient(circle at 50% 50%, #0d2232, #070f17 70%);
+        touch-action: none;
+        overflow: hidden;
+      }
+      #touchpad.active {
+        border-color: var(--line-hi);
+      }
+      .tp-hint {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        font-size: 11px;
+        line-height: 1.8;
+        color: var(--dim);
+        pointer-events: none;
+        transition: opacity 0.3s;
+      }
+      #touchpad.active .tp-hint {
+        opacity: 0;
+      }
+      .tp-dot {
+        position: absolute;
+        width: 56px;
+        height: 56px;
+        margin: -28px 0 0 -28px;
+        border-radius: 50%;
+        border: 1px solid var(--line-hi);
+        background: rgba(127, 227, 255, 0.12);
+        pointer-events: none;
+        display: none;
+      }
+      .row.c4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      #tab-drive .row button {
+        font-size: 18px;
+        padding: 9px 4px;
+      }
+      #tab-drive .row button[data-action] {
+        font-size: 13px;
+      }
+
       /* Tabs */
       .tab {
         display: none;
@@ -430,6 +486,22 @@
           />
           <button type="submit">Go</button>
         </form>
+        <div id="touchpad" aria-label="Touch pad">
+          <div class="tp-hint">
+            Drag to move · Pinch to zoom<br />Twist to turn · Two fingers
+            up/down to tilt<br />Double-tap to zoom in
+          </div>
+          <span class="tp-dot"></span><span class="tp-dot"></span>
+        </div>
+        <div class="row c4">
+          <button data-cmd="home">⌂<span class="lbl">HOME</span></button>
+          <button data-hold="zoom-out">−<span class="lbl">ZOOM</span></button>
+          <button data-hold="zoom-in">+<span class="lbl">ZOOM</span></button>
+          <button id="orbit-btn" data-cmd="orbit">
+            ↻<span class="lbl">ORBIT</span>
+          </button>
+        </div>
+        <h2><span>PLACES</span><span></span></h2>
         <div class="chips" style="margin-top: 10px">
           <button data-cmd="home">⌂ Windsor</button>
           <button data-place="Renaissance Center, Detroit">
@@ -446,46 +518,27 @@
             DTW Airport
           </button>
           <button data-place="Point Pelee National Park">Point Pelee</button>
-          <button data-action="zoom_to_globe">🌍 Whole Earth</button>
         </div>
-
-        <div class="pad">
-          <button class="up" data-hold="forward" aria-label="Forward">▲</button>
-          <button class="left" data-hold="left" aria-label="Left">◀</button>
-          <button class="home" data-cmd="home" aria-label="Windsor">
-            ⌂<br />HOME
-          </button>
-          <button class="right" data-hold="right" aria-label="Right">▶</button>
-          <button class="down" data-hold="back" aria-label="Back">▼</button>
+        <h2><span>BUTTONS</span><span>HOLD TO MOVE</span></h2>
+        <div class="row c3">
+          <button data-hold="turn-left">⟲<span class="lbl">TURN</span></button>
+          <button data-hold="forward">▲<span class="lbl">FORWARD</span></button>
+          <button data-hold="turn-right">⟳<span class="lbl">TURN</span></button>
         </div>
         <div class="row c3">
-          <button class="big" data-hold="zoom-in">
-            +<span class="lbl">ZOOM IN</span>
-          </button>
-          <button class="big" data-hold="turn-left">
-            ⟲<span class="lbl">TURN</span>
-          </button>
-          <button class="big" data-hold="tilt-up">
-            ⤒<span class="lbl">TILT UP</span>
-          </button>
+          <button data-hold="left">◀<span class="lbl">LEFT</span></button>
+          <button data-hold="back">▼<span class="lbl">BACK</span></button>
+          <button data-hold="right">▶<span class="lbl">RIGHT</span></button>
         </div>
-        <div class="row c3">
-          <button class="big" data-hold="zoom-out">
-            −<span class="lbl">ZOOM OUT</span>
-          </button>
-          <button class="big" data-hold="turn-right">
-            ⟳<span class="lbl">TURN</span>
-          </button>
-          <button class="big" data-hold="tilt-down">
+        <div class="row c2">
+          <button data-hold="tilt-up">⤒<span class="lbl">TILT UP</span></button>
+          <button data-hold="tilt-down">
             ⤓<span class="lbl">TILT DOWN</span>
           </button>
         </div>
-        <div class="note" style="text-align: center">
-          Hold a button to keep moving. Let go to stop.
-        </div>
         <div class="row c2" style="margin-top: 12px">
-          <button id="orbit-btn" data-cmd="orbit">↻ Slow orbit</button>
           <button data-action="stop_tracking">■ Stop following</button>
+          <button data-action="zoom_to_globe">🌍 Whole Earth</button>
         </div>
       </section>
 

@@ -125,15 +125,43 @@ const MAX_TOKENS = 16;
 export function parseRemoteCommand(body) {
   if (!body || typeof body !== 'object') return null;
   const cmd = typeof body.cmd === 'string' ? body.cmd : '';
-  if (!Object.hasOwn(COMMANDS, cmd) && cmd !== 'action') return null;
+  if (!Object.hasOwn(COMMANDS, cmd) && cmd !== 'action' && cmd !== 'pad')
+    return null;
   const allowed = COMMANDS[cmd];
   if (cmd === 'action') {
     const action = parseRemoteAction(body.arg);
     return action ? { cmd, arg: action } : null;
   }
+  if (cmd === 'pad') {
+    const pad = parsePadDelta(body.arg);
+    return pad ? { cmd, arg: pad } : null;
+  }
   if (allowed === null) return { cmd, arg: null };
   const arg = typeof body.arg === 'string' ? body.arg : '';
   return allowed.includes(arg) ? { cmd, arg } : null;
+}
+
+/**
+ * Touch-pad gesture delta: x/y are fractions of the pad's width, zoom is
+ * ln(pinch scale), turn and tilt are radians. Clamped so one update can't
+ * throw the camera across the planet.
+ */
+const PAD_LIMITS = Object.freeze({
+  x: 2,
+  y: 2,
+  zoom: 2,
+  turn: Math.PI,
+  tilt: 1.2,
+});
+export function parsePadDelta(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  const out = {};
+  for (const [key, limit] of Object.entries(PAD_LIMITS)) {
+    const n = value[key] ?? 0;
+    if (typeof n !== 'number' || !Number.isFinite(n)) return null;
+    out[key] = Math.max(-limit, Math.min(limit, n));
+  }
+  return out;
 }
 
 /** A fresh 4-digit PIN, zero-padded. */

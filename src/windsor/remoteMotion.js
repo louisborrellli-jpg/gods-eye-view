@@ -167,7 +167,102 @@ export function createRemoteMotion({ viewer, beforeStart = () => {} }) {
     scene.requestRender?.();
   }
 
+  // ── Touch pad ─────────────────────────────────────────
+  // Gesture deltas from the phone are added to `pending` and eased in over
+  // the next few frames, so a 20-per-second stream of small updates still
+  // glides instead of stepping.
+  const pending = { x: 0, y: 0, zoom: 0, turn: 0, tilt: 0 };
+  let padListener = null;
+  let padFrame = 0;
+  let padPivot = null;
+  const PAD_EASE_PER_SEC = 14;
+  const PAD_OWNER = 'phone-remote-pad';
+  const tiny = () =>
+    Math.abs(pending.x) + Math.abs(pending.y) < 1e-4 &&
+    Math.abs(pending.zoom) < 1e-4 &&
+    Math.abs(pending.turn) < 1e-4 &&
+    Math.abs(pending.tilt) < 1e-4;
+
+  function stopPad() {
+    padListener?.();
+    padListener = null;
+    padPivot = null;
+    for (const k of Object.keys(pending)) pending[k] = 0;
+    releaseContinuousRender(PAD_OWNER);
+    scene.requestRender?.();
+  }
+
+  function padStep() {
+    const t = now();
+    const dt = Math.min(0.35, (t - padFrame) / 1000);
+    padFrame = t;
+    if (tiny()) return stopPad();
+    const k = 1 - Math.exp(-PAD_EASE_PER_SEC * dt);
+    const take = {};
+    for (const key of Object.keys(pending)) {
+      take[key] = pending[key] * k;
+      pending[key] -= take[key];
+    }
+    const height = Math.max(
+      camera.positionCartographic?.height ?? 1000,
+      MIN_HEIGHT,
+    );
+    const pitch = Cesium.Math.clamp(camera.pitch, MIN_PITCH, MAX_PITCH);
+    // Distance to the point in the middle of the view.
+    const range = height / Math.sin(-pitch);
+
+    if (take.turn || take.tilt) {
+      padPivot ??= pickPivot();
+      if (padPivot) {
+        padPivot.heading += take.turn;
+        padPivot.pitch = Cesium.Math.clamp(
+          padPivot.pitch + take.tilt,
+          MIN_PITCH,
+          MAX_PITCH,
+        );
+        camera.lookAt(
+          padPivot.target,
+          new Cesium.HeadingPitchRange(
+            padPivot.heading,
+            padPivot.pitch,
+            padPivot.range,
+          ),
+        );
+        camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+      }
+    }
+    if (take.x || take.y) {
+      // The pad spans roughly the width of the view on the ground.
+      const across = range * 1.4;
+      if (take.y) horizontalMove(0, -take.y * across); // drag up = go forward
+      if (take.x) horizontalMove(Math.PI / 2, -take.x * across);
+      padPivot = null;
+    }
+    if (take.zoom) {
+      // zoom = ln(scale): pinch out (scale > 1) moves toward the middle.
+      const scale = Math.exp(take.zoom);
+      const move = range * (1 - 1 / scale);
+      if (move > 0 && height > MIN_HEIGHT) camera.zoomIn(move);
+      else if (move < 0 && height < MAX_HEIGHT) camera.zoomOut(-move);
+      if (padPivot)
+        padPivot.range = Math.max(padPivot.range / scale, MIN_HEIGHT);
+    }
+  }
+
   return {
+    /** Add a touch-pad gesture delta: {x, y, zoom, turn, tilt}. */
+    pad(delta) {
+      for (const key of Object.keys(pending))
+        if (Number.isFinite(delta?.[key])) pending[key] += delta[key];
+      if (padListener) return;
+      stop();
+      beforeStart();
+      camera.cancelFlight?.();
+      padFrame = now();
+      holdContinuousRender(PAD_OWNER);
+      padListener = scene.preRender.addEventListener(padStep);
+    },
+    stopPad,
     /** Start (or keep alive) a held action. */
     hold(name) {
       if (!HOLD_ACTIONS.includes(name)) return;
@@ -178,6 +273,7 @@ export function createRemoteMotion({ viewer, beforeStart = () => {} }) {
         return;
       }
       stop();
+      stopPad();
       beforeStart();
       camera.cancelFlight?.();
       action = name;

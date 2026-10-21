@@ -104,10 +104,11 @@ Restart `npm run dev`. The terminal and the TV both show the address and a
 
 The remote has four tabs:
 
-- **Drive**: search any place or address and fly there, quick places
-  (Windsor, Downtown Detroit, Belle Isle, the bridges, DTW, Point Pelee,
-  whole Earth), and press-and-hold controls that move the view smoothly
-  until you let go: D-pad, zoom, turn, tilt. Slow orbit for leaving it running.
+- **Drive**: a touch pad (drag to move, pinch to zoom, twist to turn, two
+  fingers up/down to tilt, double-tap to zoom in), search any place or
+  address, quick places (Windsor, Downtown Detroit, Belle Isle, the bridges,
+  DTW, Point Pelee), and press-and-hold buttons if you prefer them. Slow
+  orbit for leaving it running.
 - **Watch**: traffic cameras (prev/next nearest downtown first, nearest,
   auto tour), follow the nearest plane, planes/ships/satellites overhead,
   next ISS pass, and the live border board (tap a crossing to fly there).

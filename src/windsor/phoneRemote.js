@@ -244,6 +244,7 @@ export async function startPhoneRemote({
 
   function flyTo(view, duration = 2.4) {
     motion?.stop();
+    motion?.stopPad();
     stopOrbit();
     const go = () => styleManager.applyCameraState(view, duration);
     if (typeof styleManager.runImmediateLocationNavigation === 'function')
@@ -354,6 +355,8 @@ export async function startPhoneRemote({
         return stepCam(arg === 'prev' ? -1 : 1);
       case 'hold':
         return motion?.hold(arg);
+      case 'pad':
+        return motion?.pad(arg);
       case 'release':
         return motion?.release();
       case 'action':
@@ -399,6 +402,7 @@ export async function startPhoneRemote({
     }
     if (name !== 'set_layer_visibility') {
       motion?.stop();
+      motion?.stopPad();
       stopOrbit();
     }
     let result;
@@ -469,7 +473,7 @@ export async function startPhoneRemote({
     } catch {
       return;
     }
-    const continuous = command?.cmd === 'hold' || command?.cmd === 'release';
+    const continuous = ['hold', 'release', 'pad'].includes(command?.cmd);
     try {
       run(command);
       if (!continuous) keepRendering(1);
@@ -483,6 +487,7 @@ export async function startPhoneRemote({
   return () => {
     events.close();
     motion?.stop();
+    motion?.stopPad();
     for (const t of timers) clearInterval(t);
     clearTimeout(toastTimer);
     badge.remove();

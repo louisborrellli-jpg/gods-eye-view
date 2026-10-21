@@ -203,6 +203,130 @@
     flash(`Flying to ${query}…`);
   });
 
+  // ── Touch pad ───────────────────────────────────────────
+  // One finger drags the map; two fingers pinch (zoom), twist (turn) and
+  // move up/down together (tilt). Deltas accumulate here and go out as fast
+  // as the network allows, one request in flight at a time.
+  const pad = $('touchpad');
+  const dots = Array.from(pad.querySelectorAll('.tp-dot'));
+  const fingers = new Map(); // pointerId -> {x, y, startX, startY, t}
+  const zero = () => ({ x: 0, y: 0, zoom: 0, turn: 0, tilt: 0 });
+  let acc = zero();
+  let sending = false;
+  let lastTapAt = 0;
+
+  function flushPad() {
+    if (sending) return;
+    const d = acc;
+    if (!Object.values(d).some((v) => Math.abs(v) > 1e-5)) return;
+    acc = zero();
+    sending = true;
+    api('/api/cmd', { cmd: 'pad', arg: d })
+      .catch(() => setTv(false))
+      .finally(() => {
+        sending = false;
+        setTimeout(flushPad, 25);
+      });
+  }
+
+  function drawDots() {
+    const box = pad.getBoundingClientRect();
+    const list = Array.from(fingers.values());
+    dots.forEach((dot, i) => {
+      const f = list[i];
+      dot.style.display = f ? 'block' : 'none';
+      if (f) {
+        dot.style.left = `${f.x - box.left}px`;
+        dot.style.top = `${f.y - box.top}px`;
+      }
+    });
+  }
+
+  const pairOf = () => {
+    const [a, b] = Array.from(fingers.values());
+    return {
+      a,
+      b,
+      dist: Math.hypot(b.x - a.x, b.y - a.y),
+      angle: Math.atan2(b.y - a.y, b.x - a.x),
+    };
+  };
+
+  pad.addEventListener('pointerdown', (event) => {
+    event.preventDefault();
+    pad.setPointerCapture?.(event.pointerId);
+    const t = Date.now();
+    fingers.set(event.pointerId, {
+      x: event.clientX,
+      y: event.clientY,
+      startX: event.clientX,
+      startY: event.clientY,
+      t,
+    });
+    pad.classList.add('active');
+    drawDots();
+  });
+
+  pad.addEventListener('pointermove', (event) => {
+    const f = fingers.get(event.pointerId);
+    if (!f) return;
+    event.preventDefault();
+    const width = pad.clientWidth || 1;
+    if (fingers.size === 1) {
+      acc.x += (event.clientX - f.x) / width;
+      acc.y += (event.clientY - f.y) / width;
+      f.x = event.clientX;
+      f.y = event.clientY;
+    } else {
+      const before = pairOf();
+      const dy = event.clientY - f.y;
+      f.x = event.clientX;
+      f.y = event.clientY;
+      const after = pairOf();
+      if (before.dist > 10 && after.dist > 10)
+        acc.zoom += Math.log(after.dist / before.dist);
+      let twist = after.angle - before.angle;
+      if (twist > Math.PI) twist -= 2 * Math.PI;
+      if (twist < -Math.PI) twist += 2 * Math.PI;
+      acc.turn -= twist; // twist clockwise, map turns clockwise
+      // Tilt only when the fingers move up or down together, not on a pinch.
+      const other = after.a === f ? after.b : after.a;
+      const sameWay = Math.sign(dy) === Math.sign(other.lastDy || 0);
+      f.lastDy = dy;
+      if (sameWay && Math.abs(Math.log(after.dist / before.dist)) < 0.01)
+        acc.tilt += (-dy / (pad.clientHeight || 1)) * 0.45; // both fingers report: ~18° for a 40% swipe
+    }
+    drawDots();
+    flushPad();
+  });
+
+  function liftFinger(event) {
+    const f = fingers.get(event.pointerId);
+    if (!f) return;
+    fingers.delete(event.pointerId);
+    const quick = Date.now() - f.t < 250;
+    const still = Math.hypot(f.x - f.startX, f.y - f.startY) < 12;
+    if (event.type === 'pointerup' && quick && still && fingers.size === 0) {
+      const t = Date.now();
+      if (t - lastTapAt < 320) {
+        acc.zoom += Math.log(2); // double-tap: zoom in
+        buzz();
+        flushPad();
+        lastTapAt = 0;
+      } else lastTapAt = t;
+    }
+    if (!fingers.size) {
+      pad.classList.remove('active');
+      setTimeout(refresh, 600);
+    }
+    drawDots();
+  }
+  for (const type of ['pointerup', 'pointercancel', 'lostpointercapture'])
+    pad.addEventListener(type, liftFinger);
+  // iOS Safari: stop the page itself from pinch-zooming over the pad.
+  for (const type of ['gesturestart', 'gesturechange', 'touchmove'])
+    pad.addEventListener(type, (e) => e.preventDefault(), { passive: false });
+
   // ── State ───────────────────────────────────────────────
   function setTv(on) {
     $('tv-dot').classList.toggle('on', on);

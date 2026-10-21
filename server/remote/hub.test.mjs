@@ -102,6 +102,20 @@ test('app actions are checked against the voice schemas and an allowlist', () =>
   );
 });
 
+test('touch-pad deltas must be finite numbers and are clamped', () => {
+  assert.deepEqual(
+    parseRemoteCommand({ cmd: 'pad', arg: { x: 0.1, zoom: 0.2 } }),
+    {
+      cmd: 'pad',
+      arg: { x: 0.1, y: 0, zoom: 0.2, turn: 0, tilt: 0 },
+    },
+  );
+  assert.equal(parseRemoteCommand({ cmd: 'pad', arg: { x: 99 } }).arg.x, 2);
+  assert.equal(parseRemoteCommand({ cmd: 'pad', arg: { x: 'far' } }), null);
+  assert.equal(parseRemoteCommand({ cmd: 'pad', arg: { y: Infinity } }), null);
+  assert.equal(parseRemoteCommand({ cmd: 'pad', arg: null }), null);
+});
+
 test('PINs are four digits', () => {
   assert.equal(
     newPin(() => 7),
