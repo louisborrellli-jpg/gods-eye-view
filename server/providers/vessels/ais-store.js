@@ -48,6 +48,7 @@ export function ingestAisStreamEnvelope(envelope) {
       type: vesselTypeFromAis(message, _aisStreamStatic.get(mmsi)),
       destination: stringValue(message.Destination),
       imo: stringValue(message.ImoNumber ?? message.IMO),
+      eta: aisEtaIso(message.Eta) || _aisStreamStatic.get(mmsi)?.eta || '',
     };
     _aisStreamStatic.set(mmsi, staticData);
     mergeAisStaticIntoLiveVessel(mmsi, staticData);
@@ -72,6 +73,7 @@ export function ingestAisStreamEnvelope(envelope) {
     imo: stringValue(message.ImoNumber ?? message.IMO ?? staticData.imo),
     type: vesselTypeFromAis(message, staticData),
     destination: stringValue(message.Destination ?? staticData.destination),
+    eta: staticData.eta || '',
     speed: normalizedSpeedOverGround(message.Sog ?? message.SOG),
     course: normalizedCourseOverGround(message.Cog ?? message.COG),
     heading: normalizedHeading(message.TrueHeading ?? message.Heading),
@@ -197,6 +199,95 @@ function mergeAisStaticIntoLiveVessel(mmsi, staticData) {
   if (staticData.destination && !existing.destination)
     existing.destination = staticData.destination;
   if (staticData.imo && !existing.imo) existing.imo = staticData.imo;
+  // Unlike the name, a ship's ETA changes during a voyage: the newest wins.
+  if (staticData.eta) existing.eta = staticData.eta;
+  if (staticData.destination) existing.destination = staticData.destination;
+}
+
+/**
+ * A ship's self-reported ETA as an ISO UTC timestamp, or ''.
+ *
+ * AIS carries month, day, hour and minute but no year, and uses 0 / 24 / 60
+ * for "not available". The year is the one that puts the ETA nearest to now:
+ * a voyage ETA is rarely more than a few weeks past or months ahead.
+ *
+ * @param {{Month?:number, Day?:number, Hour?:number, Minute?:number}} eta
+ * @param {number} [nowMs]
+ * @returns {string}
+ */
+export function aisEtaIso(eta, nowMs = Date.now()) {
+  if (!eta || typeof eta !== 'object') return '';
+  const month = Number(eta.Month ?? eta.month);
+  const day = Number(eta.Day ?? eta.day);
+  let hour = Number(eta.Hour ?? eta.hour);
+  let minute = Number(eta.Minute ?? eta.minute);
+  if (!Number.isInteger(month) || month < 1 || month > 12) return '';
+  if (!Number.isInteger(day) || day < 1 || day > 31) return '';
+  if (!Number.isInteger(hour) || hour < 0 || hour > 23) hour = 12;
+  if (!Number.isInteger(minute) || minute < 0 || minute > 59) minute = 0;
+  const year = new Date(nowMs).getUTCFullYear();
+  let best = null;
+  for (const candidateYear of [year - 1, year, year + 1]) {
+    const ms = Date.UTC(candidateYear, month - 1, day, hour, minute);
+    const check = new Date(ms);
+    if (check.getUTCMonth() !== month - 1 || check.getUTCDate() !== day)
+      continue;
+    if (best === null || Math.abs(ms - nowMs) < Math.abs(best - nowMs))
+      best = ms;
+  }
+  return best === null ? '' : new Date(best).toISOString();
+}
+
+const AIS_FIND_LIMIT = 8;
+
+function vesselNameKey(value) {
+  return String(value ?? '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, ' ')
+    .trim();
+}
+
+/**
+ * Find ships in the live cache by MMSI (9 digits), IMO (7 digits, with or
+ * without an "IMO" prefix) or name. Exact name matches come before partial
+ * ones; within each, the most recently heard ship comes first.
+ *
+ * @param {string} query
+ * @param {number} [limit]
+ * @returns {Array<object>} Rows shaped like aisStreamRows().
+ */
+export function findAisVessels(query, limit = AIS_FIND_LIMIT) {
+  const raw = String(query ?? '').trim();
+  if (!raw) return [];
+  const cutoff = Date.now() - AISSTREAM_STALE_MS;
+  const digits = raw.replace(/^IMO\s*/i, '').replace(/\s+/g, '');
+  const live = [..._aisStreamVessels.values()].filter(
+    (row) => row._updatedAt >= cutoff,
+  );
+  const strip = ({ _updatedAt, ...row }) => row;
+  const newest = (a, b) => b._updatedAt - a._updatedAt;
+  if (/^\d{9}$/.test(digits)) {
+    const byMmsi = live.filter((row) => row.mmsi === digits);
+    if (byMmsi.length) return byMmsi.map(strip);
+  }
+  if (/^\d{7}$/.test(digits))
+    return live
+      .filter((row) => row.imo === digits)
+      .sort(newest)
+      .slice(0, limit)
+      .map(strip);
+  const key = vesselNameKey(raw);
+  if (key.length < 3) return [];
+  const exact = [];
+  const partial = [];
+  for (const row of live) {
+    const name = vesselNameKey(row.name);
+    if (name === key) exact.push(row);
+    else if (name.includes(key)) partial.push(row);
+  }
+  return [...exact.sort(newest), ...partial.sort(newest)]
+    .slice(0, limit)
+    .map(strip);
 }
 
 function vesselNameFromAis(metadata, message, staticData = {}) {

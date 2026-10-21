@@ -1092,6 +1092,23 @@
     ],
     "external": ["cesium"]
   },
+  "shipments": {
+    "exports": ["./layers/shipments"],
+    "modules": [
+      "src/layers/shipments/index.js",
+      "src/layers/shipments/containers.js",
+      "src/layers/shipments/model.js",
+      "src/layers/shipments/store.js",
+      "src/layers/shipments/source.js",
+      "src/layers/shipments/text.js",
+      "src/i18n/marker.js",
+      "src/i18n/locale.js",
+      "src/i18n/locales/es.json",
+      "src/i18n/locales/ru.json",
+      "src/i18n/index.js"
+    ],
+    "external": ["cesium"]
+  },
   "recent-imagery": {
     "exports": ["./layers/recent-imagery"],
     "modules": [
@@ -2557,7 +2574,15 @@
       "src/app/layers/greatLakes.js",
       "src/layers/greatLakes/index.js",
       "src/layers/greatLakes/source.js",
-      "src/layers/greatLakes/records.js"
+      "src/layers/greatLakes/records.js",
+      "src/app/layers/shipments.js",
+      "src/layers/shipments/index.js",
+      "src/layers/shipments/containers.js",
+      "src/layers/shipments/model.js",
+      "src/layers/shipments/store.js",
+      "src/layers/shipments/source.js",
+      "src/layers/shipments/text.js",
+      "src/ui/shipmentsBoard.js"
     ],
     "external": [
       "hls.js",
@@ -3151,7 +3176,15 @@
       "src/app/layers/greatLakes.js",
       "src/layers/greatLakes/index.js",
       "src/layers/greatLakes/source.js",
-      "src/layers/greatLakes/records.js"
+      "src/layers/greatLakes/records.js",
+      "src/app/layers/shipments.js",
+      "src/layers/shipments/index.js",
+      "src/layers/shipments/containers.js",
+      "src/layers/shipments/model.js",
+      "src/layers/shipments/store.js",
+      "src/layers/shipments/source.js",
+      "src/layers/shipments/text.js",
+      "src/ui/shipmentsBoard.js"
     ],
     "external": [
       "hls.js",

@@ -9,6 +9,7 @@ import {
   ingestAisStreamEnvelope,
   readAisTrack,
   aisStreamRows,
+  findAisVessels,
   newestAisPositionAt,
 } from './ais-store.js';
 // ---------------------------------------------------------------------------
@@ -104,6 +105,30 @@ export function aisLiveProxy() {
               source: 'AISStream (accumulated since server start)',
               retainedSec: Math.floor(AISSTREAM_STALE_MS / 1000),
             }),
+          );
+          return;
+        }
+
+        // Ship lookup for the Shipments board: by name, IMO or MMSI.
+        if (incoming.pathname === '/find') {
+          const query = String(incoming.searchParams.get('q') || '').trim();
+          const ok = query.length >= 3 && query.length <= 40;
+          const feed = aisStreamStatusSnapshot();
+          res.statusCode = ok ? 200 : 400;
+          res.setHeader('Content-Type', 'application/json; charset=utf-8');
+          res.setHeader('Cache-Control', 'no-store');
+          res.end(
+            JSON.stringify(
+              ok
+                ? {
+                    query,
+                    matches: findAisVessels(query),
+                    source: 'AISStream',
+                    status: feed.status,
+                    configured: Boolean(process.env.AISSTREAM_API_KEY),
+                  }
+                : { error: 'q must be 3 to 40 characters', matches: [] },
+            ),
           );
           return;
         }

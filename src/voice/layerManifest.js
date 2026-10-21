@@ -430,6 +430,8 @@ export const VOICE_OFF_LAYERS = Object.freeze({
   'weather-alerts':
     'NWS + Environment Canada alert polygons; voice control is a follow-up',
   'great-lakes': 'NOAA CO-OPS water-level gauges; voice control is a follow-up',
+  shipments:
+    "the operator's own containers, kept in this browser; voice control is a follow-up",
 });
 
 const TYPE_NAMES = Object.freeze({

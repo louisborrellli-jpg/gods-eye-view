@@ -26,6 +26,7 @@ import { createApplicationFirms } from './layers/firms.js';
 import { createApplicationEarthquakes } from './layers/earthquakes.js';
 import { createApplicationWeatherAlerts } from './layers/weatherAlerts.js';
 import { createApplicationGreatLakes } from './layers/greatLakes.js';
+import { createApplicationShipments } from './layers/shipments.js';
 import { createApplicationAurora } from './layers/aurora.js';
 import { createApplicationAirQuality } from './layers/airQuality.js';
 import { createApplicationFirePerimeters } from './layers/perimeters.js';
@@ -131,6 +132,7 @@ export function createApplicationCatalog({
         }),
         createApplicationMe(),
         createApplicationWatchZones(),
+        createApplicationShipments(),
         createApplicationBorderWaits(),
         createApplicationDetroit(),
         createApplicationEarthquakes({ source: sources.earthquakes }),
