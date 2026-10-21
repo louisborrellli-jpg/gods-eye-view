@@ -303,7 +303,7 @@ async function assertKeyRequired(page) {
       origin: 'user',
     }),
   );
-  await statusIs(page, 'KEY REQUIRED');
+  await statusIs(page, 'Key required');
   const shown = await page.evaluate(() => ({
     disabled: document.getElementById('sl-controls').disabled,
     hint: document.getElementById('sl-error').hidden
@@ -545,7 +545,7 @@ async function main() {
             }),
           );
           await waitForCoverage(page);
-          await statusIs(page, 'ON');
+          await statusIs(page, 'On');
           assert.equal(
             await page.$eval('#sl-controls', (node) => node.disabled),
             false,
@@ -563,9 +563,9 @@ async function main() {
         async () => {
           fixture.rejected = true;
           await press(page, '#sl-status');
-          await statusIs(page, 'OFF');
+          await statusIs(page, 'Off');
           await press(page, '#sl-status');
-          await statusIs(page, 'KEY REJECTED');
+          await statusIs(page, 'Key rejected');
           const shown = await page.evaluate(() => ({
             error: document.getElementById('sl-error').textContent,
             hidden: document.getElementById('sl-error').hidden,
@@ -575,7 +575,7 @@ async function main() {
           assert.equal(shown.hidden, false);
           assert.equal(shown.disabled, true);
           await press(page, '#sl-status');
-          await statusIs(page, 'OFF');
+          await statusIs(page, 'Off');
           assert.equal(
             await page.$eval(
               '#sl-error',
@@ -587,7 +587,7 @@ async function main() {
           fixture.rejected = false;
           await press(page, '#sl-status');
           await waitForCoverage(page);
-          await statusIs(page, 'ON');
+          await statusIs(page, 'On');
         },
       );
 
