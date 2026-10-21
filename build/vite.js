@@ -1,8 +1,45 @@
+import { readFileSync } from 'node:fs';
 import { applicationHtmlPlugin } from './application-html.js';
 import cesium from 'vite-plugin-cesium';
 import { DEFAULT_ALLOWED_HOSTS, hostCheckPlugin } from './allowedHosts.js';
 import { embedFramingPlugin } from './embed-framing.js';
 import { panelBuildPlugin } from './panel.js';
+
+/**
+ * Opt-in TLS for the dev/preview server, so the site can be reached over HTTPS
+ * from a phone on the same network (geolocation and other device APIs require a
+ * secure context off localhost). Both GEV_TLS_CERT and GEV_TLS_KEY must name
+ * readable PEM files; otherwise TLS stays off and the server runs plain HTTP.
+ * The key never reaches the browser — it is read here, server-side, at startup.
+ *
+ * A set-but-unreadable cert/key (a typo'd path, the wrong mkcert filename, an
+ * unreadable key) does not crash startup: it falls back to plain HTTP — the
+ * documented behaviour — and warns with the paths and the OS error, so the
+ * operator fixes it instead of reading a raw stack trace out of Vite's config
+ * load. The one surprising outcome, an HTTPS request the operator asked for
+ * quietly downgraded to HTTP, is exactly what the warning names.
+ *
+ * @param {Record<string,string|undefined>} [env]
+ * @param {{readFile?: (path: string) => (Buffer|string), warn?: (message: string) => void}} [io]
+ * @returns {{cert: Buffer|string, key: Buffer|string}|undefined}
+ */
+export function resolveServerTls(
+  env = process.env,
+  { readFile = readFileSync, warn = console.warn } = {},
+) {
+  const certPath = String(env.GEV_TLS_CERT || '').trim();
+  const keyPath = String(env.GEV_TLS_KEY || '').trim();
+  if (!certPath || !keyPath) return undefined;
+  try {
+    return { cert: readFile(certPath), key: readFile(keyPath) };
+  } catch (error) {
+    warn(
+      `[gev] TLS disabled: could not read GEV_TLS_CERT (${certPath}) or ` +
+        `GEV_TLS_KEY (${keyPath}): ${error?.message || error}. Serving plain HTTP.`,
+    );
+    return undefined;
+  }
+}
 
 /**
  * Content-Security-Policy for every document the dev/preview server serves.
@@ -57,6 +94,7 @@ export function createBrowserViteConfig({
   host = 'localhost',
   port = 4173,
   allowedHosts = DEFAULT_ALLOWED_HOSTS,
+  https,
   command,
 } = {}) {
   return {
@@ -101,10 +139,12 @@ export function createBrowserViteConfig({
       // Embed-mode documents are framable instead: embed-framing.js rewrites
       // only the frame-ancestors directive and keeps the rest of the policy.
       headers: BROWSER_HEADERS,
+      // Opt-in TLS (both GEV_TLS_CERT and GEV_TLS_KEY set); plain HTTP otherwise.
+      ...(https ? { https } : {}),
     },
     // The preview server serves the same documents, so it carries the same
-    // framing + CSP hardening (one constant, no drift).
-    preview: { headers: BROWSER_HEADERS },
+    // framing + CSP hardening (one constant, no drift) and the same opt-in TLS.
+    preview: { headers: BROWSER_HEADERS, ...(https ? { https } : {}) },
     define: {
       'import.meta.env.GOOGLE_MAPS_API_KEY': JSON.stringify(googleApiKey),
       'import.meta.env.CESIUM_ION_TOKEN': JSON.stringify(cesiumToken),
