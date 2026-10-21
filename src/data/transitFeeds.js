@@ -411,6 +411,29 @@ export const TRANSIT_FEED_REGISTRY = Object.freeze([
     routeMode: mbtaRouteMode,
   }),
   Object.freeze({
+    id: 'ddot-detroit',
+    name: 'DDOT',
+    operator: 'Detroit Department of Transportation',
+    region: 'Detroit, MI',
+    center: Object.freeze({ lat: 42.3314, lon: -83.0458 }),
+    loadRadiusKm: 60,
+    url: 'https://myddotbus.com/gtfsrt/vehicles',
+    license: 'City of Detroit public transit data (terms unconfirmed)',
+    licenseUrl: 'https://myddotbus.com/',
+    attribution: 'Detroit Department of Transportation (DDOT)',
+    // Added at the fork owner's request. This is DDOT's own public real-time
+    // rider-tracker backend (powers myddotbus.com); it is keyless but DDOT
+    // publishes no open-data licence for it, so the usual "licence read"
+    // admission bar is not met. Credit is the operator name as text.
+    defaultEnabled: true,
+    terms: Object.freeze({
+      quote:
+        'No published open-data licence located; this is DDOT’s public real-time tracker feed, added at the operator’s request.',
+      note: 'Keyless agency feed; terms unconfirmed. Disable per feed if DDOT objects.',
+    }),
+    defaultMode: 'bus',
+  }),
+  Object.freeze({
     id: 'capmetro-austin',
     name: 'CapMetro',
     operator: 'Capital Metropolitan Transportation Authority',
