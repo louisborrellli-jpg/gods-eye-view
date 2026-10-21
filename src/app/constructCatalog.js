@@ -32,6 +32,7 @@ import { createApplicationCables } from './layers/submarineCables.js';
 import { createApplicationStreetLevel } from './layers/streetLevel.js';
 import { createApplicationWatchZones } from './layers/watchZones.js';
 import { createApplicationBorderWaits } from './layers/borderWaits.js';
+import { createApplicationDetroit } from './layers/detroit.js';
 import { createInfrastructureLayers } from '../data/infrastructure.js';
 import { localGeoJsonServices } from './localGeojsonServices.js';
 import { createBhoteKoshiEventLayer } from '../data/bhoteKoshiEvent.js';
@@ -125,6 +126,7 @@ export function createApplicationCatalog({
         }),
         createApplicationWatchZones(),
         createApplicationBorderWaits(),
+        createApplicationDetroit(),
         createApplicationEarthquakes({ source: sources.earthquakes }),
         createApplicationAurora({ source: sources.aurora }),
         createApplicationAirQuality({ source: sources['air-quality'] }),

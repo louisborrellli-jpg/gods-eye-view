@@ -59,6 +59,7 @@ const PANEL_GROUPS = [
   {
     label: msg('Infrastructure'),
     ids: [
+      'detroit-open-data',
       'alpr-cameras',
       'military-installations',
       'local-datacenters',
