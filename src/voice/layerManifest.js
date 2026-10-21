@@ -427,6 +427,8 @@ export const VOICE_OFF_LAYERS = Object.freeze({
   'detroit-open-data':
     'City of Detroit open data; voice control is a follow-up',
   me: "this device's own location; voice control is a follow-up",
+  'weather-alerts':
+    'NWS + Environment Canada alert polygons; voice control is a follow-up',
 });
 
 const TYPE_NAMES = Object.freeze({

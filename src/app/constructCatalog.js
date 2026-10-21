@@ -24,6 +24,7 @@ import { createApplicationLocalAdsb } from './layers/localAdsb.js';
 import { createApplicationAwareness } from './layers/militaryAwareness.js';
 import { createApplicationFirms } from './layers/firms.js';
 import { createApplicationEarthquakes } from './layers/earthquakes.js';
+import { createApplicationWeatherAlerts } from './layers/weatherAlerts.js';
 import { createApplicationAurora } from './layers/aurora.js';
 import { createApplicationAirQuality } from './layers/airQuality.js';
 import { createApplicationFirePerimeters } from './layers/perimeters.js';
@@ -132,6 +133,9 @@ export function createApplicationCatalog({
         createApplicationBorderWaits(),
         createApplicationDetroit(),
         createApplicationEarthquakes({ source: sources.earthquakes }),
+        createApplicationWeatherAlerts({
+          source: sources['weather-alerts'],
+        }),
         createApplicationAurora({ source: sources.aurora }),
         createApplicationAirQuality({ source: sources['air-quality'] }),
         createApplicationFirePerimeters({
