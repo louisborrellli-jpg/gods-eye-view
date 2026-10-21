@@ -7,6 +7,7 @@ import { cameraRegion, normalizeSourceItem } from './normalize.js';
 import { loadLithuaniaSources } from './lithuania.js';
 import { loadTaiwanSources } from './taiwan.js';
 import { loadCoastGuardSources } from './coastguard.js';
+import { loadMdotSources } from './mdot.js';
 import {
   loadAustinSourcesFromOpenData,
   loadCaltransSourcesFromOpenData,
@@ -173,6 +174,11 @@ const LIVE_PACKS = [
     name: 'coastguard',
     enabled: () => envOptIn('CCTV_COASTGUARD_ENABLED'),
     load: () => loadCoastGuardSources(),
+  },
+  {
+    name: 'mdot',
+    enabled: () => envEnabled('CCTV_MDOT_ENABLED'),
+    load: loadMdotSources,
   },
 ];
 /**
