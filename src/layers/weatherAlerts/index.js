@@ -1,5 +1,13 @@
 import * as Cesium from 'cesium';
-import { severityStyle, ringsCentroid, SEVERITY } from './records.js';
+import {
+  severityStyle,
+  ringsCentroid,
+  SEVERITY,
+  WEATHER_ALERTS_OVERLAY_SOURCE_ID,
+  WEATHER_ALERTS_OVERLAY_COHORT_LIMIT,
+  WEATHER_ALERTS_OVERLAY_COLLISION_CAPACITY,
+  createWeatherAlertOverlayEntry,
+} from './records.js';
 export * from './records.js';
 export { createWeatherAlertsSource } from './source.js';
 
@@ -37,11 +45,18 @@ function flatDegrees(ring) {
  *
  * @param {object} deps
  * @param {{getSnapshot: Function}} deps.source
+ * @param {object} deps.overlayHost World-overlay host for the ambient labels.
  * @param {typeof Cesium} [deps.cesium]
  */
-export function createWeatherAlertsLayer({ source, cesium = Cesium } = {}) {
+export function createWeatherAlertsLayer({
+  source,
+  overlayHost,
+  cesium = Cesium,
+} = {}) {
   if (typeof source?.getSnapshot !== 'function')
     throw new TypeError('Weather alerts requires a snapshot source');
+  if (!overlayHost)
+    throw new TypeError('Weather alerts requires an overlay host');
 
   let _viewer = null;
   let _ds = null;
@@ -78,6 +93,7 @@ export function createWeatherAlertsLayer({ source, cesium = Cesium } = {}) {
     enable() {
       _enabled = true;
       if (_ds) _ds.show = true;
+      overlayHost.setVisible(WEATHER_ALERTS_OVERLAY_SOURCE_ID, true);
       _viewer?.scene?.requestRender?.();
     },
 
@@ -85,6 +101,8 @@ export function createWeatherAlertsLayer({ source, cesium = Cesium } = {}) {
       _request?.abort();
       _request = null;
       _enabled = false;
+      overlayHost.clearSource(WEATHER_ALERTS_OVERLAY_SOURCE_ID);
+      overlayHost.setVisible(WEATHER_ALERTS_OVERLAY_SOURCE_ID, false);
       if (_ds) {
         _ds.entities.removeAll();
         _ds.show = false;
@@ -106,6 +124,7 @@ export function createWeatherAlertsLayer({ source, cesium = Cesium } = {}) {
           ? snapshot.records
           : [];
         const next = [];
+        const overlayEntries = [];
         const tally = { 4: 0, 3: 0, 2: 0, 1: 0, 0: 0 };
 
         for (const rec of records) {
@@ -137,34 +156,17 @@ export function createWeatherAlertsLayer({ source, cesium = Cesium } = {}) {
               }),
             );
           });
-          // One label per alert at its first ring's centroid, only once the
-          // camera is close enough to read it (≈ regional zoom).
+          // One ambient label per alert at its first ring's centroid, through
+          // the overlay host (collision-managed), never a Cesium entity label.
           const c = ringsCentroid(rec.rings);
           if (c) {
-            next.push(
-              new cesium.Entity({
-                id: `weather-alert-label:${rec.id}`,
+            overlayEntries.push(
+              createWeatherAlertOverlayEntry({
+                id: rec.id,
                 position: cesium.Cartesian3.fromDegrees(c.lon, c.lat),
-                label: {
-                  text: rec.event,
-                  font: '600 13px "Inter", sans-serif',
-                  fillColor: color,
-                  outlineColor: cesium.Color.BLACK.withAlpha(0.85),
-                  outlineWidth: 3,
-                  style: cesium.LabelStyle.FILL_AND_OUTLINE,
-                  pixelOffset: new cesium.Cartesian2(0, 0),
-                  disableDepthTestDistance: Number.POSITIVE_INFINITY,
-                  distanceDisplayCondition: new cesium.DistanceDisplayCondition(
-                    0,
-                    1_200_000,
-                  ),
-                  translucencyByDistance: new cesium.NearFarScalar(
-                    300_000,
-                    1,
-                    1_200_000,
-                    0.3,
-                  ),
-                },
+                title: rec.event,
+                accent: severityStyle(rec.severityRank).hex,
+                priority: rec.severityRank,
               }),
             );
           }
@@ -174,6 +176,17 @@ export function createWeatherAlertsLayer({ source, cesium = Cesium } = {}) {
         _ds.entities.removeAll();
         for (const entity of next) _ds.entities.add(entity);
         _ds.show = _enabled;
+        if (_enabled) {
+          overlayHost.setEntries(
+            WEATHER_ALERTS_OVERLAY_SOURCE_ID,
+            overlayEntries,
+            {
+              cohortLimit: WEATHER_ALERTS_OVERLAY_COHORT_LIMIT,
+              collisionCapacity: WEATHER_ALERTS_OVERLAY_COLLISION_CAPACITY,
+              moving: false,
+            },
+          );
+        }
 
         _count = records.length;
         _bySeverity = tally;
@@ -200,6 +213,8 @@ export function createWeatherAlertsLayer({ source, cesium = Cesium } = {}) {
     destroy(viewer = _viewer) {
       _request?.abort();
       _request = null;
+      overlayHost.clearSource(WEATHER_ALERTS_OVERLAY_SOURCE_ID);
+      overlayHost.setVisible(WEATHER_ALERTS_OVERLAY_SOURCE_ID, false);
       if (_ds && viewer?.dataSources) {
         try {
           viewer.dataSources.remove(_ds, true);

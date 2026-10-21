@@ -30,6 +30,39 @@ export function severityStyle(rank) {
   return SEVERITY_STYLE[rank] ?? SEVERITY_STYLE[0];
 }
 
+// World text goes through the overlay host (collision-managed HTML labels),
+// never Cesium entity labels — see src/noCesiumLabels.test.mjs.
+export const WEATHER_ALERTS_OVERLAY_SOURCE_ID = 'weather-alerts';
+export const WEATHER_ALERTS_OVERLAY_COHORT_LIMIT = 80;
+export const WEATHER_ALERTS_OVERLAY_COLLISION_CAPACITY = 40;
+
+/** One ambient label for an alert, at its centroid, coloured by severity. */
+export function createWeatherAlertOverlayEntry({
+  id,
+  position,
+  title,
+  accent,
+  priority,
+}) {
+  return {
+    id: String(id),
+    position,
+    variant: 'label',
+    title,
+    accent,
+    priority: Math.round(Number(priority) || 0),
+    collisionGroup: 'ambient-label',
+    paintLane: 'ambient-label',
+    interactive: false,
+    edgeFade: 'keyhole',
+    horizonCull: true,
+    terrainOcclusion: false,
+    gapPx: 15,
+    verticalOnly: true,
+    placement: 'above',
+  };
+}
+
 function nwsSeverityRank(severity) {
   switch (String(severity || '').toLowerCase()) {
     case 'extreme':
