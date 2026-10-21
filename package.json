@@ -165,6 +165,7 @@
     "./layers/vessels": "./src/layers/vessels/index.js",
     "./layers/earthquakes": "./src/layers/earthquakes/index.js",
     "./layers/me": "./src/layers/me/index.js",
+    "./layers/weather-alerts": "./src/layers/weatherAlerts/index.js",
     "./layers/recent-imagery": "./src/layers/recentImagery/index.js",
     "./layers/recent-imagery/source": "./src/layers/recentImagery/source.js",
     "./layers/perimeters": "./src/layers/perimeters/index.js",
