@@ -120,8 +120,8 @@ The remote has five tabs:
 - **Layers**: every layer the app has, on/off.
 - **Look**: vision modes, map style (3D city, satellite, aerial, street),
   HUD, object boxes, Hide panels, Full controls (every panel on the TV) and
-  Smooth (renders a bit softer so the laptop keeps up while mirroring; on by
-  default).
+  Smooth (renders the whole map softer, on the laptop too, so a slow laptop
+  keeps up while mirroring; off by default, so the map stays sharp).
 
 Safety: the globe server still only listens on this computer (it holds your
 API keys). The remote is a separate tiny server that only serves the remote

@@ -31,7 +31,9 @@ const CROSSING_VIEWS = Object.freeze({
 const REPORT_LAYERS = VOICE_TOGGLE_LAYER_IDS;
 const STATE_EVERY_MS = 4000;
 const INFO_EVERY_MS = 10_000;
-const SMOOTH_KEY = 'gev:phone-remote:smooth';
+// v2: smooth used to be on by default and saved itself at start, so every
+// browser had it stored; the new key starts everyone at full quality.
+const SMOOTH_KEY = 'gev:phone-remote:smooth.v2';
 // Smooth mode: render at ~70% resolution and load slightly coarser 3D tiles.
 // On a laptop that is also encoding a screen-mirror stream this roughly
 // doubles the frame rate, and on a TV across the room it's hard to tell.
@@ -224,7 +226,7 @@ export async function startPhoneRemote({
   const baseResolution = app.viewer?.resolutionScale ?? 1;
   const baseTileError = app.tileset?.maximumScreenSpaceError;
   let smooth = false;
-  function setSmooth(on) {
+  function setSmooth(on, { remember = true } = {}) {
     smooth = on;
     if (app.viewer)
       app.viewer.resolutionScale = on ? SMOOTH_RESOLUTION : baseResolution;
@@ -232,20 +234,23 @@ export async function startPhoneRemote({
       app.tileset.maximumScreenSpaceError = on
         ? Math.max(baseTileError, SMOOTH_TILE_ERROR)
         : baseTileError;
-    try {
-      win.localStorage.setItem(SMOOTH_KEY, on ? '1' : '0');
-    } catch {
-      /* best effort */
-    }
+    if (remember)
+      try {
+        win.localStorage.setItem(SMOOTH_KEY, on ? '1' : '0');
+      } catch {
+        /* best effort */
+      }
     app.requestRender?.('phone-remote-smooth');
   }
-  let smoothSaved = '1'; // on by default once a remote is in use
+  // Full quality unless someone chose Smooth on the remote (Look tab): smooth
+  // renders the whole map softer, on this screen as well as the TV.
+  let smoothSaved = '0';
   try {
-    smoothSaved = win.localStorage.getItem(SMOOTH_KEY) ?? '1';
+    smoothSaved = win.localStorage.getItem(SMOOTH_KEY) ?? '0';
   } catch {
     /* default */
   }
-  setSmooth(smoothSaved === '1');
+  if (smoothSaved === '1') setSmooth(true, { remember: false });
 
   function flyTo(view, duration = 2.4) {
     motion?.stop();
