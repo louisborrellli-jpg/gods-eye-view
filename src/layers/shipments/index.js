@@ -13,11 +13,14 @@ import {
 } from './containers.js';
 import {
   localDay,
+  rampEtaFor,
   shipmentAlerts,
   shipmentStage,
   worstSeverity,
 } from './model.js';
-import { createShipmentStore } from './store.js';
+import { SHIPMENTS_FOCUS_KEY, createShipmentStore } from './store.js';
+import { TRACKING_KEY_NOTE, createShipmentTracker } from './tracker.js';
+import { estimatePosition } from './geo.js';
 import {
   createShipmentTrackingSource,
   createShipmentVesselSource,
@@ -31,11 +34,14 @@ export * from './model.js';
 export * from './store.js';
 export * from './text.js';
 export * from './tracking.js';
+export * from './tracker.js';
+export * from './geo.js';
 export { effectiveVessel } from './source.js';
 
 export const SHIPMENTS_LAYER_ID = 'shipments';
 export const SHIPMENTS_OVERLAY_SOURCE_ID = 'shipments';
 const PICK = 'shipment:';
+const ROUTE = 'shipment-route:';
 const ACCENT = '#ffb74d';
 const SEVERITY_ACCENT = Object.freeze({
   0: ACCENT,
@@ -45,16 +51,10 @@ const SEVERITY_ACCENT = Object.freeze({
 });
 /** How often each linked ship is looked up while the layer is on. */
 const LOOKUP_INTERVAL_MS = 2 * 60_000;
-/**
- * How often each container's milestones are refreshed. FindTEU updates its
- * data every 6 to 48 hours and the server caches each answer for 3.
- */
-const TRACK_INTERVAL_MS = 3 * 60 * 60_000;
-const TRACKING_KEY_NOTE = msg(
-  'Automatic tracking needs a FindTEU key — add it under ADD KEYS',
-);
 /** A ship position older than this is shown as "last seen", not live. */
 const LIVE_POSITION_MS = 45 * 60_000;
+/** A ship position older than this gives way to the estimate. */
+const HEARD_POSITION_MS = 12 * 60 * 60_000;
 
 /**
  * Shipments: the operator's own containers, each with its ship, port and
@@ -101,10 +101,12 @@ export function createShipmentsLayer({
   let _checking = null;
   let _lastCheck = null;
   let _feedNote = null;
-  let _trackingNote = null;
-  /** @type {Map<string, string>} shipment id → why tracking failed */
-  const _trackNotes = new Map();
-  const _lastTrack = new Map();
+  let _pendingFocus = null;
+  const tracker = createShipmentTracker({
+    store,
+    source: trackingSource,
+    now,
+  });
   /** @type {Map<string, string>} shipment id → why its ship was not found */
   const _lookupNotes = new Map();
   const _lastLookup = new Map();
@@ -145,6 +147,34 @@ export function createShipmentsLayer({
 
   // --- Scene ---------------------------------------------------------------
 
+  /**
+   * Where to draw a shipment: its ship's AIS position while recent, else the
+   * estimate along its sea lane or rail line. Null once picked up.
+   * @returns {null|{lat:number, lon:number, mode:'live'|'heard'|'est',
+   *   line:Array<[number, number]>}}
+   */
+  function positionFor(shipment) {
+    const stage = shipmentStage(shipment);
+    const estimate = estimatePosition(shipment, stage, now(), {
+      rampEta: rampEtaFor(shipment).day,
+    });
+    const seen = shipment.lastSeen;
+    if (seen && followsShip(shipment) && now() - seen.at < HEARD_POSITION_MS)
+      return {
+        lat: seen.lat,
+        lon: seen.lon,
+        mode: now() - seen.at < LIVE_POSITION_MS ? 'live' : 'heard',
+        line: estimate?.line ?? [],
+      };
+    if (!estimate) return null;
+    return {
+      lat: estimate.lat,
+      lon: estimate.lon,
+      mode: 'est',
+      line: estimate.line,
+    };
+  }
+
   function render() {
     if (!_dataSource) return;
     _dataSource.entities.removeAll();
@@ -152,29 +182,49 @@ export function createShipmentsLayer({
     const day = today();
     if (_selectedId && !store.get(_selectedId)) _selectedId = null;
     for (const shipment of store.list()) {
-      const seen = shipment.lastSeen;
-      if (!seen || !followsShip(shipment)) continue;
+      const where = positionFor(shipment);
+      if (!where) continue;
       const alerts = shipmentAlerts(shipment, day);
       const severity = alerts[0]?.severity ?? 0;
       const accent = SEVERITY_ACCENT[severity];
-      const live = now() - seen.at < LIVE_POSITION_MS;
+      const color = Cesium.Color.fromCssColorString(accent);
       const selected = shipment.id === _selectedId;
-      const position = Cesium.Cartesian3.fromDegrees(seen.lon, seen.lat);
+      const position = Cesium.Cartesian3.fromDegrees(where.lon, where.lat);
+      if (where.line.length > 1)
+        _dataSource.entities.add({
+          id: `${ROUTE}${shipment.id}`,
+          polyline: {
+            positions: Cesium.Cartesian3.fromDegreesArray(
+              where.line.flatMap(([lat, lon]) => [lon, lat]),
+            ),
+            width: selected ? 3 : 2,
+            material: new Cesium.PolylineDashMaterialProperty({
+              color: color.withAlpha(selected ? 0.9 : 0.45),
+              dashLength: 14,
+            }),
+            arcType: Cesium.ArcType.GEODESIC,
+          },
+        });
+      const estimated = where.mode === 'est';
       _dataSource.entities.add({
         id: `${PICK}${shipment.id}`,
         position,
         point: {
           pixelSize: selected ? 15 : 11,
-          color: Cesium.Color.fromCssColorString(accent).withAlpha(
-            live ? 1 : 0.55,
-          ),
-          outlineColor: Cesium.Color.BLACK,
-          outlineWidth: 2,
+          color: estimated
+            ? Cesium.Color.WHITE.withAlpha(0.9)
+            : color.withAlpha(where.mode === 'live' ? 1 : 0.7),
+          outlineColor: estimated ? color : Cesium.Color.BLACK,
+          outlineWidth: estimated ? 3 : 2,
           heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
           disableDepthTestDistance: Number.POSITIVE_INFINITY,
         },
       });
-      const title = `${shipment.container} · ${shipLabel(shipment)}`;
+      const ship = shipLabel(shipment);
+      const base = ship
+        ? `${shipment.container} · ${ship}`
+        : shipment.container;
+      const title = estimated ? t('{name} (est.)', { name: base }) : base;
       entries.push({
         id: `shipment-label:${shipment.id}`,
         position,
@@ -183,7 +233,7 @@ export function createShipmentsLayer({
               selected: true,
               interactive: false,
               title,
-              details: shipmentCardLines(shipment, day, live),
+              details: shipmentCardLines(shipment, day, where.mode),
               priority: Number.MAX_SAFE_INTEGER - 2,
             }
           : {
@@ -216,9 +266,20 @@ export function createShipmentsLayer({
     requestRender();
   }
 
-  function shipmentCardLines(shipment, day, live) {
-    const seen = shipment.lastSeen;
+  function shipmentCardLines(shipment, day, mode) {
     const lines = [describeShipmentStatus(shipment, day)];
+    if (mode === 'est') {
+      lines.push(
+        t(
+          'Estimated from its departure and ETA; live position returns near the coast',
+        ),
+      );
+      const top = shipmentAlerts(shipment, day)[0];
+      if (top) lines.push(describeShipmentAlert(top));
+      return lines;
+    }
+    const seen = shipment.lastSeen;
+    const live = mode === 'live';
     const motion = [];
     if (Number.isFinite(seen.speed))
       motion.push(
@@ -241,9 +302,8 @@ export function createShipmentsLayer({
     return lines;
   }
 
-  function flyTo(lat, lon) {
+  function flyTo(lat, lon, radiusM = 40_000) {
     if (!_viewer) return;
-    const radiusM = 40_000;
     const sphere = new Cesium.BoundingSphere(
       Cesium.Cartesian3.fromDegrees(lon, lat),
       radiusM,
@@ -262,39 +322,6 @@ export function createShipmentsLayer({
   }
 
   // --- Ship lookups and alerts -----------------------------------------------
-
-  async function trackBox(shipment, { signal } = {}) {
-    _lastTrack.set(shipment.id, now());
-    const result = await trackingSource.trackContainer(shipment.container, {
-      carrier: shipment.carrier,
-      signal,
-    });
-    if (!result.configured) {
-      _trackingNote = TRACKING_KEY_NOTE;
-      return false;
-    }
-    if (!result.tracking) {
-      _trackNotes.set(
-        shipment.id,
-        result.error
-          ? t('The tracking service says: {reason}', { reason: result.error })
-          : t(msg('Automatic tracking unavailable')),
-      );
-      return true;
-    }
-    _trackNotes.delete(shipment.id);
-    store.setAuto(shipment.id, result.tracking);
-    return true;
-  }
-
-  function trackingDue(shipment, force) {
-    if (shipment.auto?.completed) return false;
-    const last = Math.max(
-      _lastTrack.get(shipment.id) ?? 0,
-      shipment.auto?.fetchedAt ?? 0,
-    );
-    return force || now() - last >= TRACK_INTERVAL_MS;
-  }
 
   async function lookupShip(shipment, { signal } = {}) {
     const vessel = effectiveVessel(shipment);
@@ -340,23 +367,8 @@ export function createShipmentsLayer({
     const run = (async () => {
       _feedNote = null;
       // Milestones first: they can name the ship to follow.
-      if (_trackingNote !== TRACKING_KEY_NOTE || force) {
-        _trackingNote = null;
-        for (const listed of store.list()) {
-          if (onlyId && listed.id !== onlyId) continue;
-          if (shipmentStage(listed) === 'done' || !trackingDue(listed, force))
-            continue;
-          try {
-            if (!(await trackBox(listed, { signal: controller.signal }))) break;
-          } catch {
-            if (controller.signal.aborted) return;
-            _trackNotes.set(
-              listed.id,
-              t(msg('Automatic tracking unavailable')),
-            );
-          }
-        }
-      }
+      await tracker.refresh({ force, onlyId, signal: controller.signal });
+      if (controller.signal.aborted) return;
       for (const shipment of store.list()) {
         if (onlyId && shipment.id !== onlyId) continue;
         if (!followsShip(shipment)) continue;
@@ -475,8 +487,7 @@ export function createShipmentsLayer({
       if (removed) {
         _lookupNotes.delete(id);
         _lastLookup.delete(id);
-        _trackNotes.delete(id);
-        _lastTrack.delete(id);
+        tracker.forget(id);
         changed();
       }
       return removed;
@@ -494,9 +505,15 @@ export function createShipmentsLayer({
     check: (id = null) => check({ force: true, onlyId: id }),
     lookupNote: (id) => _lookupNotes.get(id) ?? null,
     /** Already translated: it can carry the tracking service's own words. */
-    trackNote: (id) => _trackNotes.get(id) ?? null,
+    trackNote(id) {
+      const note = tracker.note(id);
+      if (!note) return null;
+      return note.reason
+        ? t('The tracking service says: {reason}', { reason: note.reason })
+        : t(note.text);
+    },
     feedNote: () => _feedNote,
-    trackingNote: () => _trackingNote,
+    trackingNote: () => (tracker.keyMissing ? TRACKING_KEY_NOTE : null),
     defaults: () => store.defaults,
     setDefaults(value) {
       const next = store.setDefaults(value);
@@ -509,12 +526,18 @@ export function createShipmentsLayer({
     /** Fly to a shipment's ship; turns the layer on through the shell when off. */
     showOnGlobe(id) {
       const shipment = store.get(id);
-      if (!shipment?.lastSeen) return false;
+      const where = shipment ? positionFor(shipment) : null;
+      if (!where) return false;
       _selectedId = shipment.id;
       if (!_enabled) _shell?.setLayerEnabled?.(SHIPMENTS_LAYER_ID, true);
-      flyTo(shipment.lastSeen.lat, shipment.lastSeen.lon);
+      flyTo(where.lat, where.lon, where.mode === 'est' ? 900_000 : 40_000);
       changed();
       return true;
+    },
+    /** Whether a shipment has a position to show on the globe. */
+    hasPosition(id) {
+      const shipment = store.get(id);
+      return Boolean(shipment && positionFor(shipment));
     },
     subscribe(listener) {
       if (typeof listener !== 'function') return () => {};
@@ -558,6 +581,11 @@ export function createShipmentsLayer({
         );
       }
       render();
+      if (_pendingFocus) {
+        const focus = _pendingFocus;
+        _pendingFocus = null;
+        layer.board.showOnGlobe(focus);
+      }
       void check();
     },
 
@@ -602,8 +630,9 @@ export function createShipmentsLayer({
           : null;
         if (params.select && !shipment) return false;
         _selectedId = shipment?.id ?? null;
-        if (shipment?.lastSeen)
-          flyTo(shipment.lastSeen.lat, shipment.lastSeen.lon);
+        const where = shipment ? positionFor(shipment) : null;
+        if (where)
+          flyTo(where.lat, where.lon, where.mode === 'est' ? 900_000 : 40_000);
         else if (shipment) openBoard(shipment.id);
       }
       // Board and Add are chip presses, so the browser treats the
@@ -626,6 +655,12 @@ export function createShipmentsLayer({
       const shipments = store.list();
       const day = today();
       const chips = [
+        {
+          id: 'page',
+          label: t('Shipments page'),
+          title: t('Every container on one easy-to-read page'),
+          onClick: () => globalThis.location?.assign?.('/shipments.html'),
+        },
         {
           id: 'board',
           label: t('Open board'),
@@ -662,7 +697,7 @@ export function createShipmentsLayer({
               count: urgent,
             }),
           );
-        if (_trackingNote) parts.push(t(_trackingNote));
+        if (tracker.keyMissing) parts.push(t(TRACKING_KEY_NOTE));
         if (_feedNote) parts.push(t(_feedNote));
         info = parts.join(' · ');
       }
@@ -692,6 +727,18 @@ export function createShipmentsLayer({
     /** Toast, navigation and layer-toggle seams from the application shell. */
     attachShellServices(shell) {
       _shell = shell || null;
+      // The Shipments page asked to show a container on the map.
+      let focus = null;
+      try {
+        focus = storage?.getItem?.(SHIPMENTS_FOCUS_KEY) ?? null;
+        if (focus) storage.removeItem?.(SHIPMENTS_FOCUS_KEY);
+      } catch {
+        focus = null;
+      }
+      if (!_shell || !focus || !store.get(focus)) return;
+      _pendingFocus = focus;
+      if (_enabled) layer.board.showOnGlobe(focus);
+      else _shell.setLayerEnabled?.(SHIPMENTS_LAYER_ID, true);
     },
 
     getStats() {

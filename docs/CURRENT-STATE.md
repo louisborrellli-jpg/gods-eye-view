@@ -1014,6 +1014,29 @@ year nearest to now. Urgent alerts (severity 2 and 3) raise one toast and,
 with the tab hidden, one system notification per shipment, alert and day.
 `scripts/qa-shipments.mjs` is the gate.
 
+### Shipments page and globe estimates
+
+`/shipments.html` (entry `src/shipmentsPage.js`, UI `src/ui/shipmentsDashboard.js`,
+styles `src/ui/styles/shipments-page.css`) shows the same stored shipments
+without the globe: a summary, filters and one row per container (port ETA,
+ramp ETA, the nearest last free day, the next step), with a detail sheet for
+the journey, free time, holds and notes. It is a second build input in
+`build/vite.js`. Tracking refreshes run through `createShipmentTracker`
+(`src/layers/shipments/tracker.js`), shared with the layer; the page refreshes
+due containers on open, when shown again, and every 30 minutes, and announces
+urgent alerts with the layer's once-a-day keys. "Show on map" stores the
+container id under `gev.shipments.focus`; the layer reads it when the shell
+attaches, turns itself on and flies there.
+
+On the globe, a container with no recent AIS position (older than 12 hours,
+or none: ships leave coastal AIS mid-ocean) is drawn at an estimate from
+`src/layers/shipments/geo.js`: along a Mediterranean → Gibraltar → Atlantic →
+Gulf of St. Lawrence → Montreal sea lane by how much of departure → port ETA
+has passed, along the Montreal → Toronto rail line on the inland leg, or at the
+port or ramp while it waits. Estimated pins are hollow and labelled est.; each
+container's lane is drawn dashed. Port coordinates come from a small UN/LOCODE
+table for this trade; unknown ports get no estimate.
+
 ## Vessel components and sources
 
 `src/data/aisLiveVessels.js` assembles `createVesselLayer` from the
