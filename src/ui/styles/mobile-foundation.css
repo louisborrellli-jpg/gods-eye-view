@@ -1,0 +1,38 @@
+/* ── Mobile foundation ───────────────────────────
+   Phone-first adjustments that must win the cascade, so this sheet is
+   @imported last in style.css (after command-dock*.css, which otherwise
+   override responsive.css). Two concerns only:
+     1. Tighten fixed corner chrome on small screens, still clearing the
+        device safe areas (notch / home indicator).
+     2. Grow sub-44px controls to a comfortable touch target on coarse
+        pointers, without touching the desktop (fine-pointer) layout. */
+
+/* Narrow screens: pull the generous desktop corner gutter in to 16px, but
+   never inside the device safe-area inset. */
+@media (max-width: 720px) {
+  #title-bar {
+    top: max(16px, var(--safe-top));
+    left: max(16px, var(--safe-left));
+  }
+  #gev-voice-control {
+    right: max(16px, var(--safe-right));
+    bottom: max(16px, var(--safe-bottom));
+  }
+  #top-center-actions {
+    top: max(16px, var(--safe-top));
+  }
+}
+
+/* Coarse pointer (touch): the small round globe-action buttons and the sync
+   chips are below the 44px comfortable-tap target. Grow them on touch only,
+   so the mouse-driven desktop keeps its compact 36px chrome. Guarded by both
+   hover:none and pointer:coarse so a hybrid trackpad laptop is unaffected. */
+@media (hover: none) and (pointer: coarse) {
+  #top-center-actions {
+    gap: 10px;
+  }
+  #top-center-actions button {
+    width: var(--touch-min);
+    height: var(--touch-min);
+  }
+}

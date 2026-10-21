@@ -12,6 +12,9 @@ test('the standalone document expands every component once and preserves unique 
   assert.equal(new Set(ids).size, ids.length);
   assert.match(html, /id="cesiumContainer"/);
   assert.match(html, /type="module" src="\/src\/main.js"/);
+  // viewport-fit=cover is what makes the env(safe-area-inset-*) tokens the
+  // mobile chrome relies on resolve to non-zero on notched devices.
+  assert.match(html, /name="viewport"[^>]*viewport-fit=cover/);
 });
 
 test('component selection includes only requested markup and refuses filesystem traversal', () => {

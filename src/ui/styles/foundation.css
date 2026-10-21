@@ -50,6 +50,21 @@
   --display-panel-expanded-width: 272px;
   --cockpit-radio-collapsed-width: 148px;
   --cockpit-radio-expanded-width: 232px;
+
+  /* Device safe-area insets (notch, rounded corners, home indicator). These
+     resolve to 0 until the viewport meta opts in with viewport-fit=cover, so
+     edge-anchored chrome can fold them in with max() without shifting desktop. */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+
+  /* Gutter for fixed corner chrome: the app's hand-tuned desktop inset, pulled
+     in on phones (see mobile-foundation.css). */
+  --edge-gutter: 36px;
+
+  /* Minimum comfortable touch target on a coarse pointer (WCAG 2.5.5). */
+  --touch-min: 44px;
 }
 
 * {
@@ -399,8 +414,8 @@ body.cockpit-mode #cockpit-cloud-effects.active {
 
 #gev-voice-control {
   position: fixed;
-  right: 36px;
-  bottom: 36px;
+  right: max(36px, var(--safe-right));
+  bottom: max(36px, var(--safe-bottom));
   /* Z ladder: panels ~100, voice pill 150, toast 200, clean-view-exit 300 */
   z-index: 150;
   display: flex;
@@ -511,8 +526,8 @@ body.cockpit-mode #cockpit-cloud-effects.active {
 /* ── Title Bar ────────────────────────────────── */
 #title-bar {
   position: fixed;
-  top: 32px;
-  left: 36px;
+  top: max(32px, var(--safe-top));
+  left: max(36px, var(--safe-left));
   z-index: 100;
   pointer-events: none;
   user-select: none;
