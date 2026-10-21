@@ -3275,9 +3275,6 @@
   "Checking every container…": "Проверяем каждый контейнер…",
   "Tracking updated": "Отслеживание обновлено",
   "Add a container number. The board finds its ship, ETAs, unloading, rail move and pickup by itself, counts down every free-time deadline and warns you before charges start.": "Добавьте номер контейнера. Доска сама найдёт судно, ETA, выгрузку, перевозку по ж/д и вывоз, будет вести обратный отсчёт по каждому сроку свободного времени и предупредит до начала начислений.",
-  "Free days for every container": "Свободные дни для всех контейнеров",
-  "Set these once from your contract. The board uses them to work out each last free day; a container’s own numbers win.": "Задайте их один раз по вашему контракту. Доска рассчитывает по ним каждый последний свободный день; собственные значения контейнера имеют приоритет.",
-  "Free days saved": "Свободные дни сохранены",
   "Usual rail days, port to ramp": "Обычные дни по ж/д, от порта до терминала",
   "Tracked by {source} · updated {age}": "Отслеживается {source} · обновлено {age}",
   "Expected at {place} (est.)": "Ожидается в {place} (оценка)",
@@ -3286,6 +3283,12 @@
   "More details (optional)": "Подробнее (необязательно)",
   "Leave these empty to use automatic tracking. A date typed here replaces the tracked one.": "Оставьте пустыми, чтобы использовать автоматическое отслеживание. Введённая здесь дата заменяет отслеживаемую.",
   "Tracked: {day}": "По отслеживанию: {day}",
-  "Only if this container differs from your usual free days, set on the board.": "Только если у этого контейнера свободные дни отличаются от обычных, заданных на доске.",
-  "Saved only in this browser and never put in share links. To track them, this app’s server sends container numbers to FindTEU and Terminal49 and ship names or numbers to its live ship feed; nothing else leaves. Export to keep a copy.": "Хранится только в этом браузере и никогда не попадает в ссылки. Для отслеживания сервер этого приложения отправляет номера контейнеров в FindTEU и Terminal49, а названия или номера судов — в свой поток данных о судах; больше ничего не передаётся. Экспортируйте, чтобы сохранить копию."
+  "Saved only in this browser and never put in share links. To track them, this app’s server sends container numbers to FindTEU and Terminal49 and ship names or numbers to its live ship feed; nothing else leaves. Export to keep a copy.": "Хранится только в этом браузере и никогда не попадает в ссылки. Для отслеживания сервер этого приложения отправляет номера контейнеров в FindTEU и Terminal49, а названия или номера судов — в свой поток данных о судах; больше ничего не передаётся. Экспортируйте, чтобы сохранить копию.",
+  "Free time rules (automatic)": "Правила свободного времени (автоматически)",
+  "Last free days are worked out automatically from the standard rules: MSC Montreal port 6 working days, CN Toronto ramp 1 day, MSC empty return 4 working days, rail about 4 days. Change a number only if your contract differs; dates from these rules are marked est.": "Последние свободные дни рассчитываются автоматически по стандартным правилам: порт Монреаля (MSC) — 6 рабочих дней, терминал Торонто (CN) — 1 день, возврат порожнего (MSC) — 4 рабочих дня, ж/д — около 4 дней. Меняйте число, только если ваш контракт отличается; даты по этим правилам помечены как оценка.",
+  "Free time saved": "Свободное время сохранено",
+  "Port free days (working days)": "Свободные дни в порту (рабочие дни)",
+  "Ramp free days": "Свободные дни на терминале",
+  "Days to return the empty (working days)": "Дни на возврат порожнего (рабочие дни)",
+  "Leave empty to use the board’s free time rules.": "Оставьте пустым, чтобы использовать правила свободного времени доски."
 }

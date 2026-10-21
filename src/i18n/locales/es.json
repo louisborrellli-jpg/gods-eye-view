@@ -3193,9 +3193,6 @@
   "Checking every container…": "Comprobando cada contenedor…",
   "Tracking updated": "Seguimiento actualizado",
   "Add a container number. The board finds its ship, ETAs, unloading, rail move and pickup by itself, counts down every free-time deadline and warns you before charges start.": "Añade un número de contenedor. El tablero encuentra por sí solo su buque, ETA, descarga, traslado en tren y retiro, hace la cuenta atrás de cada plazo de tiempo libre y te avisa antes de que empiecen los cargos.",
-  "Free days for every container": "Días libres para todos los contenedores",
-  "Set these once from your contract. The board uses them to work out each last free day; a container’s own numbers win.": "Configúralos una vez según tu contrato. El tablero los usa para calcular cada último día libre; prevalecen los datos propios de cada contenedor.",
-  "Free days saved": "Días libres guardados",
   "Usual rail days, port to ramp": "Días habituales de tren, del puerto a la terminal",
   "Tracked by {source} · updated {age}": "Seguido por {source} · actualizado {age}",
   "Expected at {place} (est.)": "Previsto en {place} (aprox.)",
@@ -3204,6 +3201,12 @@
   "More details (optional)": "Más detalles (opcional)",
   "Leave these empty to use automatic tracking. A date typed here replaces the tracked one.": "Déjalas vacías para usar el seguimiento automático. Una fecha escrita aquí sustituye a la seguida.",
   "Tracked: {day}": "Seguido: {day}",
-  "Only if this container differs from your usual free days, set on the board.": "Solo si este contenedor difiere de tus días libres habituales, configurados en el tablero.",
-  "Saved only in this browser and never put in share links. To track them, this app’s server sends container numbers to FindTEU and Terminal49 and ship names or numbers to its live ship feed; nothing else leaves. Export to keep a copy.": "Se guarda solo en este navegador y nunca va en los enlaces compartidos. Para seguirlos, el servidor de esta aplicación envía los números de contenedor a FindTEU y Terminal49, y los nombres o números de buque a su fuente de buques en vivo; nada más sale. Exporta para guardar una copia."
+  "Saved only in this browser and never put in share links. To track them, this app’s server sends container numbers to FindTEU and Terminal49 and ship names or numbers to its live ship feed; nothing else leaves. Export to keep a copy.": "Se guarda solo en este navegador y nunca va en los enlaces compartidos. Para seguirlos, el servidor de esta aplicación envía los números de contenedor a FindTEU y Terminal49, y los nombres o números de buque a su fuente de buques en vivo; nada más sale. Exporta para guardar una copia.",
+  "Free time rules (automatic)": "Reglas de tiempo libre (automáticas)",
+  "Last free days are worked out automatically from the standard rules: MSC Montreal port 6 working days, CN Toronto ramp 1 day, MSC empty return 4 working days, rail about 4 days. Change a number only if your contract differs; dates from these rules are marked est.": "Los últimos días libres se calculan automáticamente con las reglas estándar: puerto de Montreal (MSC) 6 días hábiles, terminal de Toronto (CN) 1 día, devolución del vacío (MSC) 4 días hábiles, tren unos 4 días. Cambia un número solo si tu contrato es distinto; las fechas basadas en estas reglas se marcan como aprox.",
+  "Free time saved": "Tiempo libre guardado",
+  "Port free days (working days)": "Días libres en puerto (días hábiles)",
+  "Ramp free days": "Días libres en la terminal",
+  "Days to return the empty (working days)": "Días para devolver el vacío (días hábiles)",
+  "Leave empty to use the board’s free time rules.": "Déjalo vacío para usar las reglas de tiempo libre del tablero."
 }
