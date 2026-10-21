@@ -150,6 +150,9 @@ export function createShipmentsBoard({
           });
         }),
       );
+    const page = element(doc, 'a', 'shipments-btn', t('Shipments page'));
+    page.href = '/shipments.html';
+    actions.append(page);
     actions.append(
       button(t('Export'), exportAll),
       button(t('Import'), importAll),

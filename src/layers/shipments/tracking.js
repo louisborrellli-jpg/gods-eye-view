@@ -49,6 +49,7 @@ export const CARRIER_SCAC = Object.freeze({
 
 /** The milestone dates automatic tracking can fill. */
 export const AUTO_DATE_FIELDS = Object.freeze([
+  'departed',
   'portEta',
   'discharged',
   'railDeparted',
@@ -140,6 +141,17 @@ export function parseFindTeu(data, { now = Date.now() } = {}) {
   const dates = Object.fromEntries(AUTO_DATE_FIELDS.map((key) => [key, '']));
 
   const atPod = (event) => pod.code && event.code === pod.code;
+  const atPol = (event) => pol.code && event.code === pol.code;
+
+  // When the ship left the loading port: actual, else planned.
+  const departures = events.filter(
+    (event) => atPol(event) && /depart/i.test(event.action),
+  );
+  dates.departed =
+    departures.find((event) => event.actual)?.day ||
+    departures[0]?.day ||
+    day(data.pol?.etd_date) ||
+    '';
   const atDestination = (event) =>
     inland && destination.code && event.code === destination.code;
 

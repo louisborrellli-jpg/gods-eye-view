@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { applicationHtmlPlugin } from './application-html.js';
 import cesium from 'vite-plugin-cesium';
 import { DEFAULT_ALLOWED_HOSTS, hostCheckPlugin } from './allowedHosts.js';
@@ -153,6 +154,17 @@ export function createBrowserViteConfig({
         mapillaryToken ?? '',
       ),
     },
-    build: { chunkSizeWarningLimit: 1500 },
+    build: {
+      chunkSizeWarningLimit: 1500,
+      // Two documents: the globe application and the Shipments page.
+      rollupOptions: {
+        input: {
+          main: fileURLToPath(new URL('../index.html', import.meta.url)),
+          shipments: fileURLToPath(
+            new URL('../shipments.html', import.meta.url),
+          ),
+        },
+      },
+    },
   };
 }

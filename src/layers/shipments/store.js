@@ -13,6 +13,8 @@ import {
 export const SHIPMENTS_STORAGE_KEY = 'gev.shipments.v1';
 export const SHIPMENTS_NOTIFIED_KEY = 'gev.shipments.notified.v1';
 export const SHIPMENTS_DEFAULTS_KEY = 'gev.shipments.defaults.v1';
+/** The Shipments page leaves a container id here for the map to fly to. */
+export const SHIPMENTS_FOCUS_KEY = 'gev.shipments.focus';
 const MAX_NOTIFIED = 400;
 
 function read(storage, key, fallback) {

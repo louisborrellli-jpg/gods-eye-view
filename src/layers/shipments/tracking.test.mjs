@@ -58,6 +58,7 @@ test('an ocean leg in progress names the ship and the expected dates', () => {
     voyage: 'NA641R',
   });
   assert.deepEqual(tracking.dates, {
+    departed: '2026-10-02',
     portEta: '2026-10-20',
     discharged: '',
     railDeparted: '',
@@ -80,6 +81,7 @@ test('actual unloading, rail, ramp, pickup and return fill in as they happen', (
   ]);
   const tracking = parseFindTeu(data);
   assert.deepEqual(tracking.dates, {
+    departed: '2026-10-02',
     portEta: '2026-10-20',
     discharged: '2026-10-21',
     railDeparted: '2026-10-22',
