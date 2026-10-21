@@ -3068,5 +3068,20 @@
     "other": "{count} зоны"
   },
   "Exit cockpit to fly to a watch zone": "Выйдите из кабины, чтобы перелететь к зоне наблюдения",
-  "Watch Zones": "Зоны наблюдения"
+  "Watch Zones": "Зоны наблюдения",
+  "—": "—",
+  "Closed": "Закрыто",
+  "No delay": "Без задержек",
+  "{count} min": "{count} мин",
+  "Into Canada — cars {travellers}, trucks {commercial}": "В Канаду — легковые {travellers}, грузовые {commercial}",
+  "Into U.S. — cars {travellers}, trucks {commercial}": "В США — легковые {travellers}, грузовые {commercial}",
+  "Updated {when}": "Обновлено {when}",
+  "Border feed unavailable": "Пограничный источник недоступен",
+  "{count} crossings": {
+    "one": "{count} пункт",
+    "few": "{count} пункта",
+    "many": "{count} пунктов",
+    "other": "{count} пункта"
+  },
+  "Border Crossings": "Пограничные пункты"
 }

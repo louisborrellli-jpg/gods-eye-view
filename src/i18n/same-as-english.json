@@ -110,6 +110,7 @@
     "panel",
     "view band|GLOBAL",
     "voice|ERROR",
+    "{count} min",
     "{radius} km",
     "{rate} msg/s",
     "{speed} kn",
@@ -119,6 +120,7 @@
     "{value} KM/S",
     "ΔE",
     "ΔN",
+    "—",
     "▲ {frp} MW"
   ],
   "ru": [
@@ -134,6 +136,8 @@
     "R&B",
     "REC",
     "VS",
-    "WHOT/BHOT"
+    "WHOT/BHOT",
+    "{count} min",
+    "—"
   ]
 }

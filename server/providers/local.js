@@ -17,6 +17,7 @@ import { localReceiversProxy } from './local-receivers.js';
 import { transitProxy } from './transit.js';
 import { adsbLolProxy } from './aircraft/adsb-lol.js';
 import { emergenciesProxy } from './aircraft/emergencies.js';
+import { borderWaitsProxy } from './border.js';
 import { aisLiveProxy } from './vessels/ais-live.js';
 import { trackBackfillProxies } from './aircraft/tracks.js';
 import { openAiRealtimeProxy } from './openai.js';
@@ -55,6 +56,7 @@ function localProviderPlugins({ realtime, gemini } = {}) {
     transitProxy(),
     adsbLolProxy(),
     emergenciesProxy(),
+    borderWaitsProxy(),
     aisLiveProxy(),
     trackBackfillProxies(),
     openAiRealtimeProxy({ realtime }),
