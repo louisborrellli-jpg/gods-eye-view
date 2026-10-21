@@ -52,6 +52,17 @@ export const DETROIT_DATASETS = Object.freeze({
     titleField: 'offense_category',
     detailFields: ['offense_description', 'incident_occurred_at'],
   },
+  '311-requests': {
+    category: 'incidents',
+    kind: 'arcgis',
+    label: msg('311 requests (7d)'),
+    geom: 'point',
+    color: '#ff9800',
+    recentField: 'created_at',
+    recentDays: 7,
+    titleField: 'request_type',
+    detailFields: ['status', 'address', 'created_at'],
+  },
   construction: {
     category: 'road',
     kind: 'mdot',
